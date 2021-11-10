@@ -61,8 +61,8 @@ map(3,10,-).
 map(3,11,#).
 
 map(4,0,#).
-map(4,1,0).
-map(4,2,0).
+map(4,1,o).
+map(4,2,o).
 map(4,3,-).
 map(4,4,-).
 map(4,5,-).
@@ -172,7 +172,7 @@ startGame :-
 	asserta(ranchexp(0)),
 	asserta(time(0)),
 	asserta(day(1)),
-	asserta(playerpos(9,8)),
+	asserta(playerpos(8,7)),
 	promptStart.
 
 promptStart :-
@@ -194,3 +194,12 @@ promptMenu :-
 	write('%  8. d       : Gerak ke timur 1 langkah         %'),nl,
 	write('%  9. help    : Menampilkan peraturan game       %'),nl,
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
+
+showmap:- printmap(0,0),!.
+printmap(12,0):- !.
+printmap(Y,12):- nl, NextY is Y+1, printmap(NextY,0),!.
+printmap(Y,X):- playerpos(Yp,Xp),Yp=:=Y,Xp=:=X,write('P'), NextX is X+1, printmap(Y,NextX),!.
+printmap(Y,X):- map(Y,X,A), A==r, write('R'), NextX is X+1, printmap(Y,NextX),!.
+printmap(Y,X):- map(Y,X,A), A==h, write('H'), NextX is X+1, printmap(Y,NextX),!.
+printmap(Y,X):- map(Y,X,A), A==m, write('M'), NextX is X+1, printmap(Y,NextX),!.
+printmap(Y,X):- map(Y,X,A), write(A), NextX is X+1, printmap(Y,NextX),!.
