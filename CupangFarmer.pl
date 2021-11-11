@@ -203,3 +203,8 @@ printmap(Y,X):- map(Y,X,A), A==r, write('R'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- map(Y,X,A), A==h, write('H'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- map(Y,X,A), A==m, write('M'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- map(Y,X,A), write(A), NextX is X+1, printmap(Y,NextX),!.
+
+w:-playerpos(Y,X),NextY is Y-1, NextY>0, \+ (map(NextY,X,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),!.
+a:-playerpos(Y,X),NextX is X-1, NextX>0, \+ (map(Y,NextX,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),!.
+s:-playerpos(Y,X),NextY is Y+1, NextY<11, \+ (map(NextY,X,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),!.
+d:-playerpos(Y,X),NextX is X+1, NextX<11, \+ (map(Y,NextX,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),!.
