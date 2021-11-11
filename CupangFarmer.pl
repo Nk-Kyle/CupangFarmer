@@ -2,6 +2,7 @@
 :- dynamic(exp/1).
 :- dynamic(farmexp/1).
 :- dynamic(fishexp/1).
+:- dynamic(fishrod/1).
 :- dynamic(ranchexp/1).
 :- dynamic(time/1).
 :- dynamic(day/1).
@@ -169,6 +170,7 @@ startGame :-
 	asserta(exp(0)),
 	asserta(farmexp(0)),
 	asserta(fishexp(0)),
+	asserta(fishrod(0)),
 	asserta(ranchexp(0)),
 	asserta(time(0)),
 	asserta(day(1)),
@@ -215,8 +217,18 @@ s:-playerpos(Y,X),NextY is Y+1, NextY<11, \+ (loc(NextY,X,A),A=='o'), retractall
 d:-playerpos(Y,X),NextX is X+1, NextX<11, \+ (loc(Y,NextX,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
 
 /*===================FISHERMAN============================*/
-fish:- playerpos(Y,X), NextY is Y+1, loc(NextY,X,A), A=='o',write('berhasil'),!.
-fish:- playerpos(Y,X), NextY is Y-1, loc(NextY,X,A), A=='o',write('berhasil'),!.
-fish:- playerpos(Y,X), NextX is X+1, loc(Y,NextX,A), A=='o',write('berhasil'),!.
-fish:- playerpos(Y,X), NextX is X-1, loc(Y,NextX,A), A=='o',write('berhasil'),!.
+fish:- fishrod(X), X=:=0, write('Anda harus memiliki fishing rod untuk memancing!'),!.
+fish:- playerpos(Y,X), NextY is Y+1, loc(NextY,X,A), A=='o',randomfish,addtimefishing,!.
+fish:- playerpos(Y,X), NextY is Y-1, loc(NextY,X,A), A=='o',randomfish,addtimefishing,!.
+fish:- playerpos(Y,X), NextX is X+1, loc(Y,NextX,A), A=='o',randomfish,addtimefishing,!.
+fish:- playerpos(Y,X), NextX is X-1, loc(Y,NextX,A), A=='o',randomfish,addtimefishing,!.
 fish:- write('Tidak ada danau di sekitar Anda'),!.
+
+addtimefishing:- fishexp(FE), NextT is 6-FE, addTime(NextT),!.
+
+randomfish:- fishrod(X),X=:=1,random(1,100,Num), getfish(Num),!.
+randomfish:- fishrod(X),X=:=2,random(1,50,Num), getfish(Num),!.
+
+getfish(X):- X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'),!.
+getfish(X):- X=<10, write('Selamat, Anda mendapatkan Salmon'),!.
+getfish(X):- write('Selamat, Anda mendapatkan Tuna'),!.
