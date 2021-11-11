@@ -170,7 +170,7 @@ startGame :-
 	asserta(farmexp(0)),
 	asserta(fishexp(0)),
 	asserta(ranchexp(0)),
-	asserta(time(23)),
+	asserta(time(0)),
 	asserta(day(1)),
 	asserta(playerpos(8,7)),
 	promptStart.
@@ -186,7 +186,7 @@ promptMenu :-
 	write('%                       Menu                     %'),nl,
 	write('%  1. start   : Mulai pertualanganmu             %'),nl,
 	write('%  2. menu    : Menampilkan Menu                 %'),nl,
-	write('%  3. showmap : Menampilkan map                  %'),nl,
+	write('%  3. map     : Menampilkan map                  %'),nl,
 	write('%  4. status  : Menampilkan kondisimu terkini    %'),nl,
 	write('%  5. w       : Gerak ke utara 1 langkah         %'),nl,
 	write('%  6. a       : Gerak ke barat 1 langkah         %'),nl,
