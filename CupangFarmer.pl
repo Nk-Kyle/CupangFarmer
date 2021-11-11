@@ -213,3 +213,10 @@ w:-playerpos(Y,X),NextY is Y-1, NextY>0, \+ (loc(NextY,X,A),A=='o'), retractall(
 a:-playerpos(Y,X),NextX is X-1, NextX>0, \+ (loc(Y,NextX,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
 s:-playerpos(Y,X),NextY is Y+1, NextY<11, \+ (loc(NextY,X,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
 d:-playerpos(Y,X),NextX is X+1, NextX<11, \+ (loc(Y,NextX,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
+
+/*===================FISHERMAN============================*/
+fish:- playerpos(Y,X), NextY is Y+1, loc(NextY,X,A), A=='o',write('berhasil'),!.
+fish:- playerpos(Y,X), NextY is Y-1, loc(NextY,X,A), A=='o',write('berhasil'),!.
+fish:- playerpos(Y,X), NextX is X+1, loc(Y,NextX,A), A=='o',write('berhasil'),!.
+fish:- playerpos(Y,X), NextX is X-1, loc(Y,NextX,A), A=='o',write('berhasil'),!.
+fish:- write('Tidak ada danau di sekitar Anda'),!.
