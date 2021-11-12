@@ -2,6 +2,7 @@
 :- dynamic(exp/1).
 :- dynamic(farmexp/1).
 :- dynamic(fishexp/1).
+:- dynamic(fishlvl/1).
 :- dynamic(fishrod/1).
 :- dynamic(ranchexp/1).
 :- dynamic(time/1).
@@ -169,8 +170,9 @@ startGame :-
 	asserta(uang(100)),
 	asserta(exp(0)),
 	asserta(farmexp(0)),
+	asserta(fishlvl(0)),
 	asserta(fishexp(0)),
-	asserta(fishrod(0)),
+	asserta(fishrod(1)),
 	asserta(ranchexp(0)),
 	asserta(time(0)),
 	asserta(day(1)),
@@ -202,6 +204,8 @@ addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, 
 
 time:- day(D), time(T), write('Day '),write(D),write(' '),write(T),write(':00'),!.
 
+status:- fishexp(FISHEXP),fishlvl(FISHLVL), write('fishing level: '),write(FISHLVL),nl,write('fishing exp: '),write(FISHEXP),!.
+
 map:- printmap(0,0),!.
 printmap(12,0):- !.
 printmap(Y,12):- nl, NextY is Y+1, printmap(NextY,0),!.
@@ -226,9 +230,13 @@ fish:- write('Tidak ada danau di sekitar Anda'),!.
 
 addtimefishing:- fishexp(FE), NextT is 6-FE, addTime(NextT),!.
 
-randomfish:- fishrod(X),X=:=1,random(1,100,Num), getfish(Num),!.
-randomfish:- fishrod(X),X=:=2,random(1,50,Num), getfish(Num),!.
+randomfish:- fishrod(X),X=:=1,randomize,random(1,100,Num), getfish(Num),!.
+randomfish:- fishrod(X),X=:=2,randomize,random(1,50,Num), getfish(Num),!.
 
-getfish(X):- X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'),!.
-getfish(X):- X=<10, write('Selamat, Anda mendapatkan Salmon'),!.
-getfish(X):- write('Selamat, Anda mendapatkan Tuna'),!.
+getfish(X):- X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(10),!.
+getfish(X):- X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(5),!.
+getfish(_):- write('Selamat, Anda mendapatkan Tuna'),addexpfish(2),!.
+
+addexpfish(_):- fishlvl(LVL), LVL=:=3, write('Level fishing sudah maximal, Anda tidak lagi mendapat Exp memancing'),!.
+addexpfish(X):- fishexp(EXP), NEXTEXP is EXP+X, fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(fishexp(_)), asserta(fishexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!.
+addexpfish(X):- fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(fishexp(_)), retractall(fishlvl(_)), asserta(fishexp(NEXTEXP)), asserta(fishlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!. 
