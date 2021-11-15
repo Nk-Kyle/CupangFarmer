@@ -202,6 +202,17 @@ promptMenu :-
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
 
 /*=====================================================================GENERAL======================================================================*/
+start:- write('Silahkan Pilih Pekerjaan Anda (Tidak dapat diubah) '),nl,
+		write('1. Farmer    (2x exp jika berkebun)'),nl,
+		write('2. Fisherman (2x exp jika memancing)'),nl,
+		write('3. Rancher   (2x exp jika berternak)'),nl,
+		write('Pilihan Anda (1/2/3): '), read(X),asserta(job(X)),
+		status,!.
+
+writejob:-	job(X), X=:=1, write('Job        : Farmer'),!.
+writejob:-	job(X), X=:=2, write('Job        : Fishermen'),!.
+writejob:-	job(X), X=:=3, write('Job        : Rancher'),!.
+
 tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update,!.
 tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update,!.
 
@@ -211,7 +222,8 @@ addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, 
 time:- day(D), time(T), write('Day '),write(D),write(' '),write(T),write(':00'),!.
 
 status:- 	fatigue(F), fishexp(FISHEXP),fishlvl(FISHLVL),
-			write('Fatigue: '),write(F),nl,
+			writejob,nl,
+			write('Fatigue    : '),write(F),nl,
 			write('Fishing lvl: '),write(FISHLVL),nl,
 			write('Fishing exp: '),write(FISHEXP),!.
 
