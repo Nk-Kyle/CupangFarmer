@@ -284,14 +284,27 @@ addexpfish(X):- fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP
 
 /*==================================================MARKETPLACE========================================================================================*/
 market:- loc(Y,X,L),L==m, playerpos(A,B), (Y\=A;X\=B), write('Cupang tidak berada di pasar!'),!.
-market:-	write('         ______'),nl,
-			write('        /______\\ '),nl,
-			write('  o   / |      | \\ '),nl,
-			write(' /|\\    |      |'),nl,
-			write(' / \\    |______|'),nl,
+market:-	write('          ______'),nl,
+			write('         /______\\ '),nl,
+			write('  o /  / |      | \\ '),nl,
+			write(' /|      |      |'),nl,
+			write(' / \\     |______|'),nl,
 			/*emang rada zig-zag ga usah dibikin lurus*/
-			write('i want to (buy/sell): '),read(X),nl, marketchoice(X),!.
+			write('i want to (buy/sell/exit): '),read(X),nl, marketchoice(X),!.
 
-marketchoice(buy):- write('buy something'),!.
-marketchoice(sel):- write('Sell something'),!.
-marketchoice(_):- write('invalid input'),!.
+marketchoice(buy):- write('buy something'),nl,market,!.
+marketchoice(sell):- write('Sell something'),nl,,market,!.
+marketchoice(exit):- map,!.
+marketchoice(_):- write('invalid input'),market,!.
+
+/*================================================HOUSE=============================================================================================*/
+house:- loc(Y,X,L),L==h, playerpos(A,B), (Y\=A;X\=B), write('Cupang tidak berada di rumah!'),!.
+house:-	write('              '),nl,
+		write('  o '),nl,
+		write(' /|\\    ________|'),nl,
+		write(' / \\   |        |'),nl,
+		write('i want to (sleep/go_out): '),read(X),nl,housechoice(X),!.
+
+housechoice(sleep):- tidur(6),write('Cupang slept for 6 hours'),nl,house,!.
+housechoice(go_out):- map,!.
+housechoice(_):- write('invalid input'),house,!.
