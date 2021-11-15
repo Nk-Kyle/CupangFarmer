@@ -10,6 +10,7 @@
 :- dynamic(playerpos/2).
 :- dynamic(job/1).
 :- dynamic(fatigue/1).
+:- dynamic(quest/3).
 
 loc(0,0,#).
 loc(0,1,#).
@@ -151,7 +152,7 @@ loc(10,6,-).
 loc(10,7,-).
 loc(10,8,-).
 loc(10,9,-).
-loc(10,10,-).
+loc(10,10,q).
 loc(10,11,#).
 
 loc(11,0,#).
@@ -237,6 +238,10 @@ update:- !.
 failgame:- write('fail'), retractall(_),!.
 successgame:- write('berhasil'),!. 
 
+/*=========================================================QUEST==================================================================================*/
+quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil di Q'),!.
+quest:- write('true'),!.
+
 /*=======================================================MOVE DAN PETA============================================================================*/
 map:- printmap(0,0),!.
 printmap(12,0):- !.
@@ -245,6 +250,7 @@ printmap(Y,X):- playerpos(Yp,Xp),Yp=:=Y,Xp=:=X,write('P'), NextX is X+1, printma
 printmap(Y,X):- loc(Y,X,A), A==r, write('R'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- loc(Y,X,A), A==h, write('H'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- loc(Y,X,A), A==m, write('M'), NextX is X+1, printmap(Y,NextX),!.
+printmap(Y,X):- loc(Y,X,A), A==q, write('Q'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- loc(Y,X,A), write(A), NextX is X+1, printmap(Y,NextX),!.
 
 w:-playerpos(Y,X),NextY is Y-1, NextY>0, \+ (loc(NextY,X,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
@@ -265,9 +271,12 @@ addtimefishing:- fishlvl(FL), NextT is 6-FL, addTime(NextT),!.
 randomfish:- fishrod(X),X=:=1,randomize,random(1,100,Num), getfish(Num),!.
 randomfish:- fishrod(X),X=:=2,randomize,random(1,50,Num), getfish(Num),!.
 
-getfish(X):- X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(10),!.
-getfish(X):- X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(5),!.
-getfish(_):- write('Selamat, Anda mendapatkan Tuna'),addexpfish(2),!.
+getfish(X):- job(2),X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(10),!.
+getfish(X):- job(2),X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(6),!.
+getfish(_):- job(2),write('Selamat, Anda mendapatkan Tuna'),addexpfish(2),!.
+getfish(X):- X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(5),!.
+getfish(X):- X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(3),!.
+getfish(_):- write('Selamat, Anda mendapatkan Tuna'),addexpfish(1),!.
 
 addexpfish(_):- fishlvl(LVL), LVL=:=3, write('Level fishing sudah maximal, Anda tidak lagi mendapat Exp memancing'),!.
 addexpfish(X):- fishexp(EXP), NEXTEXP is EXP+X, fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(fishexp(_)), asserta(fishexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!.
