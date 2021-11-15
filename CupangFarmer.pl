@@ -9,6 +9,7 @@
 :- dynamic(day/1).
 :- dynamic(playerpos/2).
 :- dynamic(job/1).
+:- dynamic(fatigue/1).
 
 loc(0,0,#).
 loc(0,1,#).
@@ -177,6 +178,7 @@ startGame :-
 	asserta(time(0)),
 	asserta(day(1)),
 	asserta(playerpos(8,7)),
+	asserta(fatigue(0)),
 	promptStart.
 
 promptStart :-
@@ -199,13 +201,31 @@ promptMenu :-
 	write('%  9. help    : Menampilkan peraturan game       %'),nl,
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
 
-addTime(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),!.
-addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),!.
+/*=====================================================================GENERAL======================================================================*/
+tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update,!.
+tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update,!.
+
+addTime(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),addfatigue(X),update,!.
+addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),update,!.
 
 time:- day(D), time(T), write('Day '),write(D),write(' '),write(T),write(':00'),!.
 
-status:- fishexp(FISHEXP),fishlvl(FISHLVL), write('fishing level: '),write(FISHLVL),nl,write('fishing exp: '),write(FISHEXP),!.
+status:- 	fatigue(F), fishexp(FISHEXP),fishlvl(FISHLVL),
+			write('Fatigue: '),write(F),nl,
+			write('Fishing lvl: '),write(FISHLVL),nl,
+			write('Fishing exp: '),write(FISHEXP),!.
 
+addfatigue(X):- fatigue(F), NextF is F+X, retractall(fatigue(_)), asserta(fatigue(NextF)),!.
+
+update:- day(D), D =:= 366, failgame,!.
+update:- uang(G), G>=20000, sucessgame,!.
+update:- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur sehingga ia pingsan selama 12 jam'), tidur(12),!.
+update:- !.
+
+failgame:- write('fail'), retractall(_),!.
+successgame:- write('berhasil'),!. 
+
+/*=======================================================MOVE DAN PETA============================================================================*/
 map:- printmap(0,0),!.
 printmap(12,0):- !.
 printmap(Y,12):- nl, NextY is Y+1, printmap(NextY,0),!.
@@ -220,7 +240,7 @@ a:-playerpos(Y,X),NextX is X-1, NextX>0, \+ (loc(Y,NextX,A),A=='o'), retractall(
 s:-playerpos(Y,X),NextY is Y+1, NextY<11, \+ (loc(NextY,X,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
 d:-playerpos(Y,X),NextX is X+1, NextX<11, \+ (loc(Y,NextX,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
 
-/*===================FISHERMAN============================*/
+/*==================================================FISHERMAN========================================================================================*/
 fish:- fishrod(X), X=:=0, write('Anda harus memiliki fishing rod untuk memancing!'),!.
 fish:- playerpos(Y,X), NextY is Y+1, loc(NextY,X,A), A=='o',randomfish,addtimefishing,!.
 fish:- playerpos(Y,X), NextY is Y-1, loc(NextY,X,A), A=='o',randomfish,addtimefishing,!.
@@ -228,7 +248,7 @@ fish:- playerpos(Y,X), NextX is X+1, loc(Y,NextX,A), A=='o',randomfish,addtimefi
 fish:- playerpos(Y,X), NextX is X-1, loc(Y,NextX,A), A=='o',randomfish,addtimefishing,!.
 fish:- write('Tidak ada danau di sekitar Anda'),!.
 
-addtimefishing:- fishexp(FE), NextT is 6-FE, addTime(NextT),!.
+addtimefishing:- fishlvl(FL), NextT is 6-FL, addTime(NextT),!.
 
 randomfish:- fishrod(X),X=:=1,randomize,random(1,100,Num), getfish(Num),!.
 randomfish:- fishrod(X),X=:=2,randomize,random(1,50,Num), getfish(Num),!.
