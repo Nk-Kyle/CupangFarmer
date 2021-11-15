@@ -232,8 +232,13 @@ addfatigue(X):- fatigue(F), NextF is F+X, retractall(fatigue(_)), asserta(fatigu
 
 update:- day(D), D =:= 366, failgame,!.
 update:- uang(G), G>=20000, sucessgame,!.
-update:- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur sehingga ia pingsan selama 12 jam'), tidur(12),!.
+update:- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur sehingga ia tertidur selama 12 jam'),nl,showfatigue,tidur(12),!.
 update:- !.
+
+showfatigue:- 	write('    zz'),nl,
+				write('  zz'),nl,
+				write('o_ '),nl,
+				write('|/\\'),nl.
 
 failgame:- write('fail'), retractall(_),!.
 successgame:- write('berhasil'),!. 
@@ -260,11 +265,17 @@ d:-playerpos(Y,X),NextX is X+1, NextX<11, \+ (loc(Y,NextX,A),A=='o'), retractall
 
 /*==================================================FISHERMAN========================================================================================*/
 fish:- fishrod(X), X=:=0, write('Anda harus memiliki fishing rod untuk memancing!'),!.
-fish:- playerpos(Y,X), NextY is Y+1, loc(NextY,X,A), A=='o',randomfish,addtimefishing,!.
-fish:- playerpos(Y,X), NextY is Y-1, loc(NextY,X,A), A=='o',randomfish,addtimefishing,!.
-fish:- playerpos(Y,X), NextX is X+1, loc(Y,NextX,A), A=='o',randomfish,addtimefishing,!.
-fish:- playerpos(Y,X), NextX is X-1, loc(Y,NextX,A), A=='o',randomfish,addtimefishing,!.
+fish:- playerpos(Y,X), NextY is Y+1, loc(NextY,X,A), A=='o',showfishing,randomfish,addtimefishing,!.
+fish:- playerpos(Y,X), NextY is Y-1, loc(NextY,X,A), A=='o',showfishing,randomfish,addtimefishing,!.
+fish:- playerpos(Y,X), NextX is X+1, loc(Y,NextX,A), A=='o',showfishing,randomfish,addtimefishing,!.
+fish:- playerpos(Y,X), NextX is X-1, loc(Y,NextX,A), A=='o',showfishing,randomfish,addtimefishing,!.
 fish:- write('Tidak ada danau di sekitar Anda'),!.
+
+showfishing:-	write(''),nl,
+				write('   |\\'),nl,
+				write(' o_|  \\'),nl,
+				write(' |/|    \\'),nl,
+				write(' /\\   ~~~\\~~~~~'),nl,!.
 
 addtimefishing:- fishlvl(FL), NextT is 6-FL, addTime(NextT),!.
 
@@ -293,7 +304,7 @@ market:-	write('          ______'),nl,
 			write('i want to (buy/sell/exit): '),read(X),nl, marketchoice(X),!.
 
 marketchoice(buy):- write('buy something'),nl,market,!.
-marketchoice(sell):- write('Sell something'),nl,,market,!.
+marketchoice(sell):- write('Sell something'),nl,market,!.
 marketchoice(exit):- map,!.
 marketchoice(_):- write('invalid input'),market,!.
 
