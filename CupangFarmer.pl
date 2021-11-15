@@ -239,7 +239,7 @@ failgame:- write('fail'), retractall(_),!.
 successgame:- write('berhasil'),!. 
 
 /*=========================================================QUEST==================================================================================*/
-quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil di Q'),!.
+quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil dan dilihat di Q'),!.
 quest:- write('true'),!.
 
 /*=======================================================MOVE DAN PETA============================================================================*/
@@ -281,3 +281,17 @@ getfish(_):- write('Selamat, Anda mendapatkan Tuna'),addexpfish(1),!.
 addexpfish(_):- fishlvl(LVL), LVL=:=3, write('Level fishing sudah maximal, Anda tidak lagi mendapat Exp memancing'),!.
 addexpfish(X):- fishexp(EXP), NEXTEXP is EXP+X, fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(fishexp(_)), asserta(fishexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!.
 addexpfish(X):- fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(fishexp(_)), retractall(fishlvl(_)), asserta(fishexp(NEXTEXP)), asserta(fishlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!. 
+
+/*==================================================MARKETPLACE========================================================================================*/
+market:- loc(Y,X,L),L==m, playerpos(A,B), (Y\=A;X\=B), write('Cupang tidak berada di pasar!'),!.
+market:-	write('         ______'),nl,
+			write('        /______\\ '),nl,
+			write('  o   / |      | \\ '),nl,
+			write(' /|\\    |      |'),nl,
+			write(' / \\    |______|'),nl,
+			/*emang rada zig-zag ga usah dibikin lurus*/
+			write('i want to (buy/sell): '),read(X),nl, marketchoice(X),!.
+
+marketchoice(buy):- write('buy something'),!.
+marketchoice(sel):- write('Sell something'),!.
+marketchoice(_):- write('invalid input'),!.
