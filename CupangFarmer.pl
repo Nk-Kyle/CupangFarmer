@@ -12,9 +12,13 @@
 :- dynamic(fatigue/1).
 :- dynamic(quest/3).
 :- dynamic(li/1).
+:- dynamic(isPlant/1).
+:- dynamic(shovel/1).
+:- dynamic(liPlant/1).
 
 /* li -> List of item */
 li([]).
+liPlant([]).
 
 loc(0,0,#).
 loc(0,1,#).
@@ -184,6 +188,8 @@ startGame :-
 	asserta(day(1)),
 	asserta(playerpos(8,7)),
 	asserta(fatigue(0)),
+	asserta(isPlant(0)),
+	asserta(shovel(1)),
 	promptStart.
 
 promptStart :-
@@ -260,7 +266,10 @@ printmap(Y,X):- loc(Y,X,A), A==r, write('R'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- loc(Y,X,A), A==h, write('H'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- loc(Y,X,A), A==m, write('M'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- loc(Y,X,A), A==q, write('Q'), NextX is X+1, printmap(Y,NextX),!.
-printmap(Y,X):- loc(Y,X,A), write(A), NextX is X+1, printmap(Y,NextX),!.
+printmap(Y,X):- findPlant(Y,X), isPlant(B), B=1, write('='), NextX is X+1, printmap(Y, NextX), !.
+printmap(Y,X):- findPlant(Y,X), isPlant(B), B=2, write('*'), NextX is X+1, printmap(Y, NextX), !.
+printmap(Y,X):- findPlant(Y,X), isPlant(B), B=3, write('x'), NextX is X+1, printmap(Y, NextX), !.
+printmap(Y,X):- findPlant(Y,X), isPlant(B), B=0, loc(Y,X,A), write(A), NextX is X+1, printmap(Y, NextX), !.
 
 w:-playerpos(Y,X),NextY is Y-1, NextY>0, \+ (loc(NextY,X,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
 a:-playerpos(Y,X),NextX is X-1, NextX>0, \+ (loc(Y,NextX,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
@@ -401,3 +410,77 @@ deleteitem([H|T],Item,Qnty,[H|Res]) :-
 
 
 eleitem([Item|Qnty],Item,Qnty).
+
+/*======================FARMER============================*/
+plant :- shovel(X), X=:=0, write('Anda harus memiliki shovel untuk menggali tanah!'), !.
+plant :- playerpos(Y,X), loc(Y,X,A), A==m, write('Anda tidak dapat menanam pada area M'), nl, !.
+plant :- playerpos(Y,X), loc(Y,X,A), A==h, write('Anda tidak dapat menanam pada area H'), nl, !.
+plant :- playerpos(Y,X), loc(Y,X,A), A==r, write('Anda tidak dapat menanam pada area R'), nl, !.
+plant :- write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
+/* Time Planting 6 (shovel 1) */
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6), 
+				Seed =:= 1, addPlant(Y,X,72), !.
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6), 
+				Seed =:= 2, addPlant(Y,X,96), !.
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6), 
+				Seed =:= 3, addPlant(Y,X,120), !.
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6), 
+				Seed =:= 4, addPlant(Y,X,144), !.
+/* Time Planting 4 (shovel 2) */
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4), 
+				Seed =:= 1, addPlant(Y,X,72), !.
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4), 
+				Seed =:= 2, addPlant(Y,X,96), !.
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4), 
+				Seed =:= 3, addPlant(Y,X,120), !.
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4), 
+				Seed =:= 4, addPlant(Y,X,144), !.
+
+addTimePlanting(Time) :- farmexp(A), A=:=0, TimeNow is Time, addTime(TimeNow), !.
+addTimePlanting(Time) :- farmexp(A), A=:=1, TimeNow is Time-1, addTime(TimeNow), !.
+addTimePlanting(Time) :- farmexp(A), A=:=2, TimeNow is Time-2, addTime(TimeNow), !.
+addTimePlanting(Time) :- farmexp(A), A=:=3, TimeNow is Time-3, addTime(TimeNow), !.
+
+/* ADD PLANT TO LIST */
+addPlant(Ypos,Xpos,N) :-	liPlant(X),
+							append(X,[[Ypos,Xpos,N]],Res),
+							retractall(liPlant(_)),
+							assertz(liPlant(Res)).
+
+/* CARI DI LIST. KALAU KETEMU DI LIST DAN TIMENYA masih >= 1, B=1, KALAU TIME = 0, B=2. KALAU TIMENYA -1, jadi B=3, KALAU -2, delete from list, balikin jadi 0  */
+findPlant(A,B) :-	liPlant(X),
+					findPlant(X,A,B), !.
+findPlant([],_,_):- retractall(isPlant(_)), 
+					asserta(isPlant(0)),!.
+findPlant([H|_],A,B) :-	elePlant(H,M,[N,O]),
+						M==A, N==B, O>=1,
+						retractall(isPlant(_)), 
+						asserta(isPlant(1)),!.
+findPlant([H|_],A,B) :-	elePlant(H,M,[N,O]),
+						M==A, N==B, O=:=0,
+						retractall(isPlant(_)), 
+						asserta(isPlant(2)),!.
+findPlant([H|_],A,B) :-	elePlant(H,M,[N,O]),
+						M==A, N==B, O=:=(-1),
+						retractall(isPlant(_)), 
+						asserta(isPlant(3)),!.
+findPlant([H|_],A,B) :-	elePlant(H,M,[N,_]),
+						M==A, N==B,
+						retractall(isPlant(_)), 
+						asserta(isPlant(0)),!.
+findPlant([H|T],A,B) :-	elePlant(H,M,[N,_]),
+						(M\==A; N\==B),
+						findPlant(T,A,B),!.
+
+/* KURANGI WAKTUNYA SEMUA -1 */
+updatePlant :-	liPlant(X),
+				updatePlant(X,[]),!.
+updatePlant([],Up) :- 	retractall(liPlant(_)),
+						assertz(liPlant(Up)), !.
+updatePlant([H|T],Up) :-	elePlant(H,_,[_,O]),
+							O=:=(-2), updatePlant(T,Up),!.
+updatePlant([H|T],Up) :-	elePlant(H,M,[N,O]),
+							Onew is O-1,
+							O=\=(-2), updatePlant(T,[[M,N,Onew]|Up]),!.
+
+elePlant([H|T],H,T).
