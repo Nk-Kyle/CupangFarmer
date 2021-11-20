@@ -11,6 +11,10 @@
 :- dynamic(job/1).
 :- dynamic(fatigue/1).
 :- dynamic(quest/3).
+:- dynamic(li/1).
+
+/* li -> List of item */
+li([]).
 
 loc(0,0,#).
 loc(0,1,#).
@@ -319,3 +323,81 @@ house:-	write('              '),nl,
 housechoice(sleep):- tidur(6),write('Cupang slept for 6 hours'),nl,house,!.
 housechoice(go_out):- map,!.
 housechoice(_):- write('invalid input'),house,!.
+
+/*=====================================================================Item Inventory======================================================================*/
+/* menambahkan list dengan element Y, Y berupa [Item,Qnt] */
+addlist(Y) :-
+	li(X),
+	append(X,[Y],Res),
+	retractall(li(_)),
+	assertz(li(Res)).
+
+/* Add Item dengan nama Item, dengan Quantity Qnt ke li : Jika Item pada li maka jumlah diubah, mengappend jika tidak ada */
+addItemQnt(Item,Qnty):-
+	li(X),
+	addItemQnt(X,Item,Qnty,Added),
+	retractall(li(_)),
+	assertz(li(Added)).
+addItemQnt([],Item,Qnty,[NewItem]) :- 
+	eleitem(NewItem,Item,[Qnty])
+	,!.
+addItemQnt([H|T],Item,Qnty,[Added|T]) :-
+	eleitem(H,Targ,[Val]),
+	Item == Targ,
+	NewQnt is Val+Qnty,write('test'),
+	eleitem(Added,Targ,[NewQnt]),!.
+addItemQnt([H|T],Item,Qnty,[H|Res]) :-
+	eleitem(H,Targ,_),
+	Item \== Targ,
+	addItemQnt(T,Item,Qnty,Res),!.
+
+/* Mencari Quantity dari Item */
+findQnt(Item) :-
+	li(X),
+	findQnt(X, Item).
+findQnt([H|_], Item) :-
+	eleitem(H,M,[N]),
+	M == Item,
+	write(N),!.
+findQnt([H|T], Item) :-
+	eleitem(H,M,_),
+	M \== Item,
+	findQnt(T,Item).
+findQnt([], _) :-
+	write('fail'),!.
+
+/* Mengurangi item dengan nama Item dan quantity Qnty */
+/* Jika Item pada li dan Qnty < jumlah item, kurangi jumlah item dengan Qnty */
+/* Jika Item pada li dan Qnty = jumlah item, menghilangkan item dari li */
+/* Jika tidak ditemui atau Qnty > jumlah item, menampilkan pesan kesalahan */
+deleteitem(Item,Qnty) :-
+	li(X),
+	deleteitem(X,Item,Qnty,Deleted),
+	retractall(li(_)),
+	assertz(li(Deleted)).
+deleteitem([],_,_,[]) :- write('no such item'),!.
+deleteitem([H|T],Item,Qnty,[Subtracted|T]) :-
+	eleitem(H,Targ,[Val]),
+	Targ == Item,
+	Qnty < Val,
+	NewN is Val-Qnty,
+	eleitem(Subtracted,Targ,[NewN]),
+	!.
+deleteitem([H|T],Item,Qnty,T) :-
+	eleitem(H,Targ,[Val]),
+	Targ == Item,
+	Qnty == Val,
+	!.
+deleteitem([H|T],Item,Qnty,[H|T]) :-
+	eleitem(H,Targ,[Val]),
+	Targ == Item,
+	Qnty > Val, write('item quantity not met'),
+	!.
+deleteitem([H|T],Item,Qnty,[H|Res]) :-
+	eleitem(H,Targ,_),
+	Targ \== Item,
+	deleteitem(T,Item,Qnty,Res),
+	!.
+
+
+eleitem([Item|Qnty],Item,Qnty).
