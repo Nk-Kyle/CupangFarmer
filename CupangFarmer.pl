@@ -303,12 +303,12 @@ addtimefishing:- fishlvl(FL), NextT is 6-FL, addTime(NextT),!.
 randomfish:- fishrod(X),X=:=1,randomize,random(1,100,Num), getfish(Num),!.
 randomfish:- fishrod(X),X=:=2,randomize,random(1,50,Num), getfish(Num),!.
 
-getfish(X):- job(2),X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(10),!.
-getfish(X):- job(2),X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(6),!.
-getfish(_):- job(2),write('Selamat, Anda mendapatkan Tuna'),addexpfish(2),!.
-getfish(X):- X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(5),!.
-getfish(X):- X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(3),!.
-getfish(_):- write('Selamat, Anda mendapatkan Tuna'),addexpfish(1),!.
+getfish(X):- job(2),X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(10),addItemQnt(cupang,1),!.
+getfish(X):- job(2),X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(6),addItemQnt(salmon,1),!.
+getfish(_):- job(2),write('Selamat, Anda mendapatkan Tuna'),addexpfish(2),addItemQnt(tuna,1),!.
+getfish(X):- X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(5),addItemQnt(cupang,1),!.
+getfish(X):- X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(3),addItemQnt(salmon,1),!.
+getfish(_):- write('Selamat, Anda mendapatkan Tuna'),addexpfish(1),addItemQnt(tuna,1),!.
 
 addexpfish(_):- fishlvl(LVL), LVL=:=3, write('Level fishing sudah maximal, Anda tidak lagi mendapat Exp memancing'),!.
 addexpfish(X):- fishexp(EXP), NEXTEXP is EXP+X, fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(fishexp(_)), asserta(fishexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!.
@@ -443,6 +443,12 @@ planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
 				Seed =:= 3, addPlant(Y,X,120), !.
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4), 
 				Seed =:= 4, addPlant(Y,X,144), !.
+
+showplanting:-	write('       '),nl,
+				write('|____  '),nl,
+				write('  o//  '),nl,
+				write('  |   v v v v v'),nl,
+				write(' / \\  ~~~~~~~~~'),nl,!.
 
 addTimePlanting(Time) :- farmexp(A), A=:=0, TimeNow is Time, addTime(TimeNow), !.
 addTimePlanting(Time) :- farmexp(A), A=:=1, TimeNow is Time-1, addTime(TimeNow), !.
