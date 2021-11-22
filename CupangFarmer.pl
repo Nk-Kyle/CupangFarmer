@@ -23,6 +23,7 @@
 :- dynamic(sheeplist/1).
 :- dynamic(piglist/1).
 :- dynamic(invcurrcap/1).
+:- dynamic(plantType/1).
 
 chickenlist([]).
 piglist([]).
@@ -207,6 +208,7 @@ startGame :-
 	asserta(isPlant(0)),
 	asserta(shovel(1)),
 	asserta(invcurrcap(0)),
+	asserta(plantType(none)),
 	promptStart.
 
 promptStart :-
@@ -524,22 +526,22 @@ plant :- playerpos(Y,X), loc(Y,X,A), A==r, write('Anda tidak dapat menanam pada 
 plant :- showplanting, write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
 /* Time Planting 6 (shovel 1) */
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
-				Seed =:= 1, addPlant(Y,X,72), !.
+					Seed =:= 1, findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), addPlant(Y,X,72,carrot), !.
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
-				Seed =:= 2, addPlant(Y,X,96), !.
+					Seed =:= 2, findQnt(corn, Num), Num>=1, deleteitem(corn, 1), addPlant(Y,X,96,corn), !.
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
-				Seed =:= 3, addPlant(Y,X,120), !.
+					Seed =:= 3, findQnt(turnip, Num), Num>=1, deleteitem(turnip, 1), addPlant(Y,X,120,turnip), !.
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
-				Seed =:= 4, addPlant(Y,X,144), !.
+					Seed =:= 4, findQnt(cabbage, Num), Num>=1, deleteitem(cabbage, 1), addPlant(Y,X,144,cabbage), !.
 /* Time Planting 4 (shovel 2) */
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
-				Seed =:= 1, addPlant(Y,X,72), !.
+					Seed =:= 1, findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), addPlant(Y,X,72,carrot), !.
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
-				Seed =:= 2, addPlant(Y,X,96), !.
+					Seed =:= 2, findQnt(corn, Num), Num>=1, deleteitem(corn, 1), addPlant(Y,X,96,corn), !.
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
-				Seed =:= 3, addPlant(Y,X,120), !.
+					Seed =:= 3, findQnt(turnip, Num), Num>=1, deleteitem(turnip, 1), addPlant(Y,X,120,turnip), !.
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
-				Seed =:= 4, addPlant(Y,X,144), !.
+					Seed =:= 4, findQnt(cabbage, Num), Num>=1, deleteitem(cabbage, 1), addPlant(Y,X,144,cabbage), !.
 
 showplanting:-	write('       '),nl,
 				write('|____  '),nl,
@@ -553,49 +555,79 @@ addTimePlanting(Time) :- farmexp(A), A=:=2, TimeNow is Time-2, addTime(TimeNow),
 addTimePlanting(Time) :- farmexp(A), A=:=3, TimeNow is Time-3, addTime(TimeNow), !.
 
 /* ADD PLANT TO LIST */
-addPlant(Ypos,Xpos,N) :-	liPlant(X),
-							append(X,[[Ypos,Xpos,N]],Res),
-							retractall(liPlant(_)),
-							assertz(liPlant(Res)).
+addPlant(Ypos,Xpos,N,Type) :-	liPlant(X),
+								append(X,[[Ypos,Xpos,N,Type]],Res),
+								retractall(liPlant(_)),
+								assertz(liPlant(Res)).
 
 /* CARI DI LIST. KALAU KETEMU DI LIST DAN TIMENYA masih >= 1, B=1, KALAU TIME = 0, B=2. KALAU TIMENYA -1, jadi B=3, KALAU -2, delete from list, balikin jadi 0  */
 findPlant(A,B) :-	liPlant(X),
-					findPlant(X,A,B), !.
-findPlant([],_,_):- retractall(isPlant(_)),
-					asserta(isPlant(0)),!.
-findPlant([H|_],A,B) :-	elePlant(H,M,[N,O]),
+					findPlant(X,A,B).
+findPlant([],_,_) :- 	retractall(isPlant(_)),
+						asserta(isPlant(0)),
+						retractall(plantType(_)),
+						asserta(plantType(none)),!.
+findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,_]),
 						M==A, N==B, O>=1,
-						retractall(isPlant(_)),
-						asserta(isPlant(1)),!.
-findPlant([H|_],A,B) :-	elePlant(H,M,[N,O]),
+						retractall(isPlant(_)), 
+						asserta(isPlant(1)),
+						retractall(plantType(_)), 
+						asserta(plantType(growing)).
+findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,Type]),
 						M==A, N==B, O=:=0,
-						retractall(isPlant(_)),
-						asserta(isPlant(2)),!.
-findPlant([H|_],A,B) :-	elePlant(H,M,[N,O]),
+						retractall(isPlant(_)), 
+						asserta(isPlant(2)),
+						retractall(plantType(_)), 
+						asserta(plantType(Type)).
+findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,_]),
 						M==A, N==B, O=:=(-1),
-						retractall(isPlant(_)),
-						asserta(isPlant(3)),!.
-findPlant([H|_],A,B) :-	elePlant(H,M,[N,_]),
+						retractall(isPlant(_)), 
+						asserta(isPlant(3)),
+						retractall(plantType(_)), 
+						asserta(plantType(wither)).
+findPlant([H|_],A,B) :-	elePlant(H,M,[N,_,_]),
 						M==A, N==B,
-						retractall(isPlant(_)),
-						asserta(isPlant(0)),!.
-findPlant([H|T],A,B) :-	elePlant(H,M,[N,_]),
+						retractall(isPlant(_)), 
+						asserta(isPlant(0)),
+						retractall(plantType(_)), 
+						asserta(plantType(none)).
+findPlant([H|T],A,B) :-	elePlant(H,M,[N,_,_]),
 						(M\==A; N\==B),
-						findPlant(T,A,B),!.
+						findPlant(T,A,B).
 
 /* KURANGI WAKTUNYA SEMUA -1 */
 updatePlant :-	liPlant(X),
-				updatePlant(X,[]),!.
+				updatePlant(X,[]).
 updatePlant([],Up) :- 	retractall(liPlant(_)),
 						assertz(liPlant(Up)), !.
-updatePlant([H|T],Up) :-	elePlant(H,_,[_,O]),
-							O=:=(-2), updatePlant(T,Up),!.
-updatePlant([H|T],Up) :-	elePlant(H,M,[N,O]),
+updatePlant([H|T],Up) :-	elePlant(H,_,[_,O,_]),
+							O=:=(-2), updatePlant(T,Up).
+updatePlant([H|T],Up) :-	elePlant(H,M,[N,O,Type]),
 							Onew is O-1,
-							O=\=(-2), updatePlant(T,[[M,N,Onew]|Up]),!.
+							O=\=(-2), updatePlant(T,[[M,N,Onew,Type]|Up]).
 
 elePlant([H|T],H,T).
 
+/* HARVEST PLANT */
+delPlant(A,B) :-	liPlant(X),
+					delPlant(X,A,B,[[]]).
+delPlant([],_,_,Del) :- write('done'),
+						retractall(liPlant(_)),
+						assertz(liPlant(Del)), !.
+delPlant([H|T],A,B,Del) :-	elePlant(H,M,[N,O,Type]),
+							M==A, N==B,
+							write(O), write(Type),
+							delPlant(T,A,B,Del).
+delPlant([H|T],A,B,Del) :-	elePlant(H,M,[N,_,_]),
+							(M\==A; N\==B),
+							delPlant(T,A,B,[H|Del]).
+
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(none), write('Tidak ada yang dapat dipanen'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(growing), write('Tidak bisa memanen tanaman yang belum siap dipanen!'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(carrot), random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), write('Selamat! Anda memanen '), write(' wortel'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(corn), random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), write('Selamat! Anda memanen '), write(' corn'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(turnip), random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), write('Selamat! Anda memanen '), write(' turnip'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(cabbage), random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), write('Selamat! Anda memanen '), write(' cabbage'), nl, !.
 
 /*===================RANCHER============================*/
 /*chickenlist([-1,0,1]).
