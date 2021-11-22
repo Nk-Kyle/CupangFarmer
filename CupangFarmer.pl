@@ -381,18 +381,27 @@ addlist(Y) :-
 	assertz(li(Res)).
 
 /* Add Item dengan nama Item, dengan Quantity Qnt ke li : Jika Item pada li maka jumlah diubah, mengappend jika tidak ada */
+addItemQnt(_,Qnty):-
+  invcurrcap(Cap),
+  Tot is Qnty + Cap,
+  Tot > 100,!,
+  fail.
 addItemQnt(Item,Qnty):-
 	li(X),
+  invcurrcap(Cap),
+  Tot is Qnty + Cap,
 	addItemQnt(X,Item,Qnty,Added),
 	retractall(li(_)),
-	assertz(li(Added)).
+	assertz(li(Added)),
+  retractall(invcurrcap(_)),
+  assertz(invcurrcap(Tot)).
 addItemQnt([],Item,Qnty,[NewItem]) :-
 	eleitem(NewItem,Item,[Qnty])
 	,!.
 addItemQnt([H|T],Item,Qnty,[Added|T]) :-
 	eleitem(H,Targ,[Val]),
 	Item == Targ,
-	NewQnt is Val+Qnty,write('test'),
+	NewQnt is Val+Qnty,
 	eleitem(Added,Targ,[NewQnt]),!.
 addItemQnt([H|T],Item,Qnty,[H|Res]) :-
 	eleitem(H,Targ,_),
@@ -418,38 +427,51 @@ findQnt([], _, 0).
 /* Jika Item pada li dan Qnty < jumlah item, kurangi jumlah item dengan Qnty */
 /* Jika Item pada li dan Qnty = jumlah item, menghilangkan item dari li */
 /* Jika tidak ditemui atau Qnty > jumlah item, menampilkan pesan kesalahan */
+deleteitem(_,Qnty) :-
+	invcurrcap(Cap),
+  Tot is Cap - Qnty,
+  Tot < 0, !, fail.
 deleteitem(Item,Qnty) :-
 	li(X),
-	deleteitem(X,Item,Qnty,Deleted),
+	deleteitem(X,Item,Qnty,Deleted, Cap),
+  retractall(invcurrcap(_)),
+	assertz(invcurrcap(Cap)),
 	retractall(li(_)),
 	assertz(li(Deleted)).
-deleteitem([],_,_,[]) :- write('no such item'),!.
-deleteitem([H|T],Item,Qnty,[Subtracted|T]) :-
+deleteitem([],_,_,[],Cap) :- write('no such item'),invcurrcap(Cap),!,fail.
+deleteitem([H|T],Item,Qnty,[Subtracted|T],NewCap) :-
 	eleitem(H,Targ,[Val]),
 	Targ == Item,
 	Qnty < Val,
 	NewN is Val-Qnty,
+  invcurrcap(Cap),
+  NewCap is Cap - Qnty,
 	eleitem(Subtracted,Targ,[NewN]),
 	!.
-deleteitem([H|T],Item,Qnty,T) :-
+deleteitem([H|T],Item,Qnty,T,NewCap) :-
 	eleitem(H,Targ,[Val]),
 	Targ == Item,
 	Qnty == Val,
+  invcurrcap(Cap),
+  NewCap is Cap - Qnty,
 	!.
-deleteitem([H|T],Item,Qnty,[H|T]) :-
+deleteitem([H|T],Item,Qnty,[H|T],Cap) :-
 	eleitem(H,Targ,[Val]),
 	Targ == Item,
-	Qnty > Val, write('item quantity not met'),
+	Qnty > Val,
+  write('item quantity not met'),fail,
+  invcurrcap(Cap),
 	!.
-deleteitem([H|T],Item,Qnty,[H|Res]) :-
+deleteitem([H|T],Item,Qnty,[H|Res],Cap) :-
 	eleitem(H,Targ,_),
 	Targ \== Item,
-	deleteitem(T,Item,Qnty,Res),
+	deleteitem(T,Item,Qnty,Res,Cap),
 	!.
 
+/* Display Inventory*/
 displayInv :-
   li([]),
-  write('Empty Inventory').
+  write('Empty Inventory'),!.
 
 displayInv :-
   li(X),
@@ -462,6 +484,7 @@ displayInvNext([H|T],Num) :-
   write(Item), write(' : '),
   NextNum is Num+1,
   write(Qnt),nl,displayInvNext(T,NextNum),!.
+displayInvNext([],_) :- !.
 
 eleitem([Item|Qnty],Item,Qnty).
 
@@ -573,7 +596,7 @@ printsheep:- sheeplist(Y), numsheep(Y,X), X = 0, !.
 printsheep:- sheeplist(Y), numsheep(Y,X), X > 0, write(X), write(' domba'),nl.
 
 ranch :- playerpos(Y,X), loc(Y,X,A), A \= r, write('Anda sedang tidak berada di ranch!'), !.
-ranch :- 
+ranch :-
 	playerpos(Y,X), loc(Y,X,A), A == r,
 	printchicken,
 	printpig,
