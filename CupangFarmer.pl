@@ -598,6 +598,11 @@ printsheep:- sheeplist(Y), numsheep(Y,X), X > 0, write(X), write(' domba'),nl.
 ranch :- playerpos(Y,X), loc(Y,X,A), A \= r, write('Anda sedang tidak berada di ranch!'), !.
 ranch :-
 	playerpos(Y,X), loc(Y,X,A), A == r,
+	write(' o      '),nl,
+	write('/|\\ #   ,,__') ,nl,
+	write('/ \\ # c''''   )? '),nl,
+	write('    #   '''''''' '),nl,
+	write('Selamat datang di peternakan! Kamu punya:'),nl,
 	printchicken,
 	printpig,
 	printcow,
