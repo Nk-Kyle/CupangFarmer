@@ -21,7 +21,10 @@
 :- dynamic(sheeplist/1).
 :- dynamic(piglist/1).
 
-
+chickenlist([]).
+piglist([]).
+cowlist([]).
+sheeplist([]).
 
 /* li -> List of item */
 li([]).
@@ -544,10 +547,10 @@ elePlant([H|T],H,T).
 
 
 /*===================RANCHER============================*/
-chickenlist([-1,0,1]).
+/*chickenlist([-1,0,1]).
 piglist([3,2]).
 cowlist([-2, 0,-1, 1]).
-sheeplist([-6, 1, 0]).
+sheeplist([-6, 1, 0]).*/
 
 
 numchicken([],0) :- !.
@@ -569,8 +572,9 @@ printcow:- cowlist(Y), numcow(Y,X), X > 0, write(X), write(' sapi'),nl.
 printsheep:- sheeplist(Y), numsheep(Y,X), X = 0, !.
 printsheep:- sheeplist(Y), numsheep(Y,X), X > 0, write(X), write(' domba'),nl.
 
-ranch :-
-	write('Selamat datang di peternakan! Kamu punya:'),nl,
+ranch :- playerpos(Y,X), loc(Y,X,A), A \= r, write('Anda sedang tidak berada di ranch!'), !.
+ranch :- 
+	playerpos(Y,X), loc(Y,X,A), A == r,
 	printchicken,
 	printpig,
 	printcow,
