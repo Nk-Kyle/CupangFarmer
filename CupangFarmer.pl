@@ -207,8 +207,11 @@ promptStart :-
 
 promptMenu :-
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,
+	write('%                                                %'),nl,
 	write('%                   Cupang Farmer                %'),nl,
+	write('%                                                %'),nl,
 	write('%                       Menu                     %'),nl,
+	write('%                                                %'),nl,
 	write('%  1. start   : Mulai pertualanganmu             %'),nl,
 	write('%  2. menu    : Menampilkan Menu                 %'),nl,
 	write('%  3. map     : Menampilkan map                  %'),nl,
@@ -218,6 +221,31 @@ promptMenu :-
 	write('%  7. s       : Gerak ke selatan 1 langkah       %'),nl,
 	write('%  8. d       : Gerak ke timur 1 langkah         %'),nl,
 	write('%  9. help    : Menampilkan peraturan game       %'),nl,
+	write('%                                                %'),nl,
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
+
+help :-
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,
+	write('%                                                %'),nl,
+	write('%                     HELP                       %'),nl,
+	write('%                                                %'),nl,
+	write('%  1. start   : Mulai pertualanganmu             %'),nl,
+	write('%  2. menu    : Menampilkan Menu                 %'),nl,
+	write('%  3. map     : Menampilkan map                  %'),nl,
+	write('%  4. status  : Menampilkan kondisimu terkini    %'),nl,
+	write('%  5. w       : Gerak ke utara 1 langkah         %'),nl,
+	write('%  6. a       : Gerak ke barat 1 langkah         %'),nl,
+	write('%  7. s       : Gerak ke selatan 1 langkah       %'),nl,
+	write('%  8. d       : Gerak ke timur 1 langkah         %'),nl,
+	write('%  9. ranch   : Menampilkan pilihan ranch        %'),nl,
+	write('%  10. chicken: Mengambil telur dari ayam        %'),nl,
+	write('%  11. cow    : Memerah susu dari sapi           %'),nl,
+	write('%  12. sheep  : Mencukur bulu domba              %'),nl,
+	write('%  13. plant  : Menanam tanaman                  %'),nl,
+	write('%  14. fish   : Memancing                        %'),nl,
+	write('%  15. market : Berbelanja di pasar              %'),nl,
+	write('%  16. quest  : Menampilkan quest                %'),nl,
+	write('%                                                %'),nl,
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
 
 /*=====================================================================GENERAL======================================================================*/
@@ -439,7 +467,7 @@ plant :- shovel(X), X=:=0, write('Anda harus memiliki shovel untuk menggali tana
 plant :- playerpos(Y,X), loc(Y,X,A), A==m, write('Anda tidak dapat menanam pada area M'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==h, write('Anda tidak dapat menanam pada area H'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==r, write('Anda tidak dapat menanam pada area R'), nl, !.
-plant :- write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
+plant :- showplanting, write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
 /* Time Planting 6 (shovel 1) */
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 				Seed =:= 1, addPlant(Y,X,72), !.
