@@ -13,6 +13,7 @@
 :- dynamic(job/1).
 :- dynamic(fatigue/1).
 :- dynamic(quest/3).
+:- dynamic(questlvl/1).
 :- dynamic(li/1).
 :- dynamic(isPlant/1).
 :- dynamic(shovel/1).
@@ -21,6 +22,7 @@
 :- dynamic(cowlist/1).
 :- dynamic(sheeplist/1).
 :- dynamic(piglist/1).
+:- dynamic(invcurrcap/1).
 
 chickenlist([]).
 piglist([]).
@@ -201,8 +203,10 @@ startGame :-
 	asserta(day(1)),
 	asserta(playerpos(8,7)),
 	asserta(fatigue(0)),
+	asserta(questlvl(1)),
 	asserta(isPlant(0)),
 	asserta(shovel(1)),
+	asserta(invcurrcap(0)),
 	promptStart.
 
 promptStart :-
@@ -273,7 +277,7 @@ addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, 
 
 addGold(X) :- uang(Gold), Nextgold is Gold + X, retractall(uang(Gold)), asserta(uang(Nextgold)),!.
 
-addExp(X) :- lvlplayer(L), L =:= 3, write('Level player sudah maksimal.'), !.
+addExp(_) :- lvlplayer(L), L =:= 3, write('Level player sudah maksimal.'), !.
 addExp(X) :- exp(E), Nexp is E + X, lvlplayer(L), Nextl is 100+(100*L), Nexp < Nextl, retractall(exp(_E)), asserta(exp(Nexp)), nl, write('Anda mendapat '), write(X), write(' Exp player!'),!.
 addExp(X) :- exp(E), lvlplayer(L), Nextl is 100+(100*L), Nexp is E + X - Nextl, Nextlvl is L + 1, retractall(exp(_E)), asserta(exp(Nexp)), retractall(lvlplayer(_L)), asserta(lvlplayer(Nextlvl)), write('Anda mendapat '), write(X), write(' Exp player dan mendapat kenaikan level player!'), C is 25*Nextlvl, addexpfish(C), addexpranch(C),!. 
 
@@ -303,7 +307,22 @@ successgame:- write('berhasil'),!.
 
 /*=========================================================QUEST==================================================================================*/
 quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil dan dilihat di Q'),!.
-quest:- write('true'),!.
+quest:- questlvl(1),write('Quest lvl 1:'),nl,write('Kumpulkan 5 carrot, 5 tuna, dan 5 telur'),fail.
+quest:- questlvl(1),findQnt(carrot,X),findQnt(tuna,Y),findQnt(telur,Z),(X<5;Y<5;Z<5),!.
+quest:- questlvl(1),write('Selamat, Anda berhasil menyelesaikan Quest lvl 1!!!'),nl,addExp(100), addGold(100),retractall(questlvl(_)),asserta(questlvl(2)),fail.
+quest:- questlvl(2),write('Quest lvl 2:'),nl,write('Kumpulkan 10 corn, 10 tuna, dan 10 telur'),fail.
+quest:- questlvl(2),findQnt(corn,X),findQnt(tuna,Y),findQnt(susu,Z), (X<10;Y<10;Z<10),!.
+quest:- questlvl(2),nl,write('Selamat, Anda berhasil menyelesaikan Quest lvl 2!!!'),nl,addExp(100), addGold(200),retractall(questlvl(_)),asserta(questlvl(3)),fail.
+quest:- questlvl(3),write('Quest lvl 3:'),nl,write('Kumpulkan 15 turnip, 15 salmon, dan 15 wol'),fail.
+quest:- questlvl(3),findQnt(turnip,X),findQnt(salmon,Y),findQnt(wol,Z), (X<15;Y<15;Z<15),!.
+quest:- questlvl(3),nl,write('Selamat, Anda berhasil menyelesaikan Quest lvl 3!!!'),nl,addExp(100), addGold(300),retractall(questlvl(_)),asserta(questlvl(4)),fail.
+quest:- questlvl(4),write('Quest lvl 4:'),nl,write('Kumpulkan 20 cabbage, 20 salmon, dan 20 babi'),fail.
+quest:- questlvl(4),findQnt(cabbage,X),findQnt(salmon,Y),findQnt(babi,Z), (X<20;Y<20;Z<20),!.
+quest:- questlvl(4),nl,write('Selamat, Anda berhasil menyelesaikan Quest lvl 4!!!'),nl,addExp(100), addGold(400),retractall(questlvl(_)),asserta(questlvl(5)),fail.
+quest:- questlvl(5),write('Quest lvl 5:'),nl,write('Kumpulkan 25 cabbage, 5 cupang, dan 25 wol'),fail.
+quest:- questlvl(5),findQnt(cabbage,X),findQnt(cupang,Y),findQnt(wol,Z), (X<25;Y<5;Z<25),!.
+quest:- questlvl(5),nl,write('Selamat, Anda berhasil menyelesaikan Seluruh Quest yang ada!!!'),nl,addExp(200), addGold(500),retractall(questlvl(_)),asserta(questlvl(6)),fail.
+quest:- questlvl(5),write('Tidak ada Quest yang tersedia'),!.
 
 /*=======================================================MOVE DAN PETA============================================================================*/
 map:- printmap(0,0),!.
