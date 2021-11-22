@@ -397,19 +397,19 @@ addItemQnt([H|T],Item,Qnty,[H|Res]) :-
 	addItemQnt(T,Item,Qnty,Res),!.
 
 /* Mencari Quantity dari Item */
-findQnt(Item) :-
+findQnt(Item,Qnt) :-
 	li(X),
-	findQnt(X, Item).
-findQnt([H|_], Item) :-
+	findQnt(X, Item,Qnt).
+findQnt([H|_], Item,N) :-
 	eleitem(H,M,[N]),
-	M == Item,
-	write(N),!.
-findQnt([H|T], Item) :-
+	M == Item,!.
+findQnt([H|T], Item,Qnt) :-
 	eleitem(H,M,_),
 	M \== Item,
-	findQnt(T,Item).
-findQnt([], _) :-
-	write('fail'),!.
+	findQnt(T,Item,Qnt).
+findQnt([], _, 0).
+
+
 
 /* Mengurangi item dengan nama Item dan quantity Qnty */
 /* Jika Item pada li dan Qnty < jumlah item, kurangi jumlah item dengan Qnty */
