@@ -5,6 +5,7 @@
 :- dynamic(fishlvl/1).
 :- dynamic(fishrod/1).
 :- dynamic(ranchexp/1).
+:- dynamic(ranchinglvl/1).
 :- dynamic(time/1).
 :- dynamic(day/1).
 :- dynamic(playerpos/2).
@@ -15,6 +16,12 @@
 :- dynamic(isPlant/1).
 :- dynamic(shovel/1).
 :- dynamic(liPlant/1).
+:- dynamic(chickenlist/1).
+:- dynamic(cowlist/1).
+:- dynamic(sheeplist/1).
+:- dynamic(piglist/1).
+ 
+
 
 /* li -> List of item */
 li([]).
@@ -184,6 +191,7 @@ startGame :-
 	asserta(fishexp(0)),
 	asserta(fishrod(1)),
 	asserta(ranchexp(0)),
+	asserta(ranchinglvl(0)),
 	asserta(time(0)),
 	asserta(day(1)),
 	asserta(playerpos(8,7)),
@@ -484,3 +492,72 @@ updatePlant([H|T],Up) :-	elePlant(H,M,[N,O]),
 							O=\=(-2), updatePlant(T,[[M,N,Onew]|Up]),!.
 
 elePlant([H|T],H,T).
+
+
+/*===================RANCHER============================*/
+chickenlist([-1,0,1]).
+piglist([3,2]).
+cowlist([-2, 0,-1, 1]).
+sheeplist([-6, 1, 0]).
+
+
+numchicken([],0) :- !.
+numchicken([_Head|Tail], Count) :- numchicken(Tail, Ncount), Count is Ncount + 1.
+numpig([],0) :- !.
+numpig([_Head|Tail], Count) :- numpig(Tail, Ncount), Count is Ncount + 1.
+numcow([],0) :- !.
+numcow([_Head|Tail], Count) :- numcow(Tail, Ncount), Count is Ncount + 1.
+numsheep([],0) :- !.
+numsheep([_Head|Tail], Count) :- numsheep(Tail, Ncount), Count is Ncount + 1.
+
+
+printchicken:- chickenlist(Y), numchicken(Y,X), X = 0,!.
+printchicken:- chickenlist(Y), numchicken(Y,X), X > 0, write(X), write(' ayam'),nl.
+printpig:- piglist(X), numpig(X,Y), Y = 0, !.
+printpig:- piglist(X), numpig(X,Y), Y > 0, write(Y), write(' babi'),nl.
+printcow:- cowlist(Y), numcow(Y,X), X = 0, !.
+printcow:- cowlist(Y), numcow(Y,X), X > 0, write(X), write(' sapi'),nl.
+printsheep:- sheeplist(Y), numsheep(Y,X), X = 0, !.
+printsheep:- sheeplist(Y), numsheep(Y,X), X > 0, write(X), write(' domba'),nl.
+
+ranch :- 
+	write('Selamat datang di peternakan! Kamu punya:'),nl,
+	printchicken,
+	printpig,
+	printcow,
+	printsheep,
+	write('Apa yang mau kamu lakukan?').
+
+numegg([],0) :- !.
+numegg([Head|Tail], Count) :- day(X), N is X-Head, numegg(Tail, Ncount), Count is Ncount + N.
+nummilk([],0) :- !.
+nummilk([Head|Tail], Count) :- day(X), N is X - Head, N >= 2, nummilk(Tail, Ncount), Count is Ncount + 1.
+nummilk([Head|Tail], Count) :- day(X), N is X - Head, N < 2, nummilk(Tail, Count).
+numwool([],0) :- !.
+numwool([Head|Tail], Count) :- day(X), N is X - Head, N >= 7, numwool(Tail, Ncount), Count is Ncount + 1.
+numwool([Head|Tail], Count) :- day(X), N is X - Head, N < 7, numwool(Tail, Count).
+
+chickenchange([], _X, []) :- !.
+chickenchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A >= 1, chickenchange(Tail, X, Ttail), Thead is X.
+chickenchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A < 1, chickenchange(Tail, X, Ttail), Thead is Head.
+cowchange([], _X, []) :- !.
+cowchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A >= 2, cowchange(Tail, X, Ttail), Thead is X.
+cowchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A < 2, cowchange(Tail, X, Ttail), Thead is Head.
+sheepchange([], _X, []) :- !.
+sheepchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A >= 7, sheepchange(Tail, X, Ttail), Thead is X.
+sheepchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A < 7, sheepchange(Tail, X, Ttail), Thead is Head.
+
+addtimeambilegg :- ranchinglvl(X), X =:= 0, addTime(1), !.
+addtimeambilmilk :- ranchinglvl(X), Tnext is 4 - X, addTime(Tnext), !.
+addtimeambilwool :- ranchinglvl(X), Tnext is 6 - X, addTime(Tnext), !.
+
+addexpranch(_):- ranchinglvl(LVL), LVL=:=3, write('Level ranching sudah maximal, Anda tidak lagi mendapat Exp ranching'),!.
+addexpranch(X):- ranchexp(EXP), NEXTEXP is EXP+X, ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(ranchexp(_)), asserta(ranchexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp ranching'),!.
+addexpranch(X):- ranchexp(EXP), ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(ranchexp(_)), retractall(ranchinglvl(_)), asserta(ranchexp(NEXTEXP)), asserta(ranchinglvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp ranching'),!. 
+
+chicken :- chickenlist(X), numegg(X,Y), Y =:= 0, write('Your chicken has not laid eggs yet.'), nl, write('Please check again later.'), !.
+chicken :- chickenlist(X), numegg(X,Y), write('Your chicken lays '), write(Y), write(' eggs.'), nl, write('You got '), write(Y), write(' eggs!'), day(D), chickenlist(C), chickenchange(C, D, Z), retractall(chickenlist(X)), asserta(chickenlist(Z)), addtimeambilegg, addexpranch(Y).
+cow :- cowlist(X), nummilk(X,Y), Y =:= 0, write('Your cows has not produced milk yet.'), nl, write('Please check again later.'), !.
+cow :- cowlist(X), nummilk(X,Y), write('Your cows produce '), write(Y), write(' bottles of milk.'), nl, write('You got '), write(Y), write(' bottles of milk!'), day(D), cowlist(C), cowchange(C,D,Z), retractall(cowlist(X)), asserta(cowlist(Z)), addtimeambilmilk, Nexp is Y * 5, addexpranch(Nexp).
+sheep :- sheeplist(X), numwool(X,Y), Y =:= 0, write('Your sheeps has not produced wool yet.'), nl, write('Please check again later.'), !.
+sheep :- sheeplist(X), numwool(X,Y), write('Your sheeps produce '), write(Y), write(' wools.'), nl, write('You got '), write(Y), write(' wools!'), day(D), sheeplist(C), sheepchange(C,D,Z), retractall(sheeplist(X)), asserta(sheeplist(Z)), addtimeambilwool, Nexp is Y * 15, addexpranch(Nexp).
