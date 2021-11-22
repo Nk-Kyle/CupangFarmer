@@ -20,7 +20,7 @@
 :- dynamic(cowlist/1).
 :- dynamic(sheeplist/1).
 :- dynamic(piglist/1).
- 
+
 
 
 /* li -> List of item */
@@ -259,7 +259,7 @@ showfatigue:- 	write('    zz'),nl,
 				write('|/\\'),nl.
 
 failgame:- write('fail'), retractall(_),!.
-successgame:- write('berhasil'),!. 
+successgame:- write('berhasil'),!.
 
 /*=========================================================QUEST==================================================================================*/
 quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil dan dilihat di Q'),!.
@@ -312,7 +312,7 @@ getfish(_):- write('Selamat, Anda mendapatkan Tuna'),addexpfish(1),addItemQnt(tu
 
 addexpfish(_):- fishlvl(LVL), LVL=:=3, write('Level fishing sudah maximal, Anda tidak lagi mendapat Exp memancing'),!.
 addexpfish(X):- fishexp(EXP), NEXTEXP is EXP+X, fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(fishexp(_)), asserta(fishexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!.
-addexpfish(X):- fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(fishexp(_)), retractall(fishlvl(_)), asserta(fishexp(NEXTEXP)), asserta(fishlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!. 
+addexpfish(X):- fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(fishexp(_)), retractall(fishlvl(_)), asserta(fishexp(NEXTEXP)), asserta(fishlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!.
 
 /*==================================================MARKETPLACE========================================================================================*/
 market:- loc(Y,X,L),L==m, playerpos(A,B), (Y\=A;X\=B), write('Cupang tidak berada di pasar!'),!.
@@ -355,7 +355,7 @@ addItemQnt(Item,Qnty):-
 	addItemQnt(X,Item,Qnty,Added),
 	retractall(li(_)),
 	assertz(li(Added)).
-addItemQnt([],Item,Qnty,[NewItem]) :- 
+addItemQnt([],Item,Qnty,[NewItem]) :-
 	eleitem(NewItem,Item,[Qnty])
 	,!.
 addItemQnt([H|T],Item,Qnty,[Added|T]) :-
@@ -416,6 +416,21 @@ deleteitem([H|T],Item,Qnty,[H|Res]) :-
 	deleteitem(T,Item,Qnty,Res),
 	!.
 
+displayInv :-
+  li([]),
+  write('Empty Inventory').
+
+displayInv :-
+  li(X),
+  write('Your Inventory (Item - Quantity) :'),nl,
+  displayInvNext(X,1),!.
+
+displayInvNext([H|T],Num) :-
+  write(Num), write('. '),
+  eleitem(H,Item,[Qnt]),
+  write(Item), write(' : '),
+  NextNum is Num+1,
+  write(Qnt),nl,displayInvNext(T,NextNum),!.
 
 eleitem([Item|Qnty],Item,Qnty).
 
@@ -426,22 +441,22 @@ plant :- playerpos(Y,X), loc(Y,X,A), A==h, write('Anda tidak dapat menanam pada 
 plant :- playerpos(Y,X), loc(Y,X,A), A==r, write('Anda tidak dapat menanam pada area R'), nl, !.
 plant :- write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
 /* Time Planting 6 (shovel 1) */
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6), 
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 				Seed =:= 1, addPlant(Y,X,72), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6), 
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 				Seed =:= 2, addPlant(Y,X,96), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6), 
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 				Seed =:= 3, addPlant(Y,X,120), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6), 
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 				Seed =:= 4, addPlant(Y,X,144), !.
 /* Time Planting 4 (shovel 2) */
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4), 
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
 				Seed =:= 1, addPlant(Y,X,72), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4), 
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
 				Seed =:= 2, addPlant(Y,X,96), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4), 
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
 				Seed =:= 3, addPlant(Y,X,120), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4), 
+planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
 				Seed =:= 4, addPlant(Y,X,144), !.
 
 showplanting:-	write('       '),nl,
@@ -464,23 +479,23 @@ addPlant(Ypos,Xpos,N) :-	liPlant(X),
 /* CARI DI LIST. KALAU KETEMU DI LIST DAN TIMENYA masih >= 1, B=1, KALAU TIME = 0, B=2. KALAU TIMENYA -1, jadi B=3, KALAU -2, delete from list, balikin jadi 0  */
 findPlant(A,B) :-	liPlant(X),
 					findPlant(X,A,B), !.
-findPlant([],_,_):- retractall(isPlant(_)), 
+findPlant([],_,_):- retractall(isPlant(_)),
 					asserta(isPlant(0)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O]),
 						M==A, N==B, O>=1,
-						retractall(isPlant(_)), 
+						retractall(isPlant(_)),
 						asserta(isPlant(1)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O]),
 						M==A, N==B, O=:=0,
-						retractall(isPlant(_)), 
+						retractall(isPlant(_)),
 						asserta(isPlant(2)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O]),
 						M==A, N==B, O=:=(-1),
-						retractall(isPlant(_)), 
+						retractall(isPlant(_)),
 						asserta(isPlant(3)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,_]),
 						M==A, N==B,
-						retractall(isPlant(_)), 
+						retractall(isPlant(_)),
 						asserta(isPlant(0)),!.
 findPlant([H|T],A,B) :-	elePlant(H,M,[N,_]),
 						(M\==A; N\==B),
@@ -526,7 +541,7 @@ printcow:- cowlist(Y), numcow(Y,X), X > 0, write(X), write(' sapi'),nl.
 printsheep:- sheeplist(Y), numsheep(Y,X), X = 0, !.
 printsheep:- sheeplist(Y), numsheep(Y,X), X > 0, write(X), write(' domba'),nl.
 
-ranch :- 
+ranch :-
 	write('Selamat datang di peternakan! Kamu punya:'),nl,
 	printchicken,
 	printpig,
@@ -559,7 +574,7 @@ addtimeambilwool :- ranchinglvl(X), Tnext is 6 - X, addTime(Tnext), !.
 
 addexpranch(_):- ranchinglvl(LVL), LVL=:=3, write('Level ranching sudah maximal, Anda tidak lagi mendapat Exp ranching'),!.
 addexpranch(X):- ranchexp(EXP), NEXTEXP is EXP+X, ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(ranchexp(_)), asserta(ranchexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp ranching'),!.
-addexpranch(X):- ranchexp(EXP), ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(ranchexp(_)), retractall(ranchinglvl(_)), asserta(ranchexp(NEXTEXP)), asserta(ranchinglvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp ranching'),!. 
+addexpranch(X):- ranchexp(EXP), ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(ranchexp(_)), retractall(ranchinglvl(_)), asserta(ranchexp(NEXTEXP)), asserta(ranchinglvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp ranching'),!.
 
 chicken :- chickenlist(X), numegg(X,Y), Y =:= 0, write('Your chicken has not laid eggs yet.'), nl, write('Please check again later.'), !.
 chicken :- chickenlist(X), numegg(X,Y), write('Your chicken lays '), write(Y), write(' eggs.'), nl, write('You got '), write(Y), write(' eggs!'), day(D), chickenlist(C), chickenchange(C, D, Z), retractall(chickenlist(X)), asserta(chickenlist(Z)), addtimeambilegg, addexpranch(Y).
