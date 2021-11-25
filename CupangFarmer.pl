@@ -244,28 +244,39 @@ promptMenu :-
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
 
 help :-
-	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,
-	write('%                                                %'),nl,
-	write('%                     HELP                       %'),nl,
-	write('%                                                %'),nl,
-	write('%  1. start   : Mulai pertualanganmu             %'),nl,
-	write('%  2. menu    : Menampilkan Menu                 %'),nl,
-	write('%  3. map     : Menampilkan map                  %'),nl,
-	write('%  4. status  : Menampilkan kondisimu terkini    %'),nl,
-	write('%  5. w       : Gerak ke utara 1 langkah         %'),nl,
-	write('%  6. a       : Gerak ke barat 1 langkah         %'),nl,
-	write('%  7. s       : Gerak ke selatan 1 langkah       %'),nl,
-	write('%  8. d       : Gerak ke timur 1 langkah         %'),nl,
-	write('%  9. ranch   : Menampilkan pilihan ranch        %'),nl,
-	write('%  10. chicken: Mengambil telur dari ayam        %'),nl,
-	write('%  11. cow    : Memerah susu dari sapi           %'),nl,
-	write('%  12. sheep  : Mencukur bulu domba              %'),nl,
-	write('%  13. plant  : Menanam tanaman                  %'),nl,
-	write('%  14. fish   : Memancing                        %'),nl,
-	write('%  15. market : Berbelanja di pasar              %'),nl,
-	write('%  16. quest  : Menampilkan quest                %'),nl,
-	write('%                                                %'),nl,
-	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,
+	write('%                                                           %'),nl,
+	write('%                          HELP                             %'),nl,
+	write('%                                                           %'),nl,
+	write('%  1. start       : Mulai pertualanganmu                    %'),nl,
+	write('%  2. menu        : Menampilkan Menu                        %'),nl,
+	write('%  3. map         : Menampilkan map                         %'),nl,
+	write('%  4. status      : Menampilkan kondisimu terkini           %'),nl,
+	write('%  5. w           : Gerak ke utara 1 langkah                %'),nl,
+	write('%  6. a           : Gerak ke barat 1 langkah                %'),nl,
+	write('%  7. s           : Gerak ke selatan 1 langkah              %'),nl,
+	write('%  8. d           : Gerak ke timur 1 langkah                %'),nl,
+	write('%  9. house       : Masuk ke House (H)                      %'),nl,
+	write('%  10. writeDiary : Menulis diary (H)                       %'),nl,
+	write('%  11. readDiary  : Membaca isi diary (H)                   %'),nl,
+	write('%  12. sleep      : Tidur selama 6 jam                      %'),nl,
+	write('%  13. go_out     : Keluar dari House                       %'),nl,
+	write('%  14. time       : Menampilkan hari dan jam                %'),nl,
+	write('%  15. quest      : Menampilkan daftar quest                %'),nl,
+	write('%  16. market     : Masuk ke Marketplace (M)                %'),nl,
+	write('%  17. buy        : Berbelanja di Marketplace (M)           %'),nl,
+	write('%  18. sell       : Menjual barang di Marketplace (M)       %'),nl,
+	write('%  19. exit       : Keluar dari Marketplace (M)             %'),nl,
+	write('%  20. displayInv : Menampilkan daftar barang di Inventory  %'),nl,
+	write('%  21. ranch      : Menampilkan daftar ternak (R)           %'),nl,
+	write('%  10. chicken    : Mengambil telur dari ayam (R)           %'),nl,
+	write('%  11. cow        : Memerah susu dari sapi (R)              %'),nl,
+	write('%  12. sheep      : Mencukur bulu domba (R(                 %'),nl,
+	write('%  13. fish       : Memancing (Tepi danau [o])              %'),nl,
+	write('%  14. plant      : Menanam tanaman (Tile kosong [-])       %'),nl,
+	write('%  15. harvest    : Memanen tanaman (Fully grown plant [*]) %'),nl,
+	write('%                                                           %'),nl,
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
 
 /*=====================================================================GENERAL======================================================================*/
 start:- write('Silahkan Pilih Pekerjaan Anda (Tidak dapat diubah) '),nl,
@@ -416,35 +427,46 @@ buymenu :-
 	write('%                                           %'), nl,
 	write('%           Mau beli apa hari ini?          %'), nl,
 	write('%                                           %'), nl,
-	write('% 1. Seed Carrot    : 5 gold                %'), nl,
-	write('% 2. Seed Corn      : 10 gold               %'), nl,
-	write('% 3. Seed Turnip    : 15 gold               %'), nl,
-	write('% 4. Seed Cabbage   : 20 gold               %'), nl,
-	write('% 5. Chicken Old    : 50 gold               %'), nl,
-	write('% 6. Babi Old       : 200 gold              %'), nl,
-	write('% 7. Sapi Old       : 150 gold              %'), nl,
-	write('% 8. Domba Old      : 100 gold              %'), nl,
+	write('% 1. Shovel lvl 1       : 25                %'), nl,
+	write('% 2. Shovel lvl 2       : 500               %'), nl,
+	write('% 3. Fishing rod lvl 1  : 25                %'), nl,
+	write('% 4. Fishing rod lvl 2  : 750               %'), nl,
+	write('% 5. Rancher lvl 1      : 50                %'), nl,
+	write('% 6. Rancher lvl 2      : 500               %'), nl,
+	write('% 7. Seed Carrot    : 5 gold                %'), nl,
+	write('% 8. Seed Corn      : 10 gold               %'), nl,
+	write('% 9. Seed Turnip    : 15 gold               %'), nl,
+	write('% 10. Seed Cabbage   : 20 gold              %'), nl,
+	write('% 11. Chicken Old    : 50 gold              %'), nl,
+	write('% 12. Babi Old       : 200 gold             %'), nl,
+	write('% 13. Sapi Old       : 150 gold             %'), nl,
+	write('% 14. Domba Old      : 100 gold             %'), nl,
 	write('%                                           %'), nl,
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
 	write('Masukkan nomor item yang ingin dibeli : '), read(X),
-	write('Masukkan jumlah item yang ingin dibeli : '), read(Y),
-	buyAlt(X,Y), !.
+	(((X>=1, X=<6), Y=1); ((X>=7), write('Masukkan jumlah item yang ingin dibeli : '), read(Y))),
+	buy(X,Y),, !.
 
-/*buyAlt(X,Y) :- X > 4, buyRanch(X,Y), !.*/
-buyAlt(X,Y) :- buy(X,Y), !.
+buy(Code, Num) :- uang(X), Code=:=1, X>=25, Money=25, minGold(Money), retractall(shovel(_)), asserta(shovel(1)), write('Membeli Shovel Level 1'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=2, X>=500, Money=500, minGold(Money), retractall(shovel(_)), asserta(shovel(2)), write('Membeli Shovel Level 2'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=3, X>=25, Money=25, minGold(Money), retractall(fishrod(_)), asserta(fishrod(1)), write('Membeli Fishing Rod Level 1'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=4, X>=750, Money=750, minGold(Money), retractall(fishrod(_)), asserta(fishrod(2)), write('Membeli Fishing Rod Level 2'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=5, X>=50, Money=50, minGold(Money), retractall(ranchlvl(_)), asserta(ranchlvl(1)), write('Membeli Rancher Level 1'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=6, X>=500, Money=500, minGold(Money), retractall(ranchlvl(_)), asserta(ranchlvl(2)), write('Membeli Rancher Level 2'), nl, !.
 
-buy(Code, Num) :- uang(X), Code=:=1, X>=5, W is Num*5, minGold(W), addItemQnt(carrot, Num), write('Membeli '), write(Num), write(' carrot!'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=2, X>=10, W is Num*10, minGold(W), addItemQnt(corn, Num), write('Membeli '), write(Num), write(' corn!'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=3, X>=15, W is Num*15, minGold(W), addItemQnt(turnip, Num), write('Membeli '), write(Num), write(' turnip!'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=4, X>=20, W is Num*20, minGold(W), addItemQnt(cabbage, Num), write('Membeli '), write(Num), write(' cabbage!'), nl, !.
-buy(Code, _Num) :- uang(_X), Code=:=5, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num) :- uang(X), Code=:=5, ranchlvl(P), P > 0, X>=50, W is Num*50, minGold(W), addchicken(Num, _Z), write('Membeli '), write(Num), write(' ayam!'), nl, !.
-buy(Code, _Num) :- uang(_X), Code=:=6, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num) :- uang(X), Code=:=6, ranchlvl(P), P > 0, X>=200, W is Num*200 ,minGold(W), addpig(Num, _Z), write('Membeli '), write(Num), write(' babi!'), nl, !.
-buy(Code, _Num) :- uang(_X), Code=:=7, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num) :- uang(X), Code=:=7, ranchlvl(P), P > 1, X>=150, W is Num*150 ,minGold(W), addcow(Num, _Z), write('Membeli '), write(Num), write(' sapi!'), nl, !.
-buy(Code, _Num) :- uang(_X), Code=:=8, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num) :- uang(X), Code=:=8, ranchlvl(P), P > 1, X>=100, W is Num*100 ,minGold(W), addsheep(Num, _Z), write('Membeli '), write(Num), write(' domba!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=7, X>=5, Money=5*Num, minGold(Money), addItemQnt(carrot, Num), write('Membeli '), write(Num), write(' carrot!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=8, X>=10, Money=10*Num, minGold(Money), addItemQnt(corn, Num), write('Membeli '), write(Num), write(' corn!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=9, X>=15, Money=15*Num, minGold(Money), addItemQnt(turnip, Num), write('Membeli '), write(Num), write(' turnip!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=10, X>=20, Money=20*Num, minGold(Money), addItemQnt(cabbage, Num), write('Membeli '), write(Num), write(' cabbage!'), nl, !.
+
+buy(Code, _Num) :- uang(_X), Code=:=11, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
+buy(Code, Num) :- uang(X), Code=:=11, ranchlvl(P), P > 0, X>=50, W is Num*50, minGold(W), addchicken(Num, _Z), write('Membeli '), write(Num), write(' ayam!'), nl, !.
+buy(Code, _Num) :- uang(_X), Code=:=12, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
+buy(Code, Num) :- uang(X), Code=:=12, ranchlvl(P), P > 0, X>=200, W is Num*200 ,minGold(W), addpig(Num, _Z), write('Membeli '), write(Num), write(' babi!'), nl, !.
+buy(Code, _Num) :- uang(_X), Code=:=13, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
+buy(Code, Num) :- uang(X), Code=:=13, ranchlvl(P), P > 1, X>=150, W is Num*150 ,minGold(W), addcow(Num, _Z), write('Membeli '), write(Num), write(' sapi!'), nl, !.
+buy(Code, _Num) :- uang(_X), Code=:=14, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
+buy(Code, Num) :- uang(X), Code=:=14, ranchlvl(P), P > 1, X>=100, W is Num*100 ,minGold(W), addsheep(Num, _Z), write('Membeli '), write(Num), write(' domba!'), nl, !.
 
 addchicken(0,X) :- chickenlist(X),!.
 addchicken(Num, Z) :- append(X,[2],Z), addchicken(Nextnum, X), Num is Nextnum + 1, retractall(chickenlist(_W)), asserta(chickenlist(Z)).
@@ -454,12 +476,6 @@ addcow(0,X) :- cowlist(X),!.
 addcow(Num, Z) :- append(X,[2],Z), addcow(Nextnum, X), Num is Nextnum + 1, retractall(cowlist(_W)), asserta(cowlist(Z)).
 addsheep(0,X) :- sheeplist(X),!.
 addsheep(Num, Z) :- append(X,[2],Z), addsheep(Nextnum, X), Num is Nextnum + 1, retractall(sheeplist(_W)), asserta(sheeplist(Z)).
-
-
-% buyRanch(Code, Num) :- uang(X), Code=:=5, X>=50, minGold(50), write('Membeli '), write(Num), write(' Chicken Old!'), nl, !.
-% buyRanch(Code, Num) :- uang(X), Code=:=6, X>=200, minGold(200), write('Membeli '), write(Num), write(' Babi Old!'), nl, !.
-% buyRanch(Code, Num) :- uang(X), Code=:=7, X>=150, minGold(150), write('Membeli '), write(Num), write(' Sapi Old!'), nl, !.
-% buyRanch(Code, Num) :- uang(X), Code=:=8, X>=100, minGold(100), write('Membeli '), write(Num), write(' Domba Old!'), nl, !.
 
 sellmenu :- write('Mau menjual hewan ternak ? (ya/tidak) : '), read(Ans), sellpilihan(Ans).
 
