@@ -25,7 +25,9 @@
 :- dynamic(invcurrcap/1).
 :- dynamic(plantType/1).
 :- dynamic(farmlvl/1).
+:- dynamic(diary/1).
 
+diary([]).
 chickenlist([]).
 piglist([]).
 cowlist([]).
@@ -284,11 +286,11 @@ minGold(X) :- uang(Gold), Nextgold is Gold - X, retractall(uang(Gold)), asserta(
 
 addExp(_) :- lvlplayer(L), L =:= 3, write('Level player sudah maksimal.'), !.
 addExp(X) :- exp(E), Nexp is E + X, lvlplayer(L), Nextl is 100+(100*L), Nexp < Nextl, retractall(exp(_E)), asserta(exp(Nexp)), nl, write('Anda mendapat '), write(X), write(' Exp player!'),!.
-addExp(X) :- exp(E), lvlplayer(L), Nextl is 100+(100*L), Nexp is E + X - Nextl, Nextlvl is L + 1, retractall(exp(_E)), asserta(exp(Nexp)), retractall(lvlplayer(_L)), asserta(lvlplayer(Nextlvl)), write('Anda mendapat '), write(X), write(' Exp player dan mendapat kenaikan level player!'), C is 25*Nextlvl, addexpfish(C), addexpranch(C),!. 
+addExp(X) :- exp(E), lvlplayer(L), Nextl is 100+(100*L), Nexp is E + X - Nextl, Nextlvl is L + 1, retractall(exp(_E)), asserta(exp(Nexp)), retractall(lvlplayer(_L)), asserta(lvlplayer(Nextlvl)), write('Anda mendapat '), write(X), write(' Exp player dan mendapat kenaikan level player!'), C is 25*Nextlvl, addexpfish(C), addexpranch(C),!.
 
 time:- day(D), time(T), write('Day '),write(D),write(' '),write(T),write(':00'),!.
 
-status:- 	fatigue(F), 
+status:- 	fatigue(F),
 			fishexp(FISHEXP),fishlvl(FISHLVL),
 			farmexp(FARMEXP), farmlvl(FARMLVL),
 			ranchexp(RANCHEXP), ranchinglvl(RANCHLVL),
@@ -442,10 +444,10 @@ sellpilihan(Ans) :- Ans==ya,!.
 /* Jual yang di Inventory */
 sellpilihan(Ans) :- Ans==tidak, displayInv, write('Masukkan nama item yang hendak dijual : '), read(X),
 					write('Masukkan jumlah item yang hendak dijual : '), read(Y), findQnt(X,Num), sellitem(X,Y,Num), !.
-				
+
 sellitem(X,Y,Num) :- Y =< Num, sell(X,Y), !.
 sellitem(X,Y,Num) :- Y > Num, sell(X,Num), !.
-				
+
 sell(X,Y) :- deleteitem(X,Y), X==carrot, Money=5*Y, addGold(Money), !.
 sell(X,Y) :- deleteitem(X,Y), X==corn, Money=10*Y, addGold(Money), !.
 sell(X,Y) :- deleteitem(X,Y), X==turnip, Money=15*Y, addGold(Money), !.
@@ -467,7 +469,60 @@ house:-	write('              '),nl,
 
 housechoice(sleep):- tidur(6),write('Cupang slept for 6 hours'),nl,house,!.
 housechoice(go_out):- map,!.
+housechoice(writeDiary) :- wdiary,!.
+housechoice(readDiary) :- !,rdiary.
 housechoice(_):- write('invalid input'),house,!.
+
+/* membuka opsi  diary */
+wdiary :-
+		day(Day),
+		write('Write your diary for Day '),
+		write(Day),nl,
+		read(Isi),
+		diary(Diary),
+		writediary(Diary,Isi,Day,Hasil),
+		retractall(diary(_)),
+		assertz(diary(Hasil)).
+
+writediary([],Isi,Day,[[Day, Isi]]).
+writediary([H|T],Isi,Day,[H|Hasil]) :-
+		writediary(T,Isi,Day,Hasil),!.
+
+rdiary :-
+		diary(Diary),
+		printdiary(Diary),
+		write('Which entry do you want to read?'),nl,
+		read(Day),
+		readdiary(Diary,Day),!.
+
+printdiary([]) :-
+		write('You have no writings in your diary'),!,fail.
+printdiary(Diary) :-
+		printdiarynext(Diary,1),!.
+printdiarynext([],_) :- write('End of Diary List'),nl.
+printdiarynext([H|T],N) :-
+		isiDiary(H,Day,_),
+		write(N),
+		write('. Day '),
+		write(Day),nl,
+		Next is N+1,
+		printdiarynext(T,Next),!.
+
+readdiary([],_) :-
+		write('You have no record of this day'),!,fail.
+readdiary([H|_],CDay) :-
+		isiDiary(H,Day,Isi),
+		CDay =:= Day,
+		write('Here is the entry for Day '),
+		write(Day),nl,
+		write(Isi),!.
+
+readdiary([H|T],CDay) :-
+		isiDiary(H,Day,_),
+		CDay =\= Day,
+		readdiary(T,CDay),!.
+isiDiary([Day,Isi],Day,Isi).
+
 
 /*=====================================================================Item Inventory======================================================================*/
 /* menambahkan list dengan element Y, Y berupa [Item,Qnt] */
@@ -599,7 +654,7 @@ planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 					Seed =:= 3, findQnt(turnip, Num), Num>=1, deleteitem(turnip, 1), addPlant(Y,X,120,turnip), !.
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 					Seed =:= 4, findQnt(cabbage, Num), Num>=1, deleteitem(cabbage, 1), addPlant(Y,X,144,cabbage), !.
-					
+
 /* Time Planting 4 (shovel 2) */
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
 					Seed =:= 1, findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), addPlant(Y,X,72,carrot), !.
@@ -636,21 +691,21 @@ findPlant([],_,_) :- 	retractall(isPlant(_)),
 						asserta(plantType(none)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,_]),
 						M==A, N==B, O>=1,
-						retractall(isPlant(_)), 
+						retractall(isPlant(_)),
 						asserta(isPlant(1)),
-						retractall(plantType(_)), 
+						retractall(plantType(_)),
 						asserta(plantType(growing)).
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,Type]),
 						M==A, N==B, O=:=0,
-						retractall(isPlant(_)), 
+						retractall(isPlant(_)),
 						asserta(isPlant(2)),
-						retractall(plantType(_)), 
+						retractall(plantType(_)),
 						asserta(plantType(Type)).
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,_]),
 						M==A, N==B, O=:=(-1),
-						retractall(isPlant(_)), 
+						retractall(isPlant(_)),
 						asserta(isPlant(3)),
-						retractall(plantType(_)), 
+						retractall(plantType(_)),
 						asserta(plantType(wither)).
 findPlant([H|T],A,B) :-	elePlant(H,M,[N,_,_]),
 						(M\==A; N\==B),
