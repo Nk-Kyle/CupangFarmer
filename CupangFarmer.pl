@@ -27,12 +27,7 @@
 :- dynamic(farmlvl/1).
 :- dynamic(diary/1).
 
-<<<<<<< Updated upstream
 diary([]).
-=======
-nama:- redLine(X),write(X).
-
->>>>>>> Stashed changes
 chickenlist([]).
 piglist([]).
 cowlist([]).
