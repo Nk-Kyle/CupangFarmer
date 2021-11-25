@@ -24,6 +24,7 @@
 :- dynamic(piglist/1).
 :- dynamic(invcurrcap/1).
 :- dynamic(plantType/1).
+:- dynamic(farmlvl/1).
 
 chickenlist([]).
 piglist([]).
@@ -209,6 +210,7 @@ startGame :-
 	asserta(shovel(1)),
 	asserta(invcurrcap(0)),
 	asserta(plantType(none)),
+	asserta(farmlvl(0)),
 	promptStart.
 
 promptStart :-
@@ -277,7 +279,8 @@ tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, re
 addTime(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),addfatigue(X),update,!.
 addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),update,!.
 
-addGold(X) :- uang(Gold), Nextgold is Gold + X, retractall(uang(Gold)), asserta(uang(Nextgold)),!.
+addGold(X) :- uang(Gold), Nextgold is Gold + X, retractall(uang(Gold)), asserta(uang(Nextgold)), !.
+minGold(X) :- uang(Gold), Nextgold is Gold - X, retractall(uang(Gold)), asserta(uang(Nextgold)), !.
 
 addExp(_) :- lvlplayer(L), L =:= 3, write('Level player sudah maksimal.'), !.
 addExp(X) :- exp(E), Nexp is E + X, lvlplayer(L), Nextl is 100+(100*L), Nexp < Nextl, retractall(exp(_E)), asserta(exp(Nexp)), nl, write('Anda mendapat '), write(X), write(' Exp player!'),!.
@@ -286,11 +289,18 @@ addExp(X) :- exp(E), lvlplayer(L), Nextl is 100+(100*L), Nexp is E + X - Nextl, 
 
 time:- day(D), time(T), write('Day '),write(D),write(' '),write(T),write(':00'),!.
 
-status:- 	fatigue(F), fishexp(FISHEXP),fishlvl(FISHLVL),
+status:- 	fatigue(F), 
+			fishexp(FISHEXP),fishlvl(FISHLVL),
+			farmexp(FARMEXP), farmlvl(FARMLVL),
+			ranchexp(RANCHEXP), ranchinglvl(RANCHLVL),
 			writejob,nl,
 			write('Fatigue    : '),write(F),nl,
 			write('Fishing lvl: '),write(FISHLVL),nl,
-			write('Fishing exp: '),write(FISHEXP),!.
+			write('Fishing exp: '),write(FISHEXP),nl,
+			write('Farming lvl: '),write(FARMLVL),nl,
+			write('Farming exp: '),write(FARMEXP),nl,
+			write('Ranch lvl: '),write(RANCHLVL),nl,
+			write('Ranch exp: '),write(RANCHEXP),!.
 
 addfatigue(X):- fatigue(F), NextF is F+X, retractall(fatigue(_)), asserta(fatigue(NextF)),!.
 
@@ -385,10 +395,42 @@ market:-	write('          ______'),nl,
 			/*emang rada zig-zag ga usah dibikin lurus*/
 			write('i want to (buy/sell/exit): '),read(X),nl, marketchoice(X),!.
 
-marketchoice(buy):- write('buy something'),nl,market,!.
+marketchoice(buy):- write('Buy something'), nl, buymenu, market, !.
 marketchoice(sell):- write('Sell something'),nl,market,!.
 marketchoice(exit):- map,!.
 marketchoice(_):- write('invalid input'),market,!.
+
+buymenu :-
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+	write('%                                           %'), nl,
+	write('%           Mau beli apa hari ini?          %'), nl,
+	write('%                                           %'), nl,
+	write('% 1. Seed Carrot    : 5 gold                %'), nl,
+	write('% 2. Seed Corn      : 10 gold               %'), nl,
+	write('% 3. Seed Turnip    : 15 gold               %'), nl,
+	write('% 4. Seed Cabbage   : 20 gold               %'), nl,
+	write('% 5. Chicken Old    : 50 gold               %'), nl,
+	write('% 6. Babi Old       : 200 gold              %'), nl,
+	write('% 7. Sapi Old       : 150 gold              %'), nl,
+	write('% 8. Domba Old      : 100 gold              %'), nl,
+	write('%                                           %'), nl,
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+	write('Masukkan nomor item yang ingin dibeli : '), read(X),
+	write('Masukkan jumlah item yang ingin dibeli : '), read(Y),
+	buyAlt(X,Y), !.
+
+buyAlt(X,Y) :- X > 4, buyRanch(X,Y), !.
+buyAlt(X,Y) :- buy(X,Y), !.
+
+buy(Code, Num) :- uang(X), Code=:=1, X>=5, minGold(5), addItemQnt(carrot, Num), write('Membeli '), write(Num), write(' carrot!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=2, X>=10, minGold(10), addItemQnt(corn, Num), write('Membeli '), write(Num), write(' corn!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=3, X>=15, minGold(15), addItemQnt(turnip, Num), write('Membeli '), write(Num), write(' turnip!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=4, X>=20, minGold(20), addItemQnt(cabbage, Num), write('Membeli '), write(Num), write(' cabbage!'), nl, !.
+
+% buyRanch(Code, Num) :- uang(X), Code=:=5, X>=50, minGold(50), write('Membeli '), write(Num), write(' Chicken Old!'), nl, !.
+% buyRanch(Code, Num) :- uang(X), Code=:=6, X>=200, minGold(200), write('Membeli '), write(Num), write(' Babi Old!'), nl, !.
+% buyRanch(Code, Num) :- uang(X), Code=:=7, X>=150, minGold(150), write('Membeli '), write(Num), write(' Sapi Old!'), nl, !.
+% buyRanch(Code, Num) :- uang(X), Code=:=8, X>=100, minGold(100), write('Membeli '), write(Num), write(' Domba Old!'), nl, !.
 
 /*================================================HOUSE=============================================================================================*/
 house:- loc(Y,X,L),L==h, playerpos(A,B), (Y\=A;X\=B), write('Cupang tidak berada di rumah!'),!.
@@ -450,8 +492,6 @@ findQnt([H|T], Item,Qnt) :-
 	M \== Item,
 	findQnt(T,Item,Qnt).
 findQnt([], _, 0).
-
-
 
 /* Mengurangi item dengan nama Item dan quantity Qnty */
 /* Jika Item pada li dan Qnty < jumlah item, kurangi jumlah item dengan Qnty */
@@ -523,7 +563,8 @@ plant :- shovel(X), X=:=0, write('Anda harus memiliki shovel untuk menggali tana
 plant :- playerpos(Y,X), loc(Y,X,A), A==m, write('Anda tidak dapat menanam pada area M'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==h, write('Anda tidak dapat menanam pada area H'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==r, write('Anda tidak dapat menanam pada area R'), nl, !.
-plant :- showplanting, write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
+plant :- showplanting, write('Mari kita bercocok tanam!'), nl, write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
+
 /* Time Planting 6 (shovel 1) */
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 					Seed =:= 1, findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), addPlant(Y,X,72,carrot), !.
@@ -533,6 +574,7 @@ planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 					Seed =:= 3, findQnt(turnip, Num), Num>=1, deleteitem(turnip, 1), addPlant(Y,X,120,turnip), !.
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 					Seed =:= 4, findQnt(cabbage, Num), Num>=1, deleteitem(cabbage, 1), addPlant(Y,X,144,cabbage), !.
+					
 /* Time Planting 4 (shovel 2) */
 planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
 					Seed =:= 1, findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), addPlant(Y,X,72,carrot), !.
@@ -585,12 +627,6 @@ findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,_]),
 						asserta(isPlant(3)),
 						retractall(plantType(_)), 
 						asserta(plantType(wither)).
-findPlant([H|_],A,B) :-	elePlant(H,M,[N,_,_]),
-						M==A, N==B,
-						retractall(isPlant(_)), 
-						asserta(isPlant(0)),
-						retractall(plantType(_)), 
-						asserta(plantType(none)).
 findPlant([H|T],A,B) :-	elePlant(H,M,[N,_,_]),
 						(M\==A; N\==B),
 						findPlant(T,A,B).
@@ -622,12 +658,16 @@ delPlant([H|T],A,B,Del) :-	elePlant(H,M,[N,_,_]),
 							(M\==A; N\==B),
 							delPlant(T,A,B,[H|Del]).
 
-harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(none), write('Tidak ada yang dapat dipanen'), nl, !.
-harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(growing), write('Tidak bisa memanen tanaman yang belum siap dipanen!'), nl, !.
-harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(carrot), random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), write('Selamat! Anda memanen '), write(' wortel'), nl, !.
-harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(corn), random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), write('Selamat! Anda memanen '), write(' corn'), nl, !.
-harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(turnip), random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), write('Selamat! Anda memanen '), write(' turnip'), nl, !.
-harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==(cabbage), random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), write('Selamat! Anda memanen '), write(' cabbage'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==none, write('Tidak ada yang dapat dipanen'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==growing, write('Tidak bisa memanen tanaman yang belum siap dipanen!'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==carrot, random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), addexpfarm(2), write('Selamat! Anda memanen '), write(' wortel'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==corn, random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), addexpfarm(4), write('Selamat! Anda memanen '), write(' corn'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==turnip, random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), addexpfarm(8), write('Selamat! Anda memanen '), write(' turnip'), nl, !.
+harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==cabbage, random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), addexpfarm(16), write('Selamat! Anda memanen '), write(' cabbage'), nl, !.
+
+addexpfarm(_):- farmlvl(LVL), LVL=:=3, write('Level farming sudah maximal, Anda tidak lagi mendapat Exp farming'),!.
+addexpfarm(X):- farmexp(EXP), NEXTEXP is EXP+X, farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(farmexp(_)), asserta(farmexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp farming'),!.
+addexpfarm(X):- farmexp(EXP), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(farmexp(_)), retractall(farmlvl(_)), asserta(farmexp(NEXTEXP)), asserta(farmlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp farming'),!.
 
 /*===================RANCHER============================*/
 /*chickenlist([-1,0,1]).
