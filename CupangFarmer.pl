@@ -510,13 +510,58 @@ house:-	write('              '),nl,
 		write('  o '),nl,
 		write(' /|\\    ________|'),nl,
 		write(' / \\   |        |'),nl,
-		write('i want to (sleep/go_out): '),read(X),nl,housechoice(X),!.
+		write('i want to :'),nl,write('- sleep'),nl,write('- go_out'),nl, write('- writeDiary'),nl,write('- readDiary'),nl,read(X),nl,housechoice(X),!.
 
-housechoice(sleep):- tidur(6),write('Cupang slept for 6 hours'),nl,house,!.
 housechoice(go_out):- map,!.
-housechoice(writeDiary) :- wdiary,!.
-housechoice(readDiary) :- !,rdiary.
+housechoice(writeDiary) :- wdiary,!,house.
+housechoice(readDiary) :- !,rdiary,house.
+housechoice(sleep):-!,
+		tidur(6),
+		write('Cupang slept for 6 hours'),nl,
+		randomize,random(0,11,Chance),
+		putritidur(Chance),!.
 housechoice(_):- write('invalid input'),house,!.
+
+
+
+putritidur(Chance) :-
+	Chance =:= 1,
+	write('Putri Tidur timbul pada bayangan Anda dan menawarkan membonceng ke mana pun dalam peta'),nl,
+	write('Apakah Anda mau dibonceng putri tidur? (y/n)'),nl,
+	read(Opt),
+	prompttransport(Opt),
+	!.
+
+	putritidur(Chance) :-
+		Chance =\= 1,
+		house,
+		!.
+
+prompttransport(Opt) :-
+	Opt == y,
+	write('Masukkan koordinat yang anda ingin capai'),nl,
+	write('Koordinat X : '),
+	read(X),
+	write('Koordinat Y : '),
+	read(Y),
+	transport(X,Y),!.
+
+prompttransport(Opt) :-
+	Opt == n,
+	write('Putri Tidur sedih diusir Anda'),nl,house,!.
+
+transport(X,Y) :-
+	!,X < 11, X > 0, Y < 11, X > 0, \+ (loc(NextY,X,A),A=='o'),
+	retractall(playerpos(_,_)),assertz(playerpos(Y,X)), write('Putri Tidur langsung membonceng Anda ke lokasi tersebut'),nl.
+
+transport(X,Y) :-
+	!,X < 11, X > 0, Y < 11, X > 0, loc(NextY,X,A), A=='o', write('Putri Tidur tidak mau menceburkan Anda ke air'),nl,house.
+
+transport(X,Y) :-
+	!,(X > 10 ; X < 1 ; Y > 10; Y < 1),
+	write('Putri Tidur kesal Anda meminta yang mustahil lalu pergi meninggalkan Anda'),house,nl.
+
+
 
 /* membuka opsi  diary */
 wdiary :-
@@ -536,7 +581,7 @@ writediary([H|T],Isi,Day,[H|Hasil]) :-
 rdiary :-
 		diary(Diary),
 		printdiary(Diary),
-		write('Which entry do you want to read?'),nl,
+		write('Which day diary do you want to read?'),nl,
 		read(Day),
 		readdiary(Diary,Day),!.
 
@@ -736,21 +781,21 @@ findPlant([],_,_) :- 	retractall(isPlant(_)),
 						asserta(plantType(none)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,_]),
 						M==A, N==B, O>=1,
-						retractall(isPlant(_)), 
+						retractall(isPlant(_)),
 						asserta(isPlant(1)),
-						retractall(plantType(_)), 
+						retractall(plantType(_)),
 						asserta(plantType(growing)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,Type]),
 						M==A, N==B, O<(1), O>(-24),
-						retractall(isPlant(_)), 
+						retractall(isPlant(_)),
 						asserta(isPlant(2)),
-						retractall(plantType(_)), 
+						retractall(plantType(_)),
 						asserta(plantType(Type)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,_]),
 						M==A, N==B, O=<(-25),
-						retractall(isPlant(_)), 
+						retractall(isPlant(_)),
 						asserta(isPlant(0)),
-						retractall(plantType(_)), 
+						retractall(plantType(_)),
 						asserta(plantType(wither)),
 						delPlant(A,B),!.
 findPlant([H|T],A,B) :-	elePlant(H,M,[N,_,_]),
@@ -774,7 +819,7 @@ elePlant([H|T],H,T).
 delPlant(A,B) :-	liPlant(X),
 					delPlant(X,A,B,[[]]).
 delPlant([],_,_,Del) :- retractall(liPlant(_)),
-						assertz(liPlant(Del)), 
+						assertz(liPlant(Del)),
 						retractall(plantType(_)),
 						asserta(plantType(none)), !.
 delPlant([H|T],A,B,Del) :-	elePlant(H,M,[N,_,_]),
