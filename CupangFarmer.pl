@@ -273,11 +273,11 @@ writejob:-	job(X), X=:=1, write('Job        : Farmer'),!.
 writejob:-	job(X), X=:=2, write('Job        : Fishermen'),!.
 writejob:-	job(X), X=:=3, write('Job        : Rancher'),!.
 
-tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update,!.
-tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update,!.
+tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update, updatePlant(6), !.
+tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update, updatePlant(6),!.
 
-addTime(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),addfatigue(X),update,!.
-addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),update,!.
+addTime(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),addfatigue(X),update, updatePlant(X), !.
+addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),update, updatePlant(X),!.
 
 addGold(X) :- uang(Gold), Nextgold is Gold + X, retractall(uang(Gold)), asserta(uang(Nextgold)), !.
 minGold(X) :- uang(Gold), Nextgold is Gold - X, retractall(uang(Gold)), asserta(uang(Nextgold)), !.
@@ -292,14 +292,18 @@ status:- 	fatigue(F),
 			fishexp(FISHEXP),fishlvl(FISHLVL),
 			farmexp(FARMEXP), farmlvl(FARMLVL),
 			ranchexp(RANCHEXP), ranchinglvl(RANCHLVL),
+			lvlplayer(LEVEL), exp(E), uang(GOLD),
 			writejob,nl,
-			write('Fatigue    : '),write(F),nl,
-			write('Fishing lvl: '),write(FISHLVL),nl,
-			write('Fishing exp: '),write(FISHEXP),nl,
-			write('Farming lvl: '),write(FARMLVL),nl,
-			write('Farming exp: '),write(FARMEXP),nl,
-			write('Ranch lvl: '),write(RANCHLVL),nl,
-			write('Ranch exp: '),write(RANCHEXP),!.
+			write('Fatigue       : '),write(F),nl,
+			write('Level         : '),write(LEVEL),nl,
+			write('Fishing level : '),write(FISHLVL),nl,
+			write('Fishing exp   : '),write(FISHEXP),nl,
+			write('Farming level : '),write(FARMLVL),nl,
+			write('Farming exp   : '),write(FARMEXP),nl,
+			write('Ranch level   : '),write(RANCHLVL),nl,
+			write('Ranch exp     : '),write(RANCHEXP),nl,
+			write('Exp           : '),write(E),nl,
+			write('Gold          : '),write(GOLD), !.
 
 addfatigue(X):- fatigue(F), NextF is F+X, retractall(fatigue(_)), asserta(fatigue(NextF)),!.
 
@@ -653,15 +657,15 @@ findPlant([H|T],A,B) :-	elePlant(H,M,[N,_,_]),
 						findPlant(T,A,B).
 
 /* KURANGI WAKTUNYA SEMUA -1 */
-updatePlant :-	liPlant(X),
-				updatePlant(X,[]).
-updatePlant([],Up) :- 	retractall(liPlant(_)),
+updatePlant(W) :-	liPlant(X),
+					updatePlant(X,[],W).
+updatePlant([],Up,W) :- retractall(liPlant(_)),
 						assertz(liPlant(Up)), !.
-updatePlant([H|T],Up) :-	elePlant(H,_,[_,O,_]),
-							O=:=(-2), updatePlant(T,Up).
-updatePlant([H|T],Up) :-	elePlant(H,M,[N,O,Type]),
-							Onew is O-1,
-							O=\=(-2), updatePlant(T,[[M,N,Onew,Type]|Up]).
+updatePlant([H|T],Up,W) :-	elePlant(H,_,[_,O,_]),
+							O=:=(-2), updatePlant(T,Up,W).
+updatePlant([H|T],Up,W) :-	elePlant(H,M,[N,O,Type]),
+							Onew is O-W,
+							O=\=(-2), updatePlant(T,[[M,N,Onew,Type]|Up],W).
 
 elePlant([H|T],H,T).
 
