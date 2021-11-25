@@ -401,7 +401,7 @@ market:-	write('          ______'),nl,
 marketchoice(buy):- write('Buy something'), nl, buymenu, market, !.
 marketchoice(sell):- write('Sell something'),nl, sellmenu, market,!.
 marketchoice(exit):- map,!.
-marketchoice(_):- write('invalid input'),market,!.
+marketchoice(_):- write('invalid input'),nl,market,!.
 
 buymenu :-
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
@@ -659,7 +659,7 @@ findPlant([H|T],A,B) :-	elePlant(H,M,[N,_,_]),
 /* KURANGI WAKTUNYA SEMUA -1 */
 updatePlant(W) :-	liPlant(X),
 					updatePlant(X,[],W).
-updatePlant([],Up,W) :- retractall(liPlant(_)),
+updatePlant([],Up,_) :- retractall(liPlant(_)),
 						assertz(liPlant(Up)), !.
 updatePlant([H|T],Up,W) :-	elePlant(H,_,[_,O,_]),
 							O=:=(-2), updatePlant(T,Up,W).
