@@ -7,6 +7,7 @@
 :- dynamic(fishrod/1).
 :- dynamic(ranchexp/1).
 :- dynamic(ranchinglvl/1).
+:- dynamic(ranchlvl/1).
 :- dynamic(time/1).
 :- dynamic(day/1).
 :- dynamic(playerpos/2).
@@ -203,6 +204,7 @@ startGame :-
 	asserta(fishrod(1)),
 	asserta(ranchexp(0)),
 	asserta(ranchinglvl(0)),
+	asserta(ranchlvl(0)),
 	asserta(time(0)),
 	asserta(day(1)),
 	asserta(playerpos(8,7)),
@@ -422,13 +424,31 @@ buymenu :-
 	write('Masukkan jumlah item yang ingin dibeli : '), read(Y),
 	buyAlt(X,Y), !.
 
-buyAlt(X,Y) :- X > 4, buyRanch(X,Y), !.
+/*buyAlt(X,Y) :- X > 4, buyRanch(X,Y), !.*/
 buyAlt(X,Y) :- buy(X,Y), !.
 
-buy(Code, Num) :- uang(X), Code=:=1, X>=5, Money=5*Num, minGold(Money), addItemQnt(carrot, Num), write('Membeli '), write(Num), write(' carrot!'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=2, X>=10, Money=10*Num, minGold(Money), addItemQnt(corn, Num), write('Membeli '), write(Num), write(' corn!'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=3, X>=15, Money=15*Num, minGold(Money), addItemQnt(turnip, Num), write('Membeli '), write(Num), write(' turnip!'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=4, X>=20, Money=20*Num, minGold(Money), addItemQnt(cabbage, Num), write('Membeli '), write(Num), write(' cabbage!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=1, X>=5, W is Num*5, minGold(W), addItemQnt(carrot, Num), write('Membeli '), write(Num), write(' carrot!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=2, X>=10, W is Num*10, minGold(W), addItemQnt(corn, Num), write('Membeli '), write(Num), write(' corn!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=3, X>=15, W is Num*15, minGold(W), addItemQnt(turnip, Num), write('Membeli '), write(Num), write(' turnip!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=4, X>=20, W is Num*20, minGold(W), addItemQnt(cabbage, Num), write('Membeli '), write(Num), write(' cabbage!'), nl, !.
+buy(Code, _Num) :- uang(_X), Code=:=5, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
+buy(Code, Num) :- uang(X), Code=:=5, ranchlvl(P), P > 0, X>=50, W is Num*50, minGold(W), addchicken(Num, _Z), write('Membeli '), write(Num), write(' ayam!'), nl, !.
+buy(Code, _Num) :- uang(_X), Code=:=6, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
+buy(Code, Num) :- uang(X), Code=:=6, ranchlvl(P), P > 0, X>=200, W is Num*200 ,minGold(W), addpig(Num, _Z), write('Membeli '), write(Num), write(' babi!'), nl, !.
+buy(Code, _Num) :- uang(_X), Code=:=7, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
+buy(Code, Num) :- uang(X), Code=:=7, ranchlvl(P), P > 1, X>=150, W is Num*150 ,minGold(W), addcow(Num, _Z), write('Membeli '), write(Num), write(' sapi!'), nl, !.
+buy(Code, _Num) :- uang(_X), Code=:=8, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
+buy(Code, Num) :- uang(X), Code=:=8, ranchlvl(P), P > 1, X>=100, W is Num*100 ,minGold(W), addsheep(Num, _Z), write('Membeli '), write(Num), write(' domba!'), nl, !.
+
+addchicken(0,X) :- chickenlist(X),!.
+addchicken(Num, Z) :- append(X,[2],Z), addchicken(Nextnum, X), Num is Nextnum + 1, retractall(chickenlist(_W)), asserta(chickenlist(Z)).
+addpig(0,X) :- piglist(X),!.
+addpig(Num, Z) :- append(X,[2],Z), addpig(Nextnum, X), Num is Nextnum + 1, retractall(piglist(_W)), asserta(piglist(Z)).
+addcow(0,X) :- cowlist(X),!.
+addcow(Num, Z) :- append(X,[2],Z), addcow(Nextnum, X), Num is Nextnum + 1, retractall(cowlist(_W)), asserta(cowlist(Z)).
+addsheep(0,X) :- sheeplist(X),!.
+addsheep(Num, Z) :- append(X,[2],Z), addsheep(Nextnum, X), Num is Nextnum + 1, retractall(sheeplist(_W)), asserta(sheeplist(Z)).
+
 
 % buyRanch(Code, Num) :- uang(X), Code=:=5, X>=50, minGold(50), write('Membeli '), write(Num), write(' Chicken Old!'), nl, !.
 % buyRanch(Code, Num) :- uang(X), Code=:=6, X>=200, minGold(200), write('Membeli '), write(Num), write(' Babi Old!'), nl, !.
@@ -438,13 +458,23 @@ buy(Code, Num) :- uang(X), Code=:=4, X>=20, Money=20*Num, minGold(Money), addIte
 sellmenu :- write('Mau menjual hewan ternak ? (ya/tidak) : '), read(Ans), sellpilihan(Ans).
 
 /* Jual hewan */
-sellpilihan(Ans) :- Ans==ya,!.
+sellpilihan(Ans) :- Ans==ya, write('Masukkan nama item yang hendak dijual : '), read(X),
+					write('Masukkan jumlah item yang hendak dijual : '), read(Y), sellternak(X,Y,_Num), !.
 /* Jual yang di Inventory */
 sellpilihan(Ans) :- Ans==tidak, displayInv, write('Masukkan nama item yang hendak dijual : '), read(X),
 					write('Masukkan jumlah item yang hendak dijual : '), read(Y), findQnt(X,Num), sellitem(X,Y,Num), !.
 
 sellitem(X,Y,Num) :- Y =< Num, sell(X,Y), !.
 sellitem(X,Y,Num) :- Y > Num, sell(X,Num), !.
+
+sellternak(X,Y,Num) :- X==chicken, chickenlist(W), numchicken(W,Num), Y > Num, sell(X,Num), !.
+sellternak(X,Y,Num) :- X==chicken, chickenlist(W), numchicken(W,Num), Y =< Num, sell(X,Y), !.
+sellternak(X,Y,Num) :- X==pig, piglist(W), numpig(W,Num), Y > Num, sell(X,Num), !.
+sellternak(X,Y,Num) :- X==pig, piglist(W), numpig(W,Num), Y =< Num, sell(X,Y), !.
+sellternak(X,Y,Num) :- X==cow, cowlist(W), numcow(W,Num), Y > Num, sell(X,Num), !.
+sellternak(X,Y,Num) :- X==cow, cowlist(W), numcow(W,Num), Y =< Num, sell(X,Y), !.
+sellternak(X,Y,Num) :- X==sheep, sheeplist(W), numsheep(W,Num), Y > Num, sell(X,Num), !.
+sellternak(X,Y,Num) :- X==sheep, sheeplist(W), numsheep(W,Num), Y =< Num, sell(X,Y), !.
 
 sell(X,Y) :- deleteitem(X,Y), X==carrot, Money=5*Y, addGold(Money), !.
 sell(X,Y) :- deleteitem(X,Y), X==corn, Money=10*Y, addGold(Money), !.
@@ -456,6 +486,23 @@ sell(X,Y) :- deleteitem(X,Y), X==wool, Money=20*Y, addGold(Money), !.
 sell(X,Y) :- deleteitem(X,Y), X==tuna, Money=20*Y, addGold(Money), !.
 sell(X,Y) :- deleteitem(X,Y), X==salmon, Money=30*Y, addGold(Money), !.
 sell(X,Y) :- deleteitem(X,Y), X==cupang, Money=50*Y, addGold(Money), !.
+sell(X,Y) :- X==chicken, deletechicken(Y), Money=30*Y, addGold(Money), !.
+sell(X,Y) :- X==pig, deletepig(Y), Money=150*Y, addGold(Money), !.
+sell(X,Y) :- X==cow, deletecow(Y), Money=100*Y, addGold(Money), !.
+sell(X,Y) :- X==sheep, deletesheep(Y), Money=75*Y, addGold(Money), !.
+
+deletechicken(0, X) :- retractall(chickenlist(_)), asserta(chickenlist(X)) ,!.
+deletechicken(Num, [_H|T]) :- Nextnum is Num - 1, deletechicken(Nextnum, T), ! .
+deletechicken(Num) :- chickenlist(X), deletechicken(Num, X), !.
+deletepig(0, X) :- retractall(piglist(_)), asserta(piglist(X)) ,!.
+deletepig(Num, [_H|T]) :- Nextnum is Num - 1, deletepig(Nextnum, T), ! .
+deletepig(Num) :- piglist(X), deletepig(Num, X), !.
+deletecow(0, X) :- retractall(cowlist(_)), asserta(cowlist(X)) ,!.
+deletecow(Num, [_H|T]) :- Nextnum is Num - 1, deletecow(Nextnum, T), ! .
+deletecow(Num) :- cowlist(X), deletecow(Num, X), !.
+deletesheep(0, X) :- retractall(sheeplist(_)), asserta(sheeplist(X)) ,!.
+deletesheep(Num, [_H|T]) :- Nextnum is Num - 1, deletesheep(Nextnum, T), ! .
+deletesheep(Num) :- sheeplist(X), deletesheep(Num, X), !.
 
 /*================================================HOUSE=============================================================================================*/
 house:- loc(Y,X,L),L==h, playerpos(A,B), (Y\=A;X\=B), write('Cupang tidak berada di rumah!'),!.
