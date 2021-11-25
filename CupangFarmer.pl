@@ -941,7 +941,7 @@ sheep :- sheeplist(X), numwool(X,Y), Y =:= 0, write('Your sheeps has not produce
 sheep :- sheeplist(X), numwool(X,Y), write('Your sheeps produce '), write(Y), write(' wools.'), nl, write('You got '), write(Y), write(' wools!'), day(D), sheeplist(C), sheepchange(C,D,Z), retractall(sheeplist(X)), asserta(sheeplist(Z)), addtimeambilwool, Nexp is Y * 15, addexpranch(Nexp), addItemQnt(wool, Y).
 
 /*===========================================================ALCHEMIST=================================================================*/
-summonAlchemist:- randomize,random(1,2, X), X =:= 1, retractall(alchemist(_,_)), asserta(alchemist(1,72)),write('Alchemist sedang berada di market selama 72 jam kedepan. ketik potion pada menu di market untuk membeli barangnya!'),!.
+summonAlchemist:- randomize,random(1,100, X), X =:= 1, retractall(alchemist(_,_)), asserta(alchemist(1,72)),write('Alchemist sedang berada di market selama 72 jam kedepan. ketik potion pada menu di market untuk membeli barangnya!'),!.
 
 buypotion :-	alchemist(0,_), write('Alchemist sedang tidak berada di market, Anda tidak dapat membeli potion'),nl,!.
 buypotion :- 	write('1. Farming Potion  (500) --> memaksimalkan lvl farming'),nl, 
