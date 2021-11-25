@@ -286,7 +286,6 @@ addExp(_) :- lvlplayer(L), L =:= 3, write('Level player sudah maksimal.'), !.
 addExp(X) :- exp(E), Nexp is E + X, lvlplayer(L), Nextl is 100+(100*L), Nexp < Nextl, retractall(exp(_E)), asserta(exp(Nexp)), nl, write('Anda mendapat '), write(X), write(' Exp player!'),!.
 addExp(X) :- exp(E), lvlplayer(L), Nextl is 100+(100*L), Nexp is E + X - Nextl, Nextlvl is L + 1, retractall(exp(_E)), asserta(exp(Nexp)), retractall(lvlplayer(_L)), asserta(lvlplayer(Nextlvl)), write('Anda mendapat '), write(X), write(' Exp player dan mendapat kenaikan level player!'), C is 25*Nextlvl, addexpfish(C), addexpranch(C),!. 
 
-
 time:- day(D), time(T), write('Day '),write(D),write(' '),write(T),write(':00'),!.
 
 status:- 	fatigue(F), 
@@ -396,7 +395,7 @@ market:-	write('          ______'),nl,
 			write('i want to (buy/sell/exit): '),read(X),nl, marketchoice(X),!.
 
 marketchoice(buy):- write('Buy something'), nl, buymenu, market, !.
-marketchoice(sell):- write('Sell something'),nl,market,!.
+marketchoice(sell):- write('Sell something'),nl, sellmenu, market,!.
 marketchoice(exit):- map,!.
 marketchoice(_):- write('invalid input'),market,!.
 
@@ -431,6 +430,28 @@ buy(Code, Num) :- uang(X), Code=:=4, X>=20, minGold(20), addItemQnt(cabbage, Num
 % buyRanch(Code, Num) :- uang(X), Code=:=6, X>=200, minGold(200), write('Membeli '), write(Num), write(' Babi Old!'), nl, !.
 % buyRanch(Code, Num) :- uang(X), Code=:=7, X>=150, minGold(150), write('Membeli '), write(Num), write(' Sapi Old!'), nl, !.
 % buyRanch(Code, Num) :- uang(X), Code=:=8, X>=100, minGold(100), write('Membeli '), write(Num), write(' Domba Old!'), nl, !.
+
+sellmenu :- write('Mau menjual hewan ternak ? (ya/tidak) : '), read(Ans), sellpilihan(Ans).
+
+/* Jual hewan */
+sellpilihan(Ans) :- Ans==ya,!.
+/* Jual yang di Inventory */
+sellpilihan(Ans) :- Ans==tidak, displayInv, write('Masukkan nama item yang hendak dijual : '), read(X),
+					write('Masukkan jumlah item yang hendak dijual : '), read(Y), findQnt(X,Num), sellitem(X,Y,Num), !.
+				
+sellitem(X,Y,Num) :- Y =< Num, sell(X,Y), !.
+sellitem(X,Y,Num) :- Y > Num, sell(X,Num), !.
+				
+sell(X,Y) :- deleteitem(X,Y), X==carrot, Money=5*Y, addGold(Money), !.
+sell(X,Y) :- deleteitem(X,Y), X==corn, Money=10*Y, addGold(Money), !.
+sell(X,Y) :- deleteitem(X,Y), X==turnip, Money=15*Y, addGold(Money), !.
+sell(X,Y) :- deleteitem(X,Y), X==cabbage, Money=25*Y, addGold(Money), !.
+sell(X,Y) :- deleteitem(X,Y), X==telur, Money=10*Y, addGold(Money), !.
+sell(X,Y) :- deleteitem(X,Y), X==susu, Money=15*Y, addGold(Money), !.
+sell(X,Y) :- deleteitem(X,Y), X==wool, Money=20*Y, addGold(Money), !.
+sell(X,Y) :- deleteitem(X,Y), X==tuna, Money=20*Y, addGold(Money), !.
+sell(X,Y) :- deleteitem(X,Y), X==salmon, Money=30*Y, addGold(Money), !.
+sell(X,Y) :- deleteitem(X,Y), X==cupang, Money=50*Y, addGold(Money), !.
 
 /*================================================HOUSE=============================================================================================*/
 house:- loc(Y,X,L),L==h, playerpos(A,B), (Y\=A;X\=B), write('Cupang tidak berada di rumah!'),!.
