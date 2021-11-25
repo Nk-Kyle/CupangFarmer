@@ -27,6 +27,7 @@
 :- dynamic(plantType/1).
 :- dynamic(farmlvl/1).
 :- dynamic(diary/1).
+:- dynamic(alchemist/2).
 
 diary([]).
 chickenlist([]).
@@ -215,6 +216,7 @@ startGame :-
 	asserta(invcurrcap(0)),
 	asserta(plantType(none)),
 	asserta(farmlvl(0)),
+	asserta(alchemist(0,0)),
 	promptStart.
 
 promptStart :-
@@ -277,11 +279,11 @@ writejob:-	job(X), X=:=1, write('Job        : Farmer'),!.
 writejob:-	job(X), X=:=2, write('Job        : Fishermen'),!.
 writejob:-	job(X), X=:=3, write('Job        : Rancher'),!.
 
-tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update, updatePlant(X), !.
-tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update, updatePlant(X),!.
+tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update(X), updatePlant(6), !.
+tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update(X), updatePlant(6),!.
 
-addTime(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),addfatigue(X),update, updatePlant(X), !.
-addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),update, updatePlant(X),!.
+addTime(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),addfatigue(X),update(X), updatePlant(X), !.
+addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),update(X), updatePlant(X),!.
 
 addGold(X) :- uang(Gold), Nextgold is Gold + X, retractall(uang(Gold)), asserta(uang(Nextgold)), !.
 minGold(X) :- uang(Gold), X=<Gold, Nextgold is Gold - X, retractall(uang(Gold)), asserta(uang(Nextgold)), !.
@@ -311,10 +313,12 @@ status:- 	fatigue(F),
 
 addfatigue(X):- fatigue(F), NextF is F+X, retractall(fatigue(_)), asserta(fatigue(NextF)),!.
 
-update:- day(D), D =:= 366, failgame,!.
-update:- uang(G), G>=20000, sucessgame,!.
-update:- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur sehingga ia tertidur selama 12 jam'),nl,showfatigue,tidur(12),!.
-update:- !.
+update(_):- day(D), D =:= 366, failgame,!.
+update(_):- uang(G), G>=20000, sucessgame,!.
+update(_):- alchemist(X,_),X=:=0, summonAlchemist.
+update(X):- alchemist(1,B), NEXTB is B - X, retractall(alchemist(_,_)), asserta(alchemist(1,NEXTB)), NEXTB =< 0 , write('Alchemist sudah pergi meninggalkan market'), retractall(alchemist(_,_)),asserta(alchemist(0,0)).
+update(_):- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur sehingga ia tertidur selama 12 jam'),nl,showfatigue,tidur(12),!.
+update(_):- !.
 
 showfatigue:- 	write('    zz'),nl,
 				write('  zz'),nl,
@@ -403,6 +407,8 @@ market:-	write('          ______'),nl,
 marketchoice(buy):- write('Buy something'), nl, buymenu, market, !.
 marketchoice(sell):- write('Sell something'),nl, sellmenu, market,!.
 marketchoice(exit):- map,!.
+marketchoice(potion):- alchemist(0,_), write('Alchemist sedang tidak berada di market'),nl,market,!.
+marketchoice(potion):- alchemist(1,_), buypotion,market,!.
 marketchoice(_):- write('invalid input'),nl,market,!.
 
 buymenu :-
@@ -917,3 +923,18 @@ cow :- cowlist(X), nummilk(X,Y), Y =:= 0, write('Your cows has not produced milk
 cow :- cowlist(X), nummilk(X,Y), write('Your cows produce '), write(Y), write(' bottles of milk.'), nl, write('You got '), write(Y), write(' bottles of milk!'), day(D), cowlist(C), cowchange(C,D,Z), retractall(cowlist(X)), asserta(cowlist(Z)), addtimeambilmilk, Nexp is Y * 5, addexpranch(Nexp), addItemQnt(susu, Y).
 sheep :- sheeplist(X), numwool(X,Y), Y =:= 0, write('Your sheeps has not produced wool yet.'), nl, write('Please check again later.'), !.
 sheep :- sheeplist(X), numwool(X,Y), write('Your sheeps produce '), write(Y), write(' wools.'), nl, write('You got '), write(Y), write(' wools!'), day(D), sheeplist(C), sheepchange(C,D,Z), retractall(sheeplist(X)), asserta(sheeplist(Z)), addtimeambilwool, Nexp is Y * 15, addexpranch(Nexp), addItemQnt(wool, Y).
+
+/*===========================================================ALCHEMIST=================================================================*/
+summonAlchemist:- randomize,random(1,2, X), X =:= 1, retractall(alchemist(_,_)), asserta(alchemist(1,72)),write('Alchemist sedang berada di market selama 72 jam kedepan. ketik potion pada menu di market untuk membeli barangnya!'),!.
+
+buypotion :-	alchemist(0,_), write('Alchemist sedang tidak berada di market, Anda tidak dapat membeli potion'),nl,!.
+buypotion :- 	write('1. Farming Potion  (500) --> memaksimalkan lvl farming'),nl, 
+				write('2. Fishing Potion  (500) --> memaksimalkan lvl fishing'),nl,
+				write('3. Ranching Potion (500) --> memaksimalkan lvl ranching'),nl,
+				write('4. Tidak jadi beli'),nl,
+				write('Pilihan : '), read(X), pilihanpotion(X),!.
+
+pilihanpotion(1):- minGold(5), retractall(farmlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
+pilihanpotion(2):- minGold(5),  retractall(fishlvl(_)),asserta(fishlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
+pilihanpotion(3):- minGold(5),  retractall(ranchlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
+pilihanpotion(4):- !. 
