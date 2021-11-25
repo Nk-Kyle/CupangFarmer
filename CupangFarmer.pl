@@ -27,7 +27,12 @@
 :- dynamic(farmlvl/1).
 :- dynamic(diary/1).
 
+<<<<<<< Updated upstream
 diary([]).
+=======
+nama:- redLine(X),write(X).
+
+>>>>>>> Stashed changes
 chickenlist([]).
 piglist([]).
 cowlist([]).
@@ -379,14 +384,13 @@ addtimefishing:- fishlvl(FL), NextT is 6-FL, addTime(NextT),!.
 randomfish:- fishrod(X),X=:=1,randomize,random(1,100,Num), getfish(Num),!.
 randomfish:- fishrod(X),X=:=2,randomize,random(1,50,Num), getfish(Num),!.
 
-getfish(X):- job(2),X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(10),addItemQnt(cupang,1),!.
-getfish(X):- job(2),X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(6),addItemQnt(salmon,1),!.
-getfish(_):- job(2),write('Selamat, Anda mendapatkan Tuna'),addexpfish(2),addItemQnt(tuna,1),!.
 getfish(X):- X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(5),addItemQnt(cupang,1),!.
 getfish(X):- X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(3),addItemQnt(salmon,1),!.
 getfish(_):- write('Selamat, Anda mendapatkan Tuna'),addexpfish(1),addItemQnt(tuna,1),!.
 
 addexpfish(_):- fishlvl(LVL), LVL=:=3, write('Level fishing sudah maximal, Anda tidak lagi mendapat Exp memancing'),!.
+addexpfish(X):- job(2),fishexp(EXP), NEXTEXP is EXP+(2*X), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(fishexp(_)), asserta(fishexp(NEXTEXP)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp fishing'),!.
+addexpfish(X):- job(2),fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+(2*X)-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(fishexp(_)), retractall(fishlvl(_)), asserta(fishexp(NEXTEXP)), asserta(fishlvl(NEXTLVL)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp fishing'),!.
 addexpfish(X):- fishexp(EXP), NEXTEXP is EXP+X, fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(fishexp(_)), asserta(fishexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!.
 addexpfish(X):- fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(fishexp(_)), retractall(fishlvl(_)), asserta(fishexp(NEXTEXP)), asserta(fishlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!.
 
@@ -746,6 +750,8 @@ harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==turnip, random(1,5,N
 harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==cabbage, random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), addexpfarm(16), write('Selamat! Anda memanen '), write(' cabbage'), nl, !.
 
 addexpfarm(_):- farmlvl(LVL), LVL=:=3, write('Level farming sudah maximal, Anda tidak lagi mendapat Exp farming'),!.
+addexpfarm(X):- job(1),farmexp(EXP), NEXTEXP is EXP+(2*X), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(farmexp(_)), asserta(farmexp(NEXTEXP)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp farming'),!.
+addexpfarm(X):- job(1),farmexp(EXP), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+(2*X)-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(farmexp(_)), retractall(farmlvl(_)), asserta(farmexp(NEXTEXP)), asserta(farmlvl(NEXTLVL)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp farming'),!.
 addexpfarm(X):- farmexp(EXP), NEXTEXP is EXP+X, farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(farmexp(_)), asserta(farmexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp farming'),!.
 addexpfarm(X):- farmexp(EXP), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(farmexp(_)), retractall(farmlvl(_)), asserta(farmexp(NEXTEXP)), asserta(farmlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp farming'),!.
 
@@ -813,6 +819,8 @@ addtimeambilmilk :- ranchinglvl(X), Tnext is 4 - X, addTime(Tnext), !.
 addtimeambilwool :- ranchinglvl(X), Tnext is 6 - X, addTime(Tnext), !.
 
 addexpranch(_):- ranchinglvl(LVL), LVL=:=3, write('Level ranching sudah maximal, Anda tidak lagi mendapat Exp ranching'),!.
+addexpranch(X):- job(3),ranchexp(EXP), NEXTEXP is EXP+(2*X), ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(ranchexp(_)), asserta(ranchexp(NEXTEXP)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp ranching'),!.
+addexpranch(X):- job(3),ranchexp(EXP), ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+(2*X)-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(ranchexp(_)), retractall(ranchinglvl(_)), asserta(ranchexp(NEXTEXP)), asserta(ranchinglvl(NEXTLVL)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp ranching'),!.
 addexpranch(X):- ranchexp(EXP), NEXTEXP is EXP+X, ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(ranchexp(_)), asserta(ranchexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp ranching'),!.
 addexpranch(X):- ranchexp(EXP), ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(ranchexp(_)), retractall(ranchinglvl(_)), asserta(ranchexp(NEXTEXP)), asserta(ranchinglvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp ranching'),!.
 
