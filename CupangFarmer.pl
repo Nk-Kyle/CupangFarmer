@@ -275,14 +275,14 @@ writejob:-	job(X), X=:=1, write('Job        : Farmer'),!.
 writejob:-	job(X), X=:=2, write('Job        : Fishermen'),!.
 writejob:-	job(X), X=:=3, write('Job        : Rancher'),!.
 
-tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update, updatePlant(6), !.
-tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update, updatePlant(6),!.
+tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update, updatePlant(X), !.
+tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update, updatePlant(X),!.
 
 addTime(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),addfatigue(X),update, updatePlant(X), !.
 addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),update, updatePlant(X),!.
 
 addGold(X) :- uang(Gold), Nextgold is Gold + X, retractall(uang(Gold)), asserta(uang(Nextgold)), !.
-minGold(X) :- uang(Gold), Nextgold is Gold - X, retractall(uang(Gold)), asserta(uang(Nextgold)), !.
+minGold(X) :- uang(Gold), X=<Gold, Nextgold is Gold - X, retractall(uang(Gold)), asserta(uang(Nextgold)), !.
 
 addExp(_) :- lvlplayer(L), L =:= 3, write('Level player sudah maksimal.'), !.
 addExp(X) :- exp(E), Nexp is E + X, lvlplayer(L), Nextl is 100+(100*L), Nexp < Nextl, retractall(exp(_E)), asserta(exp(Nexp)), nl, write('Anda mendapat '), write(X), write(' Exp player!'),!.
@@ -352,7 +352,6 @@ printmap(Y,X):- loc(Y,X,A), A==m, write('M'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- loc(Y,X,A), A==q, write('Q'), NextX is X+1, printmap(Y,NextX),!.
 printmap(Y,X):- findPlant(Y,X), isPlant(B), B=1, write('='), NextX is X+1, printmap(Y, NextX), !.
 printmap(Y,X):- findPlant(Y,X), isPlant(B), B=2, write('*'), NextX is X+1, printmap(Y, NextX), !.
-printmap(Y,X):- findPlant(Y,X), isPlant(B), B=3, write('x'), NextX is X+1, printmap(Y, NextX), !.
 printmap(Y,X):- findPlant(Y,X), isPlant(B), B=0, loc(Y,X,A), write(A), NextX is X+1, printmap(Y, NextX), !.
 
 w:-playerpos(Y,X),NextY is Y-1, NextY>0, \+ (loc(NextY,X,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
@@ -426,10 +425,10 @@ buymenu :-
 buyAlt(X,Y) :- X > 4, buyRanch(X,Y), !.
 buyAlt(X,Y) :- buy(X,Y), !.
 
-buy(Code, Num) :- uang(X), Code=:=1, X>=5, minGold(5), addItemQnt(carrot, Num), write('Membeli '), write(Num), write(' carrot!'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=2, X>=10, minGold(10), addItemQnt(corn, Num), write('Membeli '), write(Num), write(' corn!'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=3, X>=15, minGold(15), addItemQnt(turnip, Num), write('Membeli '), write(Num), write(' turnip!'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=4, X>=20, minGold(20), addItemQnt(cabbage, Num), write('Membeli '), write(Num), write(' cabbage!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=1, X>=5, Money=5*Num, minGold(Money), addItemQnt(carrot, Num), write('Membeli '), write(Num), write(' carrot!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=2, X>=10, Money=10*Num, minGold(Money), addItemQnt(corn, Num), write('Membeli '), write(Num), write(' corn!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=3, X>=15, Money=15*Num, minGold(Money), addItemQnt(turnip, Num), write('Membeli '), write(Num), write(' turnip!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=4, X>=20, Money=20*Num, minGold(Money), addItemQnt(cabbage, Num), write('Membeli '), write(Num), write(' cabbage!'), nl, !.
 
 % buyRanch(Code, Num) :- uang(X), Code=:=5, X>=50, minGold(50), write('Membeli '), write(Num), write(' Chicken Old!'), nl, !.
 % buyRanch(Code, Num) :- uang(X), Code=:=6, X>=200, minGold(200), write('Membeli '), write(Num), write(' Babi Old!'), nl, !.
@@ -690,48 +689,49 @@ findPlant([],_,_) :- 	retractall(isPlant(_)),
 						asserta(plantType(none)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,_]),
 						M==A, N==B, O>=1,
-						retractall(isPlant(_)),
+						retractall(isPlant(_)), 
 						asserta(isPlant(1)),
-						retractall(plantType(_)),
-						asserta(plantType(growing)).
+						retractall(plantType(_)), 
+						asserta(plantType(growing)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,Type]),
-						M==A, N==B, O=:=0,
-						retractall(isPlant(_)),
+						M==A, N==B, O<(1), O>(-24),
+						retractall(isPlant(_)), 
 						asserta(isPlant(2)),
-						retractall(plantType(_)),
-						asserta(plantType(Type)).
+						retractall(plantType(_)), 
+						asserta(plantType(Type)),!.
 findPlant([H|_],A,B) :-	elePlant(H,M,[N,O,_]),
-						M==A, N==B, O=:=(-1),
-						retractall(isPlant(_)),
-						asserta(isPlant(3)),
-						retractall(plantType(_)),
-						asserta(plantType(wither)).
+						M==A, N==B, O=<(-25),
+						retractall(isPlant(_)), 
+						asserta(isPlant(0)),
+						retractall(plantType(_)), 
+						asserta(plantType(wither)),
+						delPlant(A,B),!.
 findPlant([H|T],A,B) :-	elePlant(H,M,[N,_,_]),
 						(M\==A; N\==B),
 						findPlant(T,A,B).
 
-/* KURANGI WAKTUNYA SEMUA -1 */
+/* KURANGI WAKTUNYA SEMUA -W */
 updatePlant(W) :-	liPlant(X),
 					updatePlant(X,[],W).
 updatePlant([],Up,_) :- retractall(liPlant(_)),
 						assertz(liPlant(Up)), !.
 updatePlant([H|T],Up,W) :-	elePlant(H,_,[_,O,_]),
-							O=:=(-2), updatePlant(T,Up,W).
+							O=<(-25), updatePlant(T,Up,W).
 updatePlant([H|T],Up,W) :-	elePlant(H,M,[N,O,Type]),
 							Onew is O-W,
-							O=\=(-2), updatePlant(T,[[M,N,Onew,Type]|Up],W).
+							O>(-25), updatePlant(T,[[M,N,Onew,Type]|Up],W).
 
 elePlant([H|T],H,T).
 
 /* HARVEST PLANT */
 delPlant(A,B) :-	liPlant(X),
 					delPlant(X,A,B,[[]]).
-delPlant([],_,_,Del) :- write('done'),
-						retractall(liPlant(_)),
-						assertz(liPlant(Del)), !.
-delPlant([H|T],A,B,Del) :-	elePlant(H,M,[N,O,Type]),
+delPlant([],_,_,Del) :- retractall(liPlant(_)),
+						assertz(liPlant(Del)), 
+						retractall(plantType(_)),
+						asserta(plantType(none)), !.
+delPlant([H|T],A,B,Del) :-	elePlant(H,M,[N,_,_]),
 							M==A, N==B,
-							write(O), write(Type),
 							delPlant(T,A,B,Del).
 delPlant([H|T],A,B,Del) :-	elePlant(H,M,[N,_,_]),
 							(M\==A; N\==B),
@@ -744,11 +744,11 @@ harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==corn, random(1,5,Npl
 harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==turnip, random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), addexpfarm(8), write('Selamat! Anda memanen '), write(' turnip'), nl, !.
 harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==cabbage, random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), addexpfarm(16), write('Selamat! Anda memanen '), write(' cabbage'), nl, !.
 
-addexpfarm(_):- farmlvl(LVL), LVL=:=3, write('Level farming sudah maximal, Anda tidak lagi mendapat Exp farming'),!.
-addexpfarm(X):- job(1),farmexp(EXP), NEXTEXP is EXP+(2*X), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(farmexp(_)), asserta(farmexp(NEXTEXP)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp farming'),!.
-addexpfarm(X):- job(1),farmexp(EXP), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+(2*X)-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(farmexp(_)), retractall(farmlvl(_)), asserta(farmexp(NEXTEXP)), asserta(farmlvl(NEXTLVL)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp farming'),!.
-addexpfarm(X):- farmexp(EXP), NEXTEXP is EXP+X, farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(farmexp(_)), asserta(farmexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp farming'),!.
-addexpfarm(X):- farmexp(EXP), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(farmexp(_)), retractall(farmlvl(_)), asserta(farmexp(NEXTEXP)), asserta(farmlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp farming'),!.
+addexpfarm(_):- farmlvl(LVL), LVL=:=3, write('Level farming sudah maximal, Anda tidak lagi mendapat Exp farming'), nl, !.
+addexpfarm(X):- job(1),farmexp(EXP), NEXTEXP is EXP+(2*X), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(farmexp(_)), asserta(farmexp(NEXTEXP)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp farming'), nl, !.
+addexpfarm(X):- job(1),farmexp(EXP), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+(2*X)-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(farmexp(_)), retractall(farmlvl(_)), asserta(farmexp(NEXTEXP)), asserta(farmlvl(NEXTLVL)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp farming'),nl,!.
+addexpfarm(X):- farmexp(EXP), NEXTEXP is EXP+X, farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(farmexp(_)), asserta(farmexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp farming'),nl,!.
+addexpfarm(X):- farmexp(EXP), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(farmexp(_)), retractall(farmlvl(_)), asserta(farmexp(NEXTEXP)), asserta(farmlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp farming'),nl,!.
 
 /*===================RANCHER============================*/
 /*chickenlist([-1,0,1]).
