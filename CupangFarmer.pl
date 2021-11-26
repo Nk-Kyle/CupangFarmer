@@ -196,8 +196,8 @@ loc(11,10,#).
 loc(11,11,#).
 
 startGame :-
-	asserta(uang(100)),
-	asserta(exp(99)),
+	asserta(uang(200)),
+	asserta(exp(0)),
 	asserta(lvlplayer(0)),
 	asserta(farmexp(0)),
 	asserta(fishlvl(0)),
@@ -445,14 +445,14 @@ buymenu :-
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
 	write('Masukkan nomor item yang ingin dibeli : '), read(X),
 	(((X>=1, X=<6), Y=1); ((X>=7), write('Masukkan jumlah item yang ingin dibeli : '), read(Y))),
-	buy(X,Y),, !.
+	buy(X,Y), !.
 
-buy(Code, Num) :- uang(X), Code=:=1, X>=25, Money=25, minGold(Money), retractall(shovel(_)), asserta(shovel(1)), write('Membeli Shovel Level 1'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=2, X>=500, Money=500, minGold(Money), retractall(shovel(_)), asserta(shovel(2)), write('Membeli Shovel Level 2'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=3, X>=25, Money=25, minGold(Money), retractall(fishrod(_)), asserta(fishrod(1)), write('Membeli Fishing Rod Level 1'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=4, X>=750, Money=750, minGold(Money), retractall(fishrod(_)), asserta(fishrod(2)), write('Membeli Fishing Rod Level 2'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=5, X>=50, Money=50, minGold(Money), retractall(ranchlvl(_)), asserta(ranchlvl(1)), write('Membeli Rancher Level 1'), nl, !.
-buy(Code, Num) :- uang(X), Code=:=6, X>=500, Money=500, minGold(Money), retractall(ranchlvl(_)), asserta(ranchlvl(2)), write('Membeli Rancher Level 2'), nl, !.
+buy(Code, _Num) :- uang(X), Code=:=1, X>=25, Money=25, minGold(Money), retractall(shovel(_)), asserta(shovel(1)), write('Membeli Shovel Level 1'), nl, !.
+buy(Code, _Num) :- uang(X), Code=:=2, X>=500, Money=500, minGold(Money), retractall(shovel(_)), asserta(shovel(2)), write('Membeli Shovel Level 2'), nl, !.
+buy(Code, _Num) :- uang(X), Code=:=3, X>=25, Money=25, minGold(Money), retractall(fishrod(_)), asserta(fishrod(1)), write('Membeli Fishing Rod Level 1'), nl, !.
+buy(Code, _Num) :- uang(X), Code=:=4, X>=750, Money=750, minGold(Money), retractall(fishrod(_)), asserta(fishrod(2)), write('Membeli Fishing Rod Level 2'), nl, !.
+buy(Code, _Num) :- uang(X), Code=:=5, X>=50, Money=50, minGold(Money), retractall(ranchlvl(_)), asserta(ranchlvl(1)), write('Membeli Rancher Level 1'), nl, !.
+buy(Code, _Num) :- uang(X), Code=:=6, X>=500, Money=500, minGold(Money), retractall(ranchlvl(_)), asserta(ranchlvl(2)), write('Membeli Rancher Level 2'), nl, !.
 
 buy(Code, Num) :- uang(X), Code=:=7, X>=5, Money=5*Num, minGold(Money), addItemQnt(carrot, Num), write('Membeli '), write(Num), write(' carrot!'), nl, !.
 buy(Code, Num) :- uang(X), Code=:=8, X>=10, Money=10*Num, minGold(Money), addItemQnt(corn, Num), write('Membeli '), write(Num), write(' corn!'), nl, !.
@@ -460,27 +460,32 @@ buy(Code, Num) :- uang(X), Code=:=9, X>=15, Money=15*Num, minGold(Money), addIte
 buy(Code, Num) :- uang(X), Code=:=10, X>=20, Money=20*Num, minGold(Money), addItemQnt(cabbage, Num), write('Membeli '), write(Num), write(' cabbage!'), nl, !.
 
 buy(Code, _Num) :- uang(_X), Code=:=11, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num) :- uang(X), Code=:=11, ranchlvl(P), P > 0, X>=50, W is Num*50, minGold(W), addchicken(Num, _Z), write('Membeli '), write(Num), write(' ayam!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=11, ranchlvl(P), P > 0, W is Num*50, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, Num) :- uang(X), Code=:=11, ranchlvl(P), P > 0, W is Num*50, X >= W, minGold(W), addchicken(Num, _Z), write('Membeli '), write(Num), write(' ayam!'), nl, !.
 buy(Code, _Num) :- uang(_X), Code=:=12, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num) :- uang(X), Code=:=12, ranchlvl(P), P > 0, X>=200, W is Num*200 ,minGold(W), addpig(Num, _Z), write('Membeli '), write(Num), write(' babi!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=12, ranchlvl(P), P > 0, W is Num*200, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, Num) :- uang(X), Code=:=12, ranchlvl(P), P > 0, W is Num*200, X >= W, minGold(W), addpig(Num, _Z), write('Membeli '), write(Num), write(' babi!'), nl, !.
 buy(Code, _Num) :- uang(_X), Code=:=13, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num) :- uang(X), Code=:=13, ranchlvl(P), P > 1, X>=150, W is Num*150 ,minGold(W), addcow(Num, _Z), write('Membeli '), write(Num), write(' sapi!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*150, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, Num) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*150, X >= W, minGold(W), addcow(Num, _Z), write('Membeli '), write(Num), write(' sapi!'), nl, !.
 buy(Code, _Num) :- uang(_X), Code=:=14, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num) :- uang(X), Code=:=14, ranchlvl(P), P > 1, X>=100, W is Num*100 ,minGold(W), addsheep(Num, _Z), write('Membeli '), write(Num), write(' domba!'), nl, !.
+buy(Code, Num) :- uang(X), Code=:=14, ranchlvl(P), P > 1, W is Num*100, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, Num) :- uang(X), Code=:=14, ranchlvl(P), P > 1, W is Num*100, X >= W, minGold(W), addsheep(Num, _Z), write('Membeli '), write(Num), write(' domba!'), nl, !.
 
-addchicken(0,X) :- chickenlist(X),!.
-addchicken(Num, Z) :- append(X,[2],Z), addchicken(Nextnum, X), Num is Nextnum + 1, retractall(chickenlist(_W)), asserta(chickenlist(Z)).
-addpig(0,X) :- piglist(X),!.
-addpig(Num, Z) :- append(X,[2],Z), addpig(Nextnum, X), Num is Nextnum + 1, retractall(piglist(_W)), asserta(piglist(Z)).
-addcow(0,X) :- cowlist(X),!.
-addcow(Num, Z) :- append(X,[2],Z), addcow(Nextnum, X), Num is Nextnum + 1, retractall(cowlist(_W)), asserta(cowlist(Z)).
-addsheep(0,X) :- sheeplist(X),!.
-addsheep(Num, Z) :- append(X,[2],Z), addsheep(Nextnum, X), Num is Nextnum + 1, retractall(sheeplist(_W)), asserta(sheeplist(Z)).
+addchicken(0, X) :- retractall(chickenlist(_)), asserta(chickenlist(X)), !.
+addchicken(Num, X) :- day(Y), append(X,[Y],Z), Nextnum is Num - 1, addchicken(Nextnum, Z), !.
+addpig(0, X) :- retractall(piglist(_)), asserta(piglist(X)), !.
+addpig(Num, X) :- day(Y), append(X,[Y],Z), Nextnum is Num - 1, addpig(Nextnum, Z), !.
+addcow(0, X) :- retractall(cowlist(_)), asserta(cowlist(X)), !.
+addcow(Num, X) :- day(Y), append(X,[Y],Z), Nextnum is Num - 1, addcow(Nextnum, Z), !.
+addsheep(0, X) :- retractall(sheeplist(_)), asserta(sheeplist(X)), !.
+addsheep(Num, X) :- day(Y), append(X,[Y],Z), Nextnum is Num - 1, addsheep(Nextnum, Z), !.
+
 
 sellmenu :- write('Mau menjual hewan ternak ? (ya/tidak) : '), read(Ans), sellpilihan(Ans).
 
 /* Jual hewan */
-sellpilihan(Ans) :- Ans==ya, write('Masukkan nama item yang hendak dijual : '), read(X),
+sellpilihan(Ans) :- Ans==ya, write('Masukkan nama hewan yang hendak dijual : '), read(X),
 					write('Masukkan jumlah item yang hendak dijual : '), read(Y), sellternak(X,Y,_Num), !.
 /* Jual yang di Inventory */
 sellpilihan(Ans) :- Ans==tidak, displayInv, write('Masukkan nama item yang hendak dijual : '), read(X),
