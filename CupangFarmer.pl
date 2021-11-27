@@ -328,6 +328,7 @@ update(_):- day(D), D =:= 366, failgame,!.
 update(_):- uang(G), G>=20000, sucessgame,!.
 update(_):- alchemist(X,_),X=:=0, summonAlchemist.
 update(X):- alchemist(1,B), NEXTB is B - X, retractall(alchemist(_,_)), asserta(alchemist(1,NEXTB)), NEXTB =< 0 , write('Alchemist sudah pergi meninggalkan market'), retractall(alchemist(_,_)),asserta(alchemist(0,0)).
+update(_):- gachahewan, !.
 update(_):- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur sehingga ia tertidur selama 12 jam'),nl,showfatigue,tidur(12),!.
 update(_):- !.
 
@@ -944,6 +945,17 @@ cow :- cowlist(X), nummilk(X,Y), Y =:= 0, write('Your cows has not produced milk
 cow :- cowlist(X), nummilk(X,Y), write('Your cows produce '), write(Y), write(' bottles of milk.'), nl, write('You got '), write(Y), write(' bottles of milk!'), day(D), cowlist(C), cowchange(C,D,Z), retractall(cowlist(X)), asserta(cowlist(Z)), addtimeambilmilk, Nexp is Y * 5, addexpranch(Nexp), addItemQnt(susu, Y).
 sheep :- sheeplist(X), numwool(X,Y), Y =:= 0, write('Your sheeps has not produced wool yet.'), nl, write('Please check again later.'), !.
 sheep :- sheeplist(X), numwool(X,Y), write('Your sheeps produce '), write(Y), write(' wools.'), nl, write('You got '), write(Y), write(' wools!'), day(D), sheeplist(C), sheepchange(C,D,Z), retractall(sheeplist(X)), asserta(sheeplist(Z)), addtimeambilwool, Nexp is Y * 15, addexpranch(Nexp), addItemQnt(wool, Y).
+
+gachahewan :- randomize, random(1,100,X), X < 11, write('Anda bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, chickenlist(Z), addchicken(1,Z), nl, write('Ayam berhasil ditambahkan ke peternakan.'), ! .
+gachahewan :- randomize, random(1,100,X), X < 11, write('Anda bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
+gachahewan :- randomize, random(1,100,X), X < 21, write('Anda bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, piglist(Z), addpig(1,Z), nl, write('Babi berhasil ditambahkan ke peternakan.'), ! .
+gachahewan :- randomize, random(1,100,X), X < 21, write('Anda bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
+gachahewan :- randomize, random(1,100,X), X < 31, write('Anda bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, cowlist(Z), addcow(1,Z), nl, write('Sapi berhasil ditambahkan ke peternakan.'), ! .
+gachahewan :- randomize, random(1,100,X), X < 31, write('Anda bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
+gachahewan :- randomize, random(1,100,X), X < 41, write('Anda bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, sheeplist(Z), addsheep(1,Z), nl, write('Domba berhasil ditambahkan ke peternakan.'), ! .
+gachahewan :- randomize, random(1,100,X), X < 41, write('Anda bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
+gachahewan :- randomize, random(1,100,X), X > 41, !.
+
 
 /*===========================================================ALCHEMIST=================================================================*/
 summonAlchemist:- randomize,random(1,100, X), X =:= 1, retractall(alchemist(_,_)), asserta(alchemist(1,72)),write('Alchemist sedang berada di market selama 72 jam kedepan. ketik potion pada menu di market untuk membeli barangnya!'),!.
