@@ -1181,11 +1181,12 @@ displayInvNext([],_) :- !.
 eleitem([Item|Qnty],Item,Qnty).
 
 /*======================FARMER============================*/
-plant :- shovel(X), X=:=0, write('Anda harus memiliki shovel untuk menggali tanah!'), !.
-plant :- playerpos(Y,X), loc(Y,X,A), A==m, write('Anda tidak dapat menanam pada area M'), nl, !.
-plant :- playerpos(Y,X), loc(Y,X,A), A==h, write('Anda tidak dapat menanam pada area H'), nl, !.
-plant :- playerpos(Y,X), loc(Y,X,A), A==r, write('Anda tidak dapat menanam pada area R'), nl, !.
-plant :- playerpos(Y,X), loc(Y,X,A), A==q, write('Anda tidak dapat menanam pada area Q'), nl, !.
+plant :- shovel(X), X=:=0, write('Claire harus memiliki shovel untuk menggali tanah!'), nl, !.
+plant :- season(S), S=:=winter, write('Tanaman sulit tumbuh pada musim dingin!'), nl, !.
+plant :- playerpos(Y,X), loc(Y,X,A), A==m, write('Claire tidak dapat menanam pada area M'), nl, !.
+plant :- playerpos(Y,X), loc(Y,X,A), A==h, write('Claire tidak dapat menanam pada area H'), nl, !.
+plant :- playerpos(Y,X), loc(Y,X,A), A==r, write('Claire tidak dapat menanam pada area R'), nl, !.
+plant :- playerpos(Y,X), loc(Y,X,A), A==q, write('Claire tidak dapat menanam pada area Q'), nl, !.
 plant :- season(S), S==spring, showplanting, write('Mari kita bercocok tanam!'), nl, write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
 plant :- season(S), S==summer, showplanting, write('Mari kita bercocok tanam!'), nl, write('Masukkan pilihan seed yang ditanam (2:Corn, 3:Turnip) : '), read(X), planting(X), !.
 plant :- season(S), S==fall, showplanting, write('Mari kita bercocok tanam!'), nl, write('Masukkan pilihan seed yang ditanam (2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
