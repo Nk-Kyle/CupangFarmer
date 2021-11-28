@@ -715,7 +715,7 @@ market:-	write('          ______'),nl,
 			write(' /|      |      |'),nl,
 			write(' / \\     |______|'),nl,
 			/*emang rada zig-zag ga usah dibikin lurus*/
-			write('Saya ingin (buy/sell/exit): '),read(X),nl, marketchoice(X),!.
+			write('Saya ingin (buy/sell/exit/potion): '),read(X),nl, marketchoice(X),!.
 
 marketchoice(buy):-  !, write('Membeli barang'), nl, season(S), buymenu(S), market.
 marketchoice(sell):- !,write('Menjual barang'),nl, sellmenu, market.
@@ -1352,21 +1352,29 @@ ranch(Choice) :- Choice == 4, sheep, !.
 numegg([],0) :- !.
 numegg([Head|Tail], Count) :- day(X), N is X-Head, numegg(Tail, Ncount), Count is Ncount + N.
 nummilk([],0) :- !.
-nummilk([Head|Tail], Count) :- day(X), N is X - Head, N >= 2, nummilk(Tail, Ncount), Count is Ncount + 1.
-nummilk([Head|Tail], Count) :- day(X), N is X - Head, N < 2, nummilk(Tail, Count).
+nummilk([Head|Tail], Count) :- ranchinglvl(Lvl), Lvl =< 1 ,day(X), N is X - Head, N >= 2, nummilk(Tail, Ncount), Count is Ncount + 1.
+nummilk([Head|Tail], Count) :- ranchinglvl(Lvl), Lvl =< 1 ,day(X), N is X - Head, N < 2, nummilk(Tail, Count).
+nummilk([Head|Tail], Count) :- ranchinglvl(Lvl), Lvl > 1 ,day(X), N is X - Head, N >= 1, nummilk(Tail, Ncount), Count is Ncount + 1.
+nummilk([Head|Tail], Count) :- ranchinglvl(Lvl), Lvl > 1 ,day(X), N is X - Head, N < 1, nummilk(Tail, Count).
 numwool([],0) :- !.
-numwool([Head|Tail], Count) :- day(X), N is X - Head, N >= 7, numwool(Tail, Ncount), Count is Ncount + 1.
-numwool([Head|Tail], Count) :- day(X), N is X - Head, N < 7, numwool(Tail, Count).
+numwool([Head|Tail], Count) :- ranchinglvl(Lvl), Lvl =< 1 , day(X), N is X - Head, N >= 7, numwool(Tail, Ncount), Count is Ncount + 1.
+numwool([Head|Tail], Count) :- ranchinglvl(Lvl), Lvl =< 1 , day(X), N is X - Head, N < 7, numwool(Tail, Count).
+numwool([Head|Tail], Count) :- ranchinglvl(Lvl), Lvl > 1 , day(X), N is X - Head, N >= 4, numwool(Tail, Ncount), Count is Ncount + 1.
+numwool([Head|Tail], Count) :- ranchinglvl(Lvl), Lvl > 1 , day(X), N is X - Head, N < 4, numwool(Tail, Count).
 
 chickenchange([], _X, []) :- !.
 chickenchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A >= 1, chickenchange(Tail, X, Ttail), Thead is X.
 chickenchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A < 1, chickenchange(Tail, X, Ttail), Thead is Head.
 cowchange([], _X, []) :- !.
-cowchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A >= 2, cowchange(Tail, X, Ttail), Thead is X.
-cowchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A < 2, cowchange(Tail, X, Ttail), Thead is Head.
+cowchange([Head|Tail], X, [Thead|Ttail]) :- ranchinglvl(Lvl), Lvl =< 1 , A is X - Head, A >= 2, cowchange(Tail, X, Ttail), Thead is X.
+cowchange([Head|Tail], X, [Thead|Ttail]) :- ranchinglvl(Lvl), Lvl =< 1 , A is X - Head, A < 2, cowchange(Tail, X, Ttail), Thead is Head.
+cowchange([Head|Tail], X, [Thead|Ttail]) :- ranchinglvl(Lvl), Lvl > 1 , A is X - Head, A >= 1, cowchange(Tail, X, Ttail), Thead is X.
+cowchange([Head|Tail], X, [Thead|Ttail]) :- ranchinglvl(Lvl), Lvl > 1 , A is X - Head, A < 1, cowchange(Tail, X, Ttail), Thead is Head.
 sheepchange([], _X, []) :- !.
-sheepchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A >= 7, sheepchange(Tail, X, Ttail), Thead is X.
-sheepchange([Head|Tail], X, [Thead|Ttail]) :- A is X - Head, A < 7, sheepchange(Tail, X, Ttail), Thead is Head.
+sheepchange([Head|Tail], X, [Thead|Ttail]) :- ranchinglvl(Lvl), Lvl =< 1 , A is X - Head, A >= 7, sheepchange(Tail, X, Ttail), Thead is X.
+sheepchange([Head|Tail], X, [Thead|Ttail]) :- ranchinglvl(Lvl), Lvl =< 1 , A is X - Head, A < 7, sheepchange(Tail, X, Ttail), Thead is Head.
+sheepchange([Head|Tail], X, [Thead|Ttail]) :- ranchinglvl(Lvl), Lvl > 1 , A is X - Head, A >= 4, sheepchange(Tail, X, Ttail), Thead is X.
+sheepchange([Head|Tail], X, [Thead|Ttail]) :- ranchinglvl(Lvl), Lvl > 1 , A is X - Head, A < 4, sheepchange(Tail, X, Ttail), Thead is Head.
 
 addtimeambilegg :- ranchinglvl(X), X =:= 0, addTime(1), !.
 addtimeambilmilk :- ranchinglvl(X), Tnext is 4 - X, addTime(Tnext), !.
@@ -1384,7 +1392,7 @@ chicken :- chickenlist(X), numegg(X,Y), write('Ayam Claire menghasilkan '), writ
 cow :- cowlist(X), numcow(X,Y), Y =:= 0, write('Claire belum punya sapi.'), nl, write('Silakan beli di market.'), !.
 cow :- cowlist(X), nummilk(X,Y), Y =:= 0, write('Sapi Claire belum menghasilkan susu.'), nl, write('Silakan cek lagi di lain waktu.'), !.
 cow :- cowlist(X), nummilk(X,Y), write('Sapi Claire menghasilkan '), write(Y), write(' botol susu.'), addItemQnt(susu, Y), nl, write('Claire mendapat '), write(Y), write(' botol susu'), day(D), cowlist(C), cowchange(C,D,Z), retractall(cowlist(X)), asserta(cowlist(Z)), addtimeambilmilk, Nexp is Y * 5, addexpranch(Nexp),!.
-sheep :- sheeplist(X), numsheep(X,Y), Y =:= 0, write('Claire belum punya sapi.'), nl, write('Silakan beli di market.'), !.
+sheep :- sheeplist(X), numsheep(X,Y), Y =:= 0, write('Claire belum punya domba.'), nl, write('Silakan beli di market.'), !.
 sheep :- sheeplist(X), numwool(X,Y), Y =:= 0, write('Domba Claire belum menghasilkan wol.'), nl, write('Silakan cek lagi di lain waktu.'), !.
 sheep :- sheeplist(X), numwool(X,Y), write('Domba Claire menghasilkan '), write(Y), write(' wol.'), addItemQnt(wool, Y), nl, write('Claire mendapat '), write(Y), write(' wol!'), day(D), sheeplist(C), sheepchange(C,D,Z), retractall(sheeplist(X)), asserta(sheeplist(Z)), addtimeambilwool, Nexp is Y * 15, addexpranch(Nexp),!.
 pig :- piglist(X), numpig(X,Y), Y =:= 0, write('Claire belum punya babi.'), nl, write('Silakan beli di market.'), !.
@@ -1418,13 +1426,13 @@ gachahewandomba(_Y) :- write('Masukan Claire salah dan domba tersebut telah perg
 summonAlchemist:- randomize,random(1,100, X), X =:= 1, retractall(alchemist(_,_)), asserta(alchemist(1,72)),write('Alchemist sedang berada di market selama 72 jam kedepan. ketik potion pada menu di market untuk membeli barangnya!'), nl, !.
 
 buypotion :-	alchemist(0,_), write('Alchemist sedang tidak berada di market, Anda tidak dapat membeli potion'),nl,!.
-buypotion :- 	write('1. Farming Potion  (500) --> memaksimalkan lvl farming'),nl,
-				write('2. Fishing Potion  (500) --> memaksimalkan lvl fishing'),nl,
-				write('3. Ranching Potion (500) --> memaksimalkan lvl ranching'),nl,
+buypotion :- 	write('1. Farming Potion  (2000) --> memaksimalkan lvl farming'),nl,
+				write('2. Fishing Potion  (2000) --> memaksimalkan lvl fishing'),nl,
+				write('3. Ranching Potion (2000) --> memaksimalkan lvl ranching'),nl,
 				write('4. Tidak jadi beli'),nl,
 				write('Pilihan : '), read(X), pilihanpotion(X),!.
 
-pilihanpotion(1):- minGold(5), retractall(farmlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
-pilihanpotion(2):- minGold(5),  retractall(fishlvl(_)),asserta(fishlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
-pilihanpotion(3):- minGold(5),  retractall(ranchlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
+pilihanpotion(1):- minGold(2000), retractall(farmlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
+pilihanpotion(2):- minGold(2000),  retractall(fishlvl(_)),asserta(fishlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
+pilihanpotion(3):- minGold(2000),  retractall(ranchlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
 pilihanpotion(4):- !.
