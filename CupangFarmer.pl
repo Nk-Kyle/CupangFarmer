@@ -589,7 +589,40 @@ update(_):- day(D), D =:= 274, retractall(season(_)), asserta(season(winter)).
 update(_):- alchemist(X,_),X=:=0, summonAlchemist, communicate.
 update(X):- alchemist(1,B), NEXTB is B - X, retractall(alchemist(_,_)), asserta(alchemist(1,NEXTB)), NEXTB =< 0 , write('Alchemist sudah pergi meninggalkan market'), retractall(alchemist(_,_)),asserta(alchemist(0,0)).
 update(_):-  \+ (season(winter)) ,gachahewan.
+update(_):- season(S), ubahcuaca(S).
 update(_):- !.
+
+ubahcuaca(S) :-
+	S == spring, randomize, random(1,1001,R), cuacaspring(R),!.
+ubahcuaca(S) :-
+	S == summer, randomize, random(1,1001,R), cuacasummer(R),!.
+ubahcuaca(S) :-
+	S == autumn, randomize, random(1,1001,R), cuacaautumn(R),!.
+ubahcuaca(S) :-
+	S == winter, randomize, random(1,1001,R), cuacawinter(R),!.
+
+cuacaspring(R) :-
+	R =< 700, retractall(cuaca(_)), assertz(cuaca(sunny)),!.
+cuacaspring(R) :-
+	R > 700, retractall(cuaca(_)), assertz(cuaca(raining)),!.
+
+cuacasummer(R) :-
+	R =< 850, retractall(cuaca(_)), assertz(cuaca(sunny)),!.
+cuacasummer(R) :-
+	R > 850, retractall(cuaca(_)), assertz(cuaca(raining)),!.
+
+cuacaautumn(R) :-
+	R =< 400, retractall(cuaca(_)), assertz(cuaca(sunny)),!.
+cuacaautumn(R) :-
+	R > 400, retractall(cuaca(_)), assertz(cuaca(raining)),!.
+
+cuacawinter(R) :-
+	R =< 200, retractall(cuaca(_)), assertz(cuaca(raining)),!.
+cuacawinter(R) :-
+	R > 200, R =< 800, retractall(cuaca(_)), assertz(cuaca(snowing)),!.
+cuacawinter(R) :-
+	R > 800, retractall(cuaca(_)), assertz(cuaca(sunny)),!.
+
 
 showfatigue:- 	write('    zz'),nl,
 				write('  zz'),nl,
