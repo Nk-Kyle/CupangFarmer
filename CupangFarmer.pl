@@ -383,11 +383,18 @@ printmap(Y,X):- findPlant(Y,X), isPlant(B), B=1, write('='), NextX is X+1, print
 printmap(Y,X):- findPlant(Y,X), isPlant(B), B=2, write('*'), NextX is X+1, printmap(Y, NextX), !.
 printmap(Y,X):- findPlant(Y,X), isPlant(B), B=0, loc(Y,X,A), write(A), NextX is X+1, printmap(Y, NextX), !.
 
-w:-playerpos(Y,X),NextY is Y-1, NextY>0, \+ (loc(NextY,X,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
-a:-playerpos(Y,X),NextX is X-1, NextX>0, \+ (loc(Y,NextX,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
-s:-playerpos(Y,X),NextY is Y+1, NextY<11, \+ (loc(NextY,X,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
-d:-playerpos(Y,X),NextX is X+1, NextX<11, \+ (loc(Y,NextX,A),A=='o'), retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
-
+w:-playerpos(Y,X),NextY is Y-1, NextY>0, loc(NextY,X,A),A\=='o', retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
+w:-playerpos(Y,X),NextY is Y-1, NextY>0, loc(NextY,X,A),A=='o',write('Anda trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
+w:-write('Anda terheran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
+a:-playerpos(Y,X),NextX is X-1, NextX>0, loc(Y,NextX,A),A\=='o', retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
+a:-playerpos(Y,X),NextX is X-1, NextX>0, loc(Y,NextX,A),A=='o', write('Anda trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
+a:-write('Anda terheran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
+s:-playerpos(Y,X),NextY is Y+1, NextY<11, loc(NextY,X,A),A\=='o', retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
+s:-playerpos(Y,X),NextY is Y+1, NextY<11, loc(NextY,X,A),A=='o', write('Anda trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
+s:-write('Anda terheran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
+d:-playerpos(Y,X),NextX is X+1, NextX<11, loc(Y,NextX,A),A\=='o', retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
+d:-playerpos(Y,X),NextX is X+1, NextX<11, loc(Y,NextX,A),A=='o', write('Anda trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
+d:-write('Anda terheran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
 /*==================================================FISHERMAN========================================================================================*/
 fish:- fishrod(X), X=:=0, write('Anda harus memiliki fishing rod untuk memancing!'),!.
 fish:- playerpos(Y,X), NextY is Y+1, loc(NextY,X,A), A=='o',showfishing,randomfish,addtimefishing,!.
