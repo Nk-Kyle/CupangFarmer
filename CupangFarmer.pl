@@ -32,7 +32,7 @@
 :- dynamic(cuaca/1).
 
 diary([]).
-chickenlist([-1,-1]).
+chickenlist([]).
 piglist([]).
 cowlist([]).
 sheeplist([]).
@@ -220,6 +220,7 @@ startGame :-
 	asserta(farmlvl(0)),
 	asserta(alchemist(0,0)),
 	asserta(season(spring)),
+	asserta(cuaca(sunny)),
 	promptStart,start.
 
 promptStart :-
@@ -558,7 +559,7 @@ addExp(_) :- lvlplayer(L), L =:= 3, write('Level player sudah maksimal.'), !.
 addExp(X) :- exp(E), Nexp is E + X, lvlplayer(L), Nextl is 100+(100*L), Nexp < Nextl, retractall(exp(_E)), asserta(exp(Nexp)), nl, write('Anda mendapat '), write(X), write(' Exp player!'),!.
 addExp(X) :- exp(E), lvlplayer(L), Nextl is 100+(100*L), Nexp is E + X - Nextl, Nextlvl is L + 1, retractall(exp(_E)), asserta(exp(Nexp)), retractall(lvlplayer(_L)), asserta(lvlplayer(Nextlvl)), write('Anda mendapat '), write(X), write(' Exp player dan mendapat kenaikan level player!'), C is 25*Nextlvl, addexpfish(C), addexpranch(C),!.
 
-time:- day(D), time(T), write('Day '),write(D),write(' '),write(T),write(':00'),!.
+time:- day(D), time(T),season(S), cuaca(C),write(S),write(' Season '),nl, write('Day '),write(D),write(' '),write(T),write(':00 '),write(C),!.
 
 status:- 	fatigue(F),
 			fishexp(FISHEXP),fishlvl(FISHLVL),
@@ -677,6 +678,7 @@ d:-playerpos(Y,X),NextX is X+1, NextX<11, loc(Y,NextX,A),A\=='o', retractall(pla
 d:-playerpos(Y,X),NextX is X+1, NextX<11, loc(Y,NextX,A),A=='o', write('Claire trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
 d:-write('Claire terheran-heran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
 /*==================================================FISHERMAN========================================================================================*/
+fish:- season(winter), !,write('musim dingin sudah datang, danau sudah membeku. Anda tidak dapat memancing'),fail.
 fish:- fishrod(X), X=:=0, write('Claire harus memiliki fishing rod untuk memancing!'),!.
 fish:- playerpos(Y,X), NextY is Y+1, loc(NextY,X,A), A=='o',showfishing,randomfish,addtimefishing,!.
 fish:- playerpos(Y,X), NextY is Y-1, loc(NextY,X,A), A=='o',showfishing,randomfish,addtimefishing,!.
