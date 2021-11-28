@@ -631,7 +631,7 @@ showfatigue:- 	write('    zz'),nl,
 
 failgame:- write('Pesan dari sistem:\nClaire, tetap semangat ya meskipun kamu gagal dalam permainan ini. Semoga beruntung dalam percobaan selanjutnya!\n'), pulang(ya),deleteall, !.
 successgame:- write('Pesan dari sistem:\nSelamat, Claire! Kamu berhasil menyelesaikan permainan ini! Semoga hari-harimu menyenangkan! Kembali lagi ya!'), pulang(ya),deleteall,!.
-deleteall:- retractall(uang(_)),retractall(exp(_)),retractall(lvlplayer(_)),retractall(farmexp(_)),retractall(fishlvl(_)),retractall(fishexp(_)),retractall(fishrod(_)),retractall(ranchexp(_)),retractall(ranchinglvl(_)),retractall(ranchlvl(_)),retractall(time(_)),retractall(day(_)),retractall(playerpos(_)),retractall(fatigue(_)),retractall(questlvl(_)),retractall(isPlant(_)),retractall(shovel(_)),retractall(invcurrcap(_)),retractall(plantType(_)),retractall(farmlvl(_)),retractall(alchemist(_)),retractall(season(_)),!.
+deleteall:- retractall(uang(_)),retractall(exp(_)),retractall(lvlplayer(_)),retractall(farmexp(_)),retractall(fishlvl(_)),retractall(fishexp(_)),retractall(fishrod(_)),retractall(ranchexp(_)),retractall(ranchinglvl(_)),retractall(ranchlvl(_)),retractall(time(_)),retractall(day(_)),retractall(playerpos(_)),retractall(fatigue(_)),retractall(questlvl(_)),retractall(isPlant(_)),retractall(shovel(_)),retractall(invcurrcap(_)),retractall(plantType(_)),retractall(farmlvl(_)),retractall(alchemist(_)),retractall(season(_)),asserta(cuaca(_)),retractall(job(_)),!.
 
 /*=========================================================QUEST==================================================================================*/
 quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil dan dilihat di Q'),!.
