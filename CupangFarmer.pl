@@ -1150,7 +1150,10 @@ plant :- playerpos(Y,X), loc(Y,X,A), A==m, write('Anda tidak dapat menanam pada 
 plant :- playerpos(Y,X), loc(Y,X,A), A==h, write('Anda tidak dapat menanam pada area H'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==r, write('Anda tidak dapat menanam pada area R'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==q, write('Anda tidak dapat menanam pada area Q'), nl, !.
-plant :- showplanting, write('Mari kita bercocok tanam!'), nl, write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
+plant :- season(S), S==spring, showplanting, write('Mari kita bercocok tanam!'), nl, write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
+plant :- season(S), S==summer, showplanting, write('Mari kita bercocok tanam!'), nl, write('Masukkan pilihan seed yang ditanam (2:Corn, 3:Turnip) : '), read(X), planting(X), !.
+plant :- season(S), S==fall, showplanting, write('Mari kita bercocok tanam!'), nl, write('Masukkan pilihan seed yang ditanam (2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
+plant :- season(S), S==winter, showplanting, write('Mari kita bercocok tanam!'), nl, write('Masukkan pilihan seed yang ditanam (3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
 
 /* Time Planting 6 (shovel 1) */
 planting(Seed) :- 	Seed =:= 1, playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
