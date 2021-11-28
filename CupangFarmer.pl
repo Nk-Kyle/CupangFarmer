@@ -634,23 +634,23 @@ successgame:- write('Pesan dari sistem:\nSelamat, Claire! Kamu berhasil menyeles
 deleteall:- retractall(uang(_)),retractall(exp(_)),retractall(lvlplayer(_)),retractall(farmexp(_)),retractall(fishlvl(_)),retractall(fishexp(_)),retractall(fishrod(_)),retractall(ranchexp(_)),retractall(ranchinglvl(_)),retractall(ranchlvl(_)),retractall(time(_)),retractall(day(_)),retractall(playerpos(_)),retractall(fatigue(_)),retractall(questlvl(_)),retractall(isPlant(_)),retractall(shovel(_)),retractall(invcurrcap(_)),retractall(plantType(_)),retractall(farmlvl(_)),retractall(alchemist(_)),retractall(season(_)),asserta(cuaca(_)),retractall(job(_)),!.
 
 /*=========================================================QUEST==================================================================================*/
-quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil dan dilihat di Q'),!.
-quest:- questlvl(1),write('Quest lvl 1:'),nl,write('Kumpulkan 5 carrot, 5 tuna, dan 5 telur'),fail.
+quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil dan dilihat di Q'), nl,!.
+quest:- questlvl(1),write('Quest lvl 1:'),nl,write('Kumpulkan 5 carrot, 5 tuna, dan 5 telur'), nl,fail.
 quest:- questlvl(1),findQnt(carrot,X),findQnt(tuna,Y),findQnt(telur,Z),(X<5;Y<5;Z<5),!.
 quest:- questlvl(1),write('Selamat, Claire berhasil menyelesaikan Quest lvl 1!!!'),nl,addExp(100), addGold(100),retractall(questlvl(_)),asserta(questlvl(2)),fail.
-quest:- questlvl(2),write('Quest lvl 2:'),nl,write('Kumpulkan 10 corn, 10 tuna, dan 10 telur'),fail.
+quest:- questlvl(2),write('Quest lvl 2:'),nl,write('Kumpulkan 10 corn, 10 tuna, dan 10 telur'), nl,fail.
 quest:- questlvl(2),findQnt(corn,X),findQnt(tuna,Y),findQnt(susu,Z), (X<10;Y<10;Z<10),!.
 quest:- questlvl(2),nl,write('Selamat, Claire berhasil menyelesaikan Quest lvl 2!!!'),nl,addExp(100), addGold(200),retractall(questlvl(_)),asserta(questlvl(3)),fail.
-quest:- questlvl(3),write('Quest lvl 3:'),nl,write('Kumpulkan 15 turnip, 15 salmon, dan 15 wol'),fail.
+quest:- questlvl(3),write('Quest lvl 3:'),nl,write('Kumpulkan 15 turnip, 15 salmon, dan 15 wol'), nl,fail.
 quest:- questlvl(3),findQnt(turnip,X),findQnt(salmon,Y),findQnt(wol,Z), (X<15;Y<15;Z<15),!.
 quest:- questlvl(3),nl,write('Selamat, Claire berhasil menyelesaikan Quest lvl 3!!!'),nl,addExp(100), addGold(300),retractall(questlvl(_)),asserta(questlvl(4)),fail.
-quest:- questlvl(4),write('Quest lvl 4:'),nl,write('Kumpulkan 20 cabbage, 20 salmon, dan 20 babi'),fail.
+quest:- questlvl(4),write('Quest lvl 4:'),nl,write('Kumpulkan 20 cabbage, 20 salmon, dan 20 babi'), nl,fail.
 quest:- questlvl(4),findQnt(cabbage,X),findQnt(salmon,Y),findQnt(babi,Z), (X<20;Y<20;Z<20),!.
 quest:- questlvl(4),nl,write('Selamat, Claire berhasil menyelesaikan Quest lvl 4!!!'),nl,addExp(100), addGold(400),retractall(questlvl(_)),asserta(questlvl(5)),fail.
-quest:- questlvl(5),write('Quest lvl 5:'),nl,write('Kumpulkan 25 cabbage, 5 cupang, dan 25 wol'),fail.
+quest:- questlvl(5),write('Quest lvl 5:'),nl,write('Kumpulkan 25 cabbage, 5 cupang, dan 25 wol'), nl,fail.
 quest:- questlvl(5),findQnt(cabbage,X),findQnt(cupang,Y),findQnt(wol,Z), (X<25;Y<5;Z<25),!.
 quest:- questlvl(5),nl,write('Selamat, Claire berhasil menyelesaikan Seluruh Quest yang ada!!!'),nl,addExp(200), addGold(500),retractall(questlvl(_)),asserta(questlvl(6)),fail.
-quest:- questlvl(5),write('Tidak ada Quest yang tersedia'),!.
+quest:- questlvl(5),write('Tidak ada Quest yang tersedia'), nl,!.
 
 /*=======================================================MOVE DAN PETA============================================================================*/
 map:- printmap(0,0),!.
