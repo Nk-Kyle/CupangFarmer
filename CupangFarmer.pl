@@ -535,19 +535,19 @@ start:- write('Silahkan Pilih Pekerjaan Anda (Tidak dapat diubah) '),nl,
 		write('1. Farmer    (2x exp jika berkebun)'),nl,
 		write('2. Fisherman (2x exp jika memancing)'),nl,
 		write('3. Rancher   (2x exp jika berternak)'),nl,
-		write('Pilihan Anda (1/2/3): '), read(X),predikatjob(X),!.
+		write('Pilihan Anda (1/2/3): '), read(X), predikatjob(X),!.
 predikatjob(X):-
 		X >= 1 , X =<3, asserta(job(X)),status,!.
 
 predikatjob(_) :-
 		write('Masukan Pekerjaan Salah Ulangi Input : '), read(Y), predikatjob(Y),!.
 
-writejob:-	job(X), X=:=1, write('Job        : Farmer'),!.
-writejob:-	job(X), X=:=2, write('Job        : Fishermen'),!.
-writejob:-	job(X), X=:=3, write('Job        : Rancher'),!.
+writejob:-	job(X), X=:=1, write('Pekerjaan        : Farmer'),!.
+writejob:-	job(X), X=:=2, write('Pekerjaan        : Fishermen'),!.
+writejob:-	job(X), X=:=3, write('Pekerjaan        : Rancher'),!.
 
-tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update(X), updatePlant(6), communicate, !.
-tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update(X), updatePlant(6), communicate, !.
+tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update(X), updatePlant(6), !.
+tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update(X), updatePlant(6), !.
 
 addTime(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),addfatigue(X),update(X), updatePlant(X), !.
 addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),update(X), updatePlant(X),!.
@@ -581,12 +581,12 @@ status:- 	fatigue(F),
 addfatigue(X):- fatigue(F), NextF is F+X, retractall(fatigue(_)), asserta(fatigue(NextF)),!.
 
 update(_):- day(D), D =:= 366, failgame,!.
-update(_):- uang(G), G>=20000, sucessgame,!.
+update(_):- uang(G), G>=20000, successgame,!.
 update(_):- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur sehingga ia tertidur selama 12 jam'),nl,showfatigue,tidur(12),!.
 update(_):- day(D), D =:= 92, retractall(season(_)), asserta(season(summer)).
 update(_):- day(D), D =:= 183, retractall(season(_)), asserta(season(autumn)).
 update(_):- day(D), D =:= 274, retractall(season(_)), asserta(season(winter)).
-update(_):- alchemist(X,_),X=:=0, summonAlchemist.
+update(_):- alchemist(X,_),X=:=0, summonAlchemist, communicate.
 update(X):- alchemist(1,B), NEXTB is B - X, retractall(alchemist(_,_)), asserta(alchemist(1,NEXTB)), NEXTB =< 0 , write('Alchemist sudah pergi meninggalkan market'), retractall(alchemist(_,_)),asserta(alchemist(0,0)).
 update(_):-  \+ (season(winter)) ,gachahewan.
 update(_):- !.
@@ -596,26 +596,26 @@ showfatigue:- 	write('    zz'),nl,
 				write('o_ '),nl,
 				write('|/\\'),nl.
 
-failgame:- write('fail'), retractall(_),!.
-successgame:- write('berhasil'),!.
+failgame:- write('Pesan dari sistem:\nClaire, tetap semangat ya meskipun kamu gagal dalam permainan ini. Semoga beruntung dalam percobaan selanjutnya!\n'), retractall(_), pulang(ya), !.
+successgame:- write('Pesan dari sistem:\nSelamat, Claire! Kamu berhasil menyelesaikan permainan ini! Semoga hari-harimu menyenangkan! Kembali lagi ya!'), pulang(ya),!.
 
 /*=========================================================QUEST==================================================================================*/
 quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil dan dilihat di Q'),!.
 quest:- questlvl(1),write('Quest lvl 1:'),nl,write('Kumpulkan 5 carrot, 5 tuna, dan 5 telur'),fail.
 quest:- questlvl(1),findQnt(carrot,X),findQnt(tuna,Y),findQnt(telur,Z),(X<5;Y<5;Z<5),!.
-quest:- questlvl(1),write('Selamat, Anda berhasil menyelesaikan Quest lvl 1!!!'),nl,addExp(100), addGold(100),retractall(questlvl(_)),asserta(questlvl(2)),fail.
+quest:- questlvl(1),write('Selamat, Claire berhasil menyelesaikan Quest lvl 1!!!'),nl,addExp(100), addGold(100),retractall(questlvl(_)),asserta(questlvl(2)),fail.
 quest:- questlvl(2),write('Quest lvl 2:'),nl,write('Kumpulkan 10 corn, 10 tuna, dan 10 telur'),fail.
 quest:- questlvl(2),findQnt(corn,X),findQnt(tuna,Y),findQnt(susu,Z), (X<10;Y<10;Z<10),!.
-quest:- questlvl(2),nl,write('Selamat, Anda berhasil menyelesaikan Quest lvl 2!!!'),nl,addExp(100), addGold(200),retractall(questlvl(_)),asserta(questlvl(3)),fail.
+quest:- questlvl(2),nl,write('Selamat, Claire berhasil menyelesaikan Quest lvl 2!!!'),nl,addExp(100), addGold(200),retractall(questlvl(_)),asserta(questlvl(3)),fail.
 quest:- questlvl(3),write('Quest lvl 3:'),nl,write('Kumpulkan 15 turnip, 15 salmon, dan 15 wol'),fail.
 quest:- questlvl(3),findQnt(turnip,X),findQnt(salmon,Y),findQnt(wol,Z), (X<15;Y<15;Z<15),!.
-quest:- questlvl(3),nl,write('Selamat, Anda berhasil menyelesaikan Quest lvl 3!!!'),nl,addExp(100), addGold(300),retractall(questlvl(_)),asserta(questlvl(4)),fail.
+quest:- questlvl(3),nl,write('Selamat, Claire berhasil menyelesaikan Quest lvl 3!!!'),nl,addExp(100), addGold(300),retractall(questlvl(_)),asserta(questlvl(4)),fail.
 quest:- questlvl(4),write('Quest lvl 4:'),nl,write('Kumpulkan 20 cabbage, 20 salmon, dan 20 babi'),fail.
 quest:- questlvl(4),findQnt(cabbage,X),findQnt(salmon,Y),findQnt(babi,Z), (X<20;Y<20;Z<20),!.
-quest:- questlvl(4),nl,write('Selamat, Anda berhasil menyelesaikan Quest lvl 4!!!'),nl,addExp(100), addGold(400),retractall(questlvl(_)),asserta(questlvl(5)),fail.
+quest:- questlvl(4),nl,write('Selamat, Claire berhasil menyelesaikan Quest lvl 4!!!'),nl,addExp(100), addGold(400),retractall(questlvl(_)),asserta(questlvl(5)),fail.
 quest:- questlvl(5),write('Quest lvl 5:'),nl,write('Kumpulkan 25 cabbage, 5 cupang, dan 25 wol'),fail.
 quest:- questlvl(5),findQnt(cabbage,X),findQnt(cupang,Y),findQnt(wol,Z), (X<25;Y<5;Z<25),!.
-quest:- questlvl(5),nl,write('Selamat, Anda berhasil menyelesaikan Seluruh Quest yang ada!!!'),nl,addExp(200), addGold(500),retractall(questlvl(_)),asserta(questlvl(6)),fail.
+quest:- questlvl(5),nl,write('Selamat, Claire berhasil menyelesaikan Seluruh Quest yang ada!!!'),nl,addExp(200), addGold(500),retractall(questlvl(_)),asserta(questlvl(6)),fail.
 quest:- questlvl(5),write('Tidak ada Quest yang tersedia'),!.
 
 /*=======================================================MOVE DAN PETA============================================================================*/
@@ -632,24 +632,24 @@ printmap(Y,X):- findPlant(Y,X), isPlant(B), B=2, write('*'), NextX is X+1, print
 printmap(Y,X):- findPlant(Y,X), isPlant(B), B=0, loc(Y,X,A), write(A), NextX is X+1, printmap(Y, NextX), !.
 
 w:-playerpos(Y,X),NextY is Y-1, NextY>0, loc(NextY,X,A),A\=='o', retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
-w:-playerpos(Y,X),NextY is Y-1, NextY>0, loc(NextY,X,A),A=='o',write('Anda trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
-w:-write('Anda terheran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
+w:-playerpos(Y,X),NextY is Y-1, NextY>0, loc(NextY,X,A),A=='o',write('Claire trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
+w:-write('Claire terheran-heran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
 a:-playerpos(Y,X),NextX is X-1, NextX>0, loc(Y,NextX,A),A\=='o', retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
-a:-playerpos(Y,X),NextX is X-1, NextX>0, loc(Y,NextX,A),A=='o', write('Anda trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
-a:-write('Anda terheran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
+a:-playerpos(Y,X),NextX is X-1, NextX>0, loc(Y,NextX,A),A=='o', write('Claire trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
+a:-write('Claire terheran-heran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
 s:-playerpos(Y,X),NextY is Y+1, NextY<11, loc(NextY,X,A),A\=='o', retractall(playerpos(_,_)), asserta(playerpos(NextY,X)),addTime(1),!.
-s:-playerpos(Y,X),NextY is Y+1, NextY<11, loc(NextY,X,A),A=='o', write('Anda trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
+s:-playerpos(Y,X),NextY is Y+1, NextY<11, loc(NextY,X,A),A=='o', write('Claire trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
 s:-write('Anda terheran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
 d:-playerpos(Y,X),NextX is X+1, NextX<11, loc(Y,NextX,A),A\=='o', retractall(playerpos(_,_)), asserta(playerpos(Y,NextX)),addTime(1),!.
-d:-playerpos(Y,X),NextX is X+1, NextX<11, loc(Y,NextX,A),A=='o', write('Anda trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
-d:-write('Anda terheran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
+d:-playerpos(Y,X),NextX is X+1, NextX<11, loc(Y,NextX,A),A=='o', write('Claire trauma dengan air (dibaca : Hidrophobia)'),addTime(1),!.
+d:-write('Claire terheran-heran setelah menabrak dinding tak kasat mata'),addTime(1),!,fail.
 /*==================================================FISHERMAN========================================================================================*/
-fish:- fishrod(X), X=:=0, write('Anda harus memiliki fishing rod untuk memancing!'),!.
+fish:- fishrod(X), X=:=0, write('Claire harus memiliki fishing rod untuk memancing!'),!.
 fish:- playerpos(Y,X), NextY is Y+1, loc(NextY,X,A), A=='o',showfishing,randomfish,addtimefishing,!.
 fish:- playerpos(Y,X), NextY is Y-1, loc(NextY,X,A), A=='o',showfishing,randomfish,addtimefishing,!.
 fish:- playerpos(Y,X), NextX is X+1, loc(Y,NextX,A), A=='o',showfishing,randomfish,addtimefishing,!.
 fish:- playerpos(Y,X), NextX is X-1, loc(Y,NextX,A), A=='o',showfishing,randomfish,addtimefishing,!.
-fish:- write('Tidak ada danau di sekitar Anda'),!.
+fish:- write('Tidak ada danau di sekitar Claire'),!.
 
 showfishing:-	write(''),nl,
 				write('   |\\'),nl,
@@ -662,28 +662,28 @@ addtimefishing:- fishlvl(FL), NextT is 6-FL, addTime(NextT),!.
 randomfish:- fishrod(X),X=:=1,randomize,random(1,100,Num), getfish(Num),!.
 randomfish:- fishrod(X),X=:=2,randomize,random(1,50,Num), getfish(Num),!.
 
-getfish(X):- X=:=1, write('Selamat, Anda mendapatkan Cupang!!!'), addexpfish(5),addItemQnt(cupang,1),!.
-getfish(X):- X=<10, write('Selamat, Anda mendapatkan Salmon'), addexpfish(3),addItemQnt(salmon,1),!.
-getfish(_):- write('Selamat, Anda mendapatkan Tuna'),addexpfish(1),addItemQnt(tuna,1),!.
+getfish(X):- X=:=1, write('Selamat, Claire mendapatkan Cupang!!!'), addexpfish(5),addItemQnt(cupang,1),!.
+getfish(X):- X=<10, write('Selamat, Claire mendapatkan Salmon'), addexpfish(3),addItemQnt(salmon,1),!.
+getfish(_):- write('Selamat, Claire mendapatkan Tuna'),addexpfish(1),addItemQnt(tuna,1),!.
 
-addexpfish(_):- fishlvl(LVL), LVL=:=3, write('Level fishing sudah maximal, Anda tidak lagi mendapat Exp memancing'),!.
+addexpfish(_):- fishlvl(LVL), LVL=:=3, write('Level fishing sudah maksimal, Claire tidak lagi mendapat Exp memancing'),!.
 addexpfish(X):- job(2),fishexp(EXP), NEXTEXP is EXP+(2*X), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(fishexp(_)), asserta(fishexp(NEXTEXP)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp fishing'),!.
-addexpfish(X):- job(2),fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+(2*X)-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(fishexp(_)), retractall(fishlvl(_)), asserta(fishexp(NEXTEXP)), asserta(fishlvl(NEXTLVL)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp fishing'),!.
-addexpfish(X):- fishexp(EXP), NEXTEXP is EXP+X, fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(fishexp(_)), asserta(fishexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!.
-addexpfish(X):- fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(fishexp(_)), retractall(fishlvl(_)), asserta(fishexp(NEXTEXP)), asserta(fishlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp fishing'),!.
+addexpfish(X):- job(2),fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+(2*X)-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(fishexp(_)), retractall(fishlvl(_)), asserta(fishexp(NEXTEXP)), asserta(fishlvl(NEXTLVL)),nl,write('Claire mendapat '),XX is X*2,write(XX),write(' Exp fishing'),!.
+addexpfish(X):- fishexp(EXP), NEXTEXP is EXP+X, fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(fishexp(_)), asserta(fishexp(NEXTEXP)),nl,write('Claire mendapat '),write(X),write(' Exp fishing'),!.
+addexpfish(X):- fishexp(EXP), fishlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(fishexp(_)), retractall(fishlvl(_)), asserta(fishexp(NEXTEXP)), asserta(fishlvl(NEXTLVL)),nl,write('Claire mendapat '),write(X),write(' Exp fishing'),!.
 
 /*==================================================MARKETPLACE========================================================================================*/
-market:- loc(Y,X,L),L==m, playerpos(A,B), (Y\=A;X\=B), write('Cupang tidak berada di pasar!'),!.
+market:- loc(Y,X,L),L==m, playerpos(A,B), (Y\=A;X\=B), write('Claire tidak berada di pasar!'),!.
 market:-	write('          ______'),nl,
 			write('         /______\\ '),nl,
 			write('  o /  / |      | \\ '),nl,
 			write(' /|      |      |'),nl,
 			write(' / \\     |______|'),nl,
 			/*emang rada zig-zag ga usah dibikin lurus*/
-			write('i want to (buy/sell/exit): '),read(X),nl, marketchoice(X),!.
+			write('Saya ingin (buy/sell/exit): '),read(X),nl, marketchoice(X),!.
 
-marketchoice(buy):-  !, write('Buy something'), nl, season(S), buymenu(S), market.
-marketchoice(sell):- !,write('Sell something'),nl, sellmenu, market.
+marketchoice(buy):-  !, write('Membeli barang'), nl, season(S), buymenu(S), market.
+marketchoice(sell):- !,write('Menjual barang'),nl, sellmenu, market.
 marketchoice(exit):- map,!.
 marketchoice(potion):- alchemist(0,_), write('Alchemist sedang tidak berada di market'),nl,market,!.
 marketchoice(potion):- alchemist(1,_), buypotion,market,!.
@@ -800,66 +800,66 @@ buy(Code, Num, spring) :- uang(X), Code=:=8, Money is 10*Num, X >= Money, addIte
 buy(Code, Num, spring) :- uang(X), Code=:=9, Money is 15*Num, X >= Money, addItemQnt(turnip, Num),minGold(Money), write('Membeli '), write(Num), write(' turnip!'), nl, !.
 buy(Code, Num, spring) :- uang(X), Code=:=10, Money is 20*Num, X >= Money, addItemQnt(cabbage, Num), minGold(Money),write('Membeli '), write(Num), write(' cabbage!'), nl, !.
 
-buy(Code, _Num, spring) :- uang(_X), Code=:=11, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, spring) :- uang(X), Code=:=11, ranchlvl(P), P > 0, W is Num*50, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, spring) :- uang(_X), Code=:=11, ranchlvl(P), P < 1, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, spring) :- uang(X), Code=:=11, ranchlvl(P), P > 0, W is Num*50, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, spring) :- uang(X), Code=:=11, ranchlvl(P), P > 0, W is Num*50, X >= W, minGold(W), addchicken(Num, _Z), write('Membeli '), write(Num), write(' ayam!'), nl, !.
-buy(Code, _Num, spring) :- uang(_X), Code=:=12, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, spring) :- uang(X), Code=:=12, ranchlvl(P), P > 0, W is Num*200, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, spring) :- uang(_X), Code=:=12, ranchlvl(P), P < 1, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, spring) :- uang(X), Code=:=12, ranchlvl(P), P > 0, W is Num*200, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, spring) :- uang(X), Code=:=12, ranchlvl(P), P > 0, W is Num*200, X >= W, minGold(W), addpig(Num, _Z), write('Membeli '), write(Num), write(' babi!'), nl, !.
-buy(Code, _Num, spring) :- uang(_X), Code=:=13, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, spring) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*150, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, spring) :- uang(_X), Code=:=13, ranchlvl(P), P < 2, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, spring) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*150, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, spring) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*150, X >= W, minGold(W), addcow(Num, _Z), write('Membeli '), write(Num), write(' sapi!'), nl, !.
-buy(Code, _Num, spring) :- uang(_X), Code=:=14, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, spring) :- uang(X), Code=:=14, ranchlvl(P), P > 1, W is Num*100, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, spring) :- uang(_X), Code=:=14, ranchlvl(P), P < 2, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, spring) :- uang(X), Code=:=14, ranchlvl(P), P > 1, W is Num*100, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, spring) :- uang(X), Code=:=14, ranchlvl(P), P > 1, W is Num*100, X >= W, minGold(W), addsheep(Num, _Z), write('Membeli '), write(Num), write(' domba!'), nl, !.
 
 buy(Code, Num, summer) :- uang(X), Code=:=7, Money is 10*Num, X >= Money, addItemQnt(corn, Num), minGold(Money), write('Membeli '), write(Num), write(' corn!'), nl, !.
 buy(Code, Num, summer) :- uang(X), Code=:=8, Money is 15*Num, X >= Money, addItemQnt(turnip, Num), minGold(Money), write('Membeli '), write(Num), write(' turnip!'), nl, !.
 
-buy(Code, _Num, summer) :- uang(_X), Code=:=9, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, summer) :- uang(X), Code=:=9, ranchlvl(P), P > 0, W is Num*50, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, summer) :- uang(_X), Code=:=9, ranchlvl(P), P < 1, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, summer) :- uang(X), Code=:=9, ranchlvl(P), P > 0, W is Num*50, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, summer) :- uang(X), Code=:=9, ranchlvl(P), P > 0, W is Num*50, X >= W, minGold(W), addchicken(Num, _Z), write('Membeli '), write(Num), write(' ayam!'), nl, !.
-buy(Code, _Num, summer) :- uang(_X), Code=:=10, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, summer) :- uang(X), Code=:=10, ranchlvl(P), P > 0, W is Num*200, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, summer) :- uang(_X), Code=:=10, ranchlvl(P), P < 1, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, summer) :- uang(X), Code=:=10, ranchlvl(P), P > 0, W is Num*200, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, summer) :- uang(X), Code=:=10, ranchlvl(P), P > 0, W is Num*200, X >= W, minGold(W), addpig(Num, _Z), write('Membeli '), write(Num), write(' babi!'), nl, !.
-buy(Code, _Num, summer) :- uang(_X), Code=:=12, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, summer) :- uang(X), Code=:=12, ranchlvl(P), P > 1, W is Num*150, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, summer) :- uang(_X), Code=:=12, ranchlvl(P), P < 2, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, summer) :- uang(X), Code=:=12, ranchlvl(P), P > 1, W is Num*150, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, summer) :- uang(X), Code=:=12, ranchlvl(P), P > 1, W is Num*150, X >= W, minGold(W), addcow(Num, _Z), write('Membeli '), write(Num), write(' sapi!'), nl, !.
-buy(Code, _Num, summer) :- uang(_X), Code=:=13, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, summer) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*100, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, summer) :- uang(_X), Code=:=13, ranchlvl(P), P < 2, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, summer) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*100, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, summer) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*100, X >= W, minGold(W), addsheep(Num, _Z), write('Membeli '), write(Num), write(' domba!'), nl, !.
 
 buy(Code, Num, autumn) :- uang(X), Code=:=7, Money is 10*Num, X >= Money, addItemQnt(corn, Num), minGold(Money), write('Membeli '), write(Num), write(' corn!'), nl, !.
 buy(Code, Num, autumn) :- uang(X), Code=:=8, Money is 15*Num, X >= Money, addItemQnt(turnip, Num), minGold(Money), write('Membeli '), write(Num), write(' turnip!'), nl, !.
 buy(Code, Num, autumn) :- uang(X), Code=:=9, Money is 20*Num, X >= Money, addItemQnt(cabbage, Num), minGold(Money), write('Membeli '), write(Num), write(' cabbage!'), nl, !.
 
-buy(Code, _Num, autumn) :- uang(_X), Code=:=10, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, autumn) :- uang(X), Code=:=10, ranchlvl(P), P > 0, W is Num*50, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, autumn) :- uang(_X), Code=:=10, ranchlvl(P), P < 1, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, autumn) :- uang(X), Code=:=10, ranchlvl(P), P > 0, W is Num*50, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, autumn) :- uang(X), Code=:=10, ranchlvl(P), P > 0, W is Num*50, X >= W, minGold(W), addchicken(Num, _Z), write('Membeli '), write(Num), write(' ayam!'), nl, !.
-buy(Code, _Num, autumn) :- uang(_X), Code=:=11, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, autumn) :- uang(X), Code=:=11, ranchlvl(P), P > 0, W is Num*200, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, autumn) :- uang(_X), Code=:=11, ranchlvl(P), P < 1, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, autumn) :- uang(X), Code=:=11, ranchlvl(P), P > 0, W is Num*200, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, autumn) :- uang(X), Code=:=11, ranchlvl(P), P > 0, W is Num*200, X >= W, minGold(W), addpig(Num, _Z), write('Membeli '), write(Num), write(' babi!'), nl, !.
-buy(Code, _Num, autumn) :- uang(_X), Code=:=12, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, autumn) :- uang(X), Code=:=12, ranchlvl(P), P > 1, W is Num*150, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, autumn) :- uang(_X), Code=:=12, ranchlvl(P), P < 2, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, autumn) :- uang(X), Code=:=12, ranchlvl(P), P > 1, W is Num*150, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, autumn) :- uang(X), Code=:=12, ranchlvl(P), P > 1, W is Num*150, X >= W, minGold(W), addcow(Num, _Z), write('Membeli '), write(Num), write(' sapi!'), nl, !.
-buy(Code, _Num, autumn) :- uang(_X), Code=:=13, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, autumn) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*100, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, autumn) :- uang(_X), Code=:=13, ranchlvl(P), P < 2, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, autumn) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*100, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, autumn) :- uang(X), Code=:=13, ranchlvl(P), P > 1, W is Num*100, X >= W, minGold(W), addsheep(Num, _Z), write('Membeli '), write(Num), write(' domba!'), nl, !.
 
 buy(Code, Num, spring) :- uang(X), Code=:=7, Money is 15*Num, X >= Money, addItemQnt(turnip, Num), minGold(Money), write('Membeli '), write(Num), write(' turnip!'), nl, !.
 buy(Code, Num, spring) :- uang(X), Code=:=8, Money is 20*Num, X >= Money, addItemQnt(cabbage, Num), minGold(Money), write('Membeli '), write(Num), write(' cabbage!'), nl, !.
 
-buy(Code, _Num, spring) :- uang(_X), Code=:=9, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, spring) :- uang(X), Code=:=9, ranchlvl(P), P > 0, W is Num*50, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, spring) :- uang(_X), Code=:=9, ranchlvl(P), P < 1, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, spring) :- uang(X), Code=:=9, ranchlvl(P), P > 0, W is Num*50, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, spring) :- uang(X), Code=:=9, ranchlvl(P), P > 0, W is Num*50, X >= W, minGold(W), addchicken(Num, _Z), write('Membeli '), write(Num), write(' ayam!'), nl, !.
-buy(Code, _Num, spring) :- uang(_X), Code=:=10, ranchlvl(P), P < 1, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, spring) :- uang(X), Code=:=10, ranchlvl(P), P > 0, W is Num*200, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, spring) :- uang(_X), Code=:=10, ranchlvl(P), P < 1, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, spring) :- uang(X), Code=:=10, ranchlvl(P), P > 0, W is Num*200, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, spring) :- uang(X), Code=:=10, ranchlvl(P), P > 0, W is Num*200, X >= W, minGold(W), addpig(Num, _Z), write('Membeli '), write(Num), write(' babi!'), nl, !.
-buy(Code, _Num, spring) :- uang(_X), Code=:=11, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, spring) :- uang(X), Code=:=11, ranchlvl(P), P > 1, W is Num*150, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, spring) :- uang(_X), Code=:=11, ranchlvl(P), P < 2, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, spring) :- uang(X), Code=:=11, ranchlvl(P), P > 1, W is Num*150, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, spring) :- uang(X), Code=:=11, ranchlvl(P), P > 1, W is Num*150, X >= W, minGold(W), addcow(Num, _Z), write('Membeli '), write(Num), write(' sapi!'), nl, !.
-buy(Code, _Num, spring) :- uang(_X), Code=:=12, ranchlvl(P), P < 2, write('Silakan naikkan level ranch anda untuk membeli ternak ini!'), !.
-buy(Code, Num, spring) :- uang(X), Code=:=12, ranchlvl(P), P > 1, W is Num*100, X < W, write('Uang anda tidak cukup!'), !.
+buy(Code, _Num, spring) :- uang(_X), Code=:=12, ranchlvl(P), P < 2, write('Silakan naikkan level ranch Claire untuk membeli ternak ini!'), !.
+buy(Code, Num, spring) :- uang(X), Code=:=12, ranchlvl(P), P > 1, W is Num*100, X < W, write('Uang Claire tidak cukup!'), !.
 buy(Code, Num, spring) :- uang(X), Code=:=12, ranchlvl(P), P > 1, W is Num*100, X >= W, minGold(W), addsheep(Num, _Z), write('Membeli '), write(Num), write(' domba!'), nl, !.
 
 addchicken(0, X) :- retractall(chickenlist(_)), asserta(chickenlist(X)), !.
@@ -922,7 +922,7 @@ deletesheep(Num, [_H|T]) :- Nextnum is Num - 1, deletesheep(Nextnum, T), ! .
 deletesheep(Num) :- sheeplist(X), deletesheep(Num, X), !.
 
 /*================================================HOUSE=============================================================================================*/
-house:- loc(Y,X,L),L==h, playerpos(A,B), (Y\=A;X\=B), write('Cupang tidak berada di rumah!'),!.
+house:- loc(Y,X,L),L==h, playerpos(A,B), (Y\=A;X\=B), write('Claire tidak berada di rumah!'),!.
 house:-	write('              '),nl,
 		write('  o '),nl,
 		write(' /|\\    ________|'),nl,
@@ -934,7 +934,7 @@ housechoice(writeDiary) :- wdiary,!,house.
 housechoice(readDiary) :- !,rdiary,house.
 housechoice(sleep):-!,
 		tidur(6),
-		write('Cupang slept for 6 hours'),nl,
+		write('Claire tidur selama 6 jam'),nl,
 		randomize,random(0,11,Chance),
 		putritidur(Chance),!.
 housechoice(_):- write('invalid input'),house,!.
@@ -942,7 +942,7 @@ housechoice(_):- write('invalid input'),house,!.
 putritidur(Chance) :-
 	Chance =:= 1,
 	write('Putri Tidur timbul pada bayangan Anda dan menawarkan membonceng ke mana pun dalam peta'),nl,
-	write('Apakah Anda mau dibonceng putri tidur? (y/n)'),nl,
+	write('Apakah Claire mau dibonceng putri tidur? (y/n)'),nl,
 	read(Opt),
 	prompttransport(Opt),
 	!.
@@ -967,19 +967,19 @@ prompttransport(Opt) :-
 
 transport(X,Y) :-
 	!,X < 11, X > 0, Y < 11, X > 0, \+ (loc(_,X,A),A=='o'),
-	retractall(playerpos(_,_)),assertz(playerpos(Y,X)), write('Putri Tidur langsung membonceng Anda ke lokasi tersebut'),nl.
+	retractall(playerpos(_,_)),assertz(playerpos(Y,X)), write('Putri Tidur langsung membonceng Claire ke lokasi tersebut'),nl.
 
 transport(X,Y) :-
-	!,X < 11, X > 0, Y < 11, X > 0, loc(_,X,A), A=='o', write('Putri Tidur tidak mau menceburkan Anda ke air'),nl,house.
+	!,X < 11, X > 0, Y < 11, X > 0, loc(_,X,A), A=='o', write('Putri Tidur tidak mau menceburkan Claire ke air'),nl,house.
 
 transport(X,Y) :-
 	!,(X > 10 ; X < 1 ; Y > 10; Y < 1),
-	write('Putri Tidur kesal Anda meminta yang mustahil lalu pergi meninggalkan Anda'),house,nl.
+	write('Putri Tidur kesal Claire meminta hal yang mustahil lalu pergi meninggalkan Claire'),house,nl.
 
 /* membuka opsi  diary */
 wdiary :-
 		day(Day),
-		write('Write your diary for Day '),
+		write('Tulis Diari-mu untuk Day-'),
 		write(Day),nl,
 		read(Isi),
 		diary(Diary),
@@ -994,15 +994,15 @@ writediary([H|T],Isi,Day,[H|Hasil]) :-
 rdiary :-
 		diary(Diary),
 		printdiary(Diary),
-		write('Which log do you want to read?'),nl,
+		write('Log mana yang mau Claire baca?'),nl,
 		read(Search),
 		readdiary(Diary,Search),!.
 
 printdiary([]) :-
-		write('You have no writings in your diary'),!,fail.
+		write('Claire tidak menulis apapun di Diari'),!,fail.
 printdiary(Diary) :-
 		printdiarynext(Diary,1),!.
-printdiarynext([],_) :- write('End of Diary List'),nl.
+printdiarynext([],_) :- write('Akhir dari Diari'),nl.
 printdiarynext([H|T],N) :-
 		isiDiary(H,Day,_),
 		write(N),
@@ -1013,11 +1013,11 @@ printdiarynext([H|T],N) :-
 
 readdiary([],Search) :-
 		Search < 1,
-		write('You have no record of this day'),!,fail.
+		write('Claire tidak punya catatan untuk Day ini.'),!,fail.
 readdiary([H|_],CSearch) :-
 		isiDiary(H,Day,Isi),
 		CSearch =:= 1,
-		write('Here is the entry for Day '),
+		write('Ini adalah entri untuk Day-'),
 		write(Day),nl,
 		write(Isi),!.
 
@@ -1086,7 +1086,7 @@ deleteitem(_,Qnty) :-
 	!,
 	invcurrcap(Cap),
   Tot is Cap - Qnty,
-  Tot < 0, write('Quantity not met'),fail.
+  Tot < 0, write('Jumlah tidak dipenuhi'),fail.
 deleteitem(Item,Qnty) :-
 	li(X),
 	deleteitem(X,Item,Qnty,Deleted, Cap),
@@ -1094,7 +1094,7 @@ deleteitem(Item,Qnty) :-
 	assertz(invcurrcap(Cap)),
 	retractall(li(_)),
 	assertz(li(Deleted)).
-deleteitem([],_,_,[],Cap) :- !,fail,write('Anda Tidak Memiliki Item Tersebut'),invcurrcap(Cap).
+deleteitem([],_,_,[],Cap) :- !,fail,write('Claire Tidak Memiliki Item Tersebut'),invcurrcap(Cap).
 deleteitem([H|T],Item,Qnty,[Subtracted|T],NewCap) :-
 	eleitem(H,Targ,[Val]),
 	Targ == Item,
@@ -1116,7 +1116,7 @@ deleteitem([H|T],Item,Qnty,[H|T],Cap) :-
 	eleitem(H,Targ,[Val]),
 	Targ == Item,
 	Qnty > Val,
-  write('Anda Tidak Memiliki Cukup Barang'),fail,
+  write('Claire Tidak Memiliki Cukup Barang'),fail,
   invcurrcap(Cap).
 deleteitem([H|T],Item,Qnty,[H|Res],Cap) :-
 	eleitem(H,Targ,_),
@@ -1127,11 +1127,11 @@ deleteitem([H|T],Item,Qnty,[H|Res],Cap) :-
 /* Display Inventory*/
 displayInv :-
   li([]),!,
-  write('Empty Inventory'),fail.
+  write('Inventory kosong'),fail.
 
 displayInv :-
   li(X),
-  write('Your Inventory (Item - Quantity) :'),nl,
+  write('Inventory Claire (Item - Quantity) :'),nl,
   displayInvNext(X,1),!.
 
 displayInvNext([H|T],Num) :-
@@ -1253,7 +1253,7 @@ harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==corn, random(1,5,Npl
 harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==turnip, random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), addexpfarm(8), write('Selamat! Anda memanen '), write(' turnip'), nl, !.
 harvest :- playerpos(Y,X), findPlant(Y,X), plantType(B), B==cabbage, random(1,5,Nplant), addItemQnt(B,Nplant), delPlant(Y,X), addexpfarm(16), write('Selamat! Anda memanen '), write(' cabbage'), nl, !.
 
-addexpfarm(_):- farmlvl(LVL), LVL=:=3, write('Level farming sudah maximal, Anda tidak lagi mendapat Exp farming'), nl, !.
+addexpfarm(_):- farmlvl(LVL), LVL=:=3, write('Level farming sudah maksimal, Claire tidak lagi mendapat Exp farming'), nl, !.
 addexpfarm(X):- job(1),farmexp(EXP), NEXTEXP is EXP+(2*X), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(farmexp(_)), asserta(farmexp(NEXTEXP)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp farming'), nl, !.
 addexpfarm(X):- job(1),farmexp(EXP), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+(2*X)-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(farmexp(_)), retractall(farmlvl(_)), asserta(farmexp(NEXTEXP)), asserta(farmlvl(NEXTLVL)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp farming'),nl,!.
 addexpfarm(X):- farmexp(EXP), NEXTEXP is EXP+X, farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(farmexp(_)), asserta(farmexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp farming'),nl,!.
@@ -1280,19 +1280,19 @@ printcow:- cowlist(Y), numcow(Y,X), X > 0, write(X), write(' sapi'),nl.
 printsheep:- sheeplist(Y), numsheep(Y,X), X = 0, !.
 printsheep:- sheeplist(Y), numsheep(Y,X), X > 0, write(X), write(' domba'),nl.
 
-ranch :- playerpos(Y,X), loc(Y,X,A), A \= r, write('Anda sedang tidak berada di ranch!'), !.
+ranch :- playerpos(Y,X), loc(Y,X,A), A \= r, write('Claire sedang tidak berada di ranch!'), !.
 ranch :-
 	playerpos(Y,X), loc(Y,X,A), A == r,
 	write(' o      '),nl,
 	write('/|\\ #   ,,__') ,nl,
 	write('/ \\ # c''''   )? '),nl,
 	write('    #   '''''''' '),nl,
-	write('Selamat datang di peternakan! Kamu punya:'),nl,
+	write('Selamat datang di peternakan! Claire punya:'),nl,
 	printchicken,
 	printpig,
 	printcow,
 	printsheep,
-	nl,nl, write('Apa yang mau kamu lakukan?'), nl,
+	nl,nl, write('Apa yang mau Claire lakukan?'), nl,
 	write('1. chicken'), nl,
 	write('2. cow'), nl,
 	write('3. sheep'), nl,
@@ -1326,38 +1326,38 @@ addtimeambilegg :- ranchinglvl(X), X =:= 0, addTime(1), !.
 addtimeambilmilk :- ranchinglvl(X), Tnext is 4 - X, addTime(Tnext), !.
 addtimeambilwool :- ranchinglvl(X), Tnext is 6 - X, addTime(Tnext), !.
 
-addexpranch(_):- ranchinglvl(LVL), LVL=:=3, write('Level ranching sudah maximal, Anda tidak lagi mendapat Exp ranching'),!.
+addexpranch(_):- ranchinglvl(LVL), LVL=:=3, write('Level ranching sudah maksimal, Claire tidak lagi mendapat Exp ranching'),!.
 addexpranch(X):- job(3),ranchexp(EXP), NEXTEXP is EXP+(2*X), ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(ranchexp(_)), asserta(ranchexp(NEXTEXP)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp ranching'),!.
 addexpranch(X):- job(3),ranchexp(EXP), ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+(2*X)-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(ranchexp(_)), retractall(ranchinglvl(_)), asserta(ranchexp(NEXTEXP)), asserta(ranchinglvl(NEXTLVL)),nl,write('Anda mendapat '),XX is X*2,write(XX),write(' Exp ranching'),!.
 addexpranch(X):- ranchexp(EXP), NEXTEXP is EXP+X, ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP<NEXTLVLEXP, retractall(ranchexp(_)), asserta(ranchexp(NEXTEXP)),nl,write('Anda mendapat '),write(X),write(' Exp ranching'),!.
 addexpranch(X):- ranchexp(EXP), ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(ranchexp(_)), retractall(ranchinglvl(_)), asserta(ranchexp(NEXTEXP)), asserta(ranchinglvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp ranching'),!.
 
-chicken :- chickenlist(X), numegg(X,Y), Y =:= 0, write('Ayam anda belum menghasilkan telur.'), nl, write('Silakan cek lagi di lain waktu.'), !.
-chicken :- chickenlist(X), numegg(X,Y), write('Ayam anda menghasilkan '), write(Y), write(' telur.'), addItemQnt(telur, Y), nl, write('Anda mendapat '), write(Y), write(' telur!'), day(D), chickenlist(C), chickenchange(C, D, Z), retractall(chickenlist(X)), asserta(chickenlist(Z)), addtimeambilegg, addexpranch(Y),!.
-cow :- cowlist(X), nummilk(X,Y), Y =:= 0, write('Sapi anda belum menghasilkan susu.'), nl, write('Silakan cek lagi di lain waktu.'), !.
-cow :- cowlist(X), nummilk(X,Y), write('Sapi anda menghasilkan '), write(Y), write(' botol susu.'), addItemQnt(susu, Y), nl, write('Anda mendapat '), write(Y), write(' botol susu'), day(D), cowlist(C), cowchange(C,D,Z), retractall(cowlist(X)), asserta(cowlist(Z)), addtimeambilmilk, Nexp is Y * 5, addexpranch(Nexp),!.
-sheep :- sheeplist(X), numwool(X,Y), Y =:= 0, write('Domba anda belum menghasilkan wol.'), nl, write('Silakan cek lagi di lain waktu.'), !.
-sheep :- sheeplist(X), numwool(X,Y), write('Domba anda menghasilkan '), write(Y), write(' wol.'), addItemQnt(wool, Y), nl, write('Anda mendapat '), write(Y), write(' wol!'), day(D), sheeplist(C), sheepchange(C,D,Z), retractall(sheeplist(X)), asserta(sheeplist(Z)), addtimeambilwool, Nexp is Y * 15, addexpranch(Nexp),!.
+chicken :- chickenlist(X), numegg(X,Y), Y =:= 0, write('Ayam Claire belum menghasilkan telur.'), nl, write('Silakan cek lagi di lain waktu.'), !.
+chicken :- chickenlist(X), numegg(X,Y), write('Ayam Claire menghasilkan '), write(Y), write(' telur.'), addItemQnt(telur, Y), nl, write('Claire mendapat '), write(Y), write(' telur!'), day(D), chickenlist(C), chickenchange(C, D, Z), retractall(chickenlist(X)), asserta(chickenlist(Z)), addtimeambilegg, addexpranch(Y),!.
+cow :- cowlist(X), nummilk(X,Y), Y =:= 0, write('Sapi Claire belum menghasilkan susu.'), nl, write('Silakan cek lagi di lain waktu.'), !.
+cow :- cowlist(X), nummilk(X,Y), write('Sapi Claire menghasilkan '), write(Y), write(' botol susu.'), addItemQnt(susu, Y), nl, write('Claire mendapat '), write(Y), write(' botol susu'), day(D), cowlist(C), cowchange(C,D,Z), retractall(cowlist(X)), asserta(cowlist(Z)), addtimeambilmilk, Nexp is Y * 5, addexpranch(Nexp),!.
+sheep :- sheeplist(X), numwool(X,Y), Y =:= 0, write('Domba Claire belum menghasilkan wol.'), nl, write('Silakan cek lagi di lain waktu.'), !.
+sheep :- sheeplist(X), numwool(X,Y), write('Domba Claire menghasilkan '), write(Y), write(' wol.'), addItemQnt(wool, Y), nl, write('Claire mendapat '), write(Y), write(' wol!'), day(D), sheeplist(C), sheepchange(C,D,Z), retractall(sheeplist(X)), asserta(sheeplist(Z)), addtimeambilwool, Nexp is Y * 15, addexpranch(Nexp),!.
 
 gachahewan :- randomize, random(1,300,X), gachahewannext(X),!.
-gachahewannext(X) :- ranchlvl(lvl), lvl > 0 ,X < 3, write('Anda bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewanayam(Y), ! .
-gachahewannext(X) :- ranchlvl(lvl), lvl > 0 ,X >= 3 ,X < 5, write('Anda bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewanbabi(Y), ! .
-gachahewannext(X) :- ranchlvl(lvl), lvl > 1 ,X >= 5 ,X < 8, write('Anda bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewansapi(Y),  ! .
-gachahewannext(X) :- ranchlvl(lvl), lvl > 1 ,X >= 8 ,X < 10, write('Anda bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewandomba(Y),  ! .
+gachahewannext(X) :- ranchlvl(lvl), lvl > 0 ,X < 3, write('Claire bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Claire?(ya/tidak): '), read(Y), gachahewanayam(Y), ! .
+gachahewannext(X) :- ranchlvl(lvl), lvl > 0 ,X >= 3 ,X < 5, write('Claire bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Claire?(ya/tidak): '), read(Y), gachahewanbabi(Y), ! .
+gachahewannext(X) :- ranchlvl(lvl), lvl > 1 ,X >= 5 ,X < 8, write('Claire bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Claire?(ya/tidak): '), read(Y), gachahewansapi(Y),  ! .
+gachahewannext(X) :- ranchlvl(lvl), lvl > 1 ,X >= 8 ,X < 10, write('Claire bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Claire?(ya/tidak): '), read(Y), gachahewandomba(Y),  ! .
 gachahewannext(X) :-  X >= 10, !.
 
 gachahewanayam(Y) :- Y == ya, chickenlist(Z), addchicken(1,Z), nl, write('Ayam berhasil ditambahkan ke peternakan.'), !.
 gachahewanayam(Y) :- Y == tidak, !.
-gachahewanayam(_Y) :- write('Masukan anda salah dan ayam tersebut telah pergi.'), !.
+gachahewanayam(_Y) :- write('Masukan Claire salah dan ayam tersebut telah pergi.'), !.
 gachahewanbabi(Y) :- Y == ya, piglist(Z), addpig(1,Z), nl, write('Babi berhasil ditambahkan ke peternakan.'),!.
 gachahewanbabi(Y) :- Y == tidak, !.
-gachahewanbabi(_Y) :- write('Masukan anda salah dan babi tersebut telah pergi.'), !.
+gachahewanbabi(_Y) :- write('Masukan Claire salah dan babi tersebut telah pergi.'), !.
 gachahewansapi(Y) :- Y == ya, cowlist(Z), addcow(1,Z), nl, write('Sapi berhasil ditambahkan ke peternakan.'),!.
 gachahewansapi(Y) :- Y == tidak, !.
-gachahewansapi(_Y) :- write('Masukan anda salah dan sapi tersebut telah pergi.'), !.
+gachahewansapi(_Y) :- write('Masukan Claire salah dan sapi tersebut telah pergi.'), !.
 gachahewandomba(Y) :- Y == ya, sheeplist(Z), addsheep(1,Z), nl, write('Domba berhasil ditambahkan ke peternakan.'),!.
 gachahewandomba(Y) :- Y == tidak, !.
-gachahewandomba(_Y) :- write('Masukan anda salah dan domba tersebut telah pergi.'), !.
+gachahewandomba(_Y) :- write('Masukan Claire salah dan domba tersebut telah pergi.'), !.
 
 
 
