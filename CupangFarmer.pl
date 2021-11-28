@@ -471,7 +471,7 @@ communicate :- day(D), D=:=354, kakek,
 				write('Kakek : \"Claire, apakah kamu sudah memutuskan akan kembali ke kota atau tidak?\"'), nl,
 				write('Masukkan ya jika akan kembali ke kota, tidak jika tak kembali ke kota! '), read(Omg), pulang(Omg), !.
 
-pulang(Ans) :- Ans==ya, nl, write('\"Kakek... Claire mau mengucapkan terima kasih sebesar-besarnya pada Kakek...\n Kakek sudah banyak membantu Clair selama ini...\n Claire akan kembali ke kota Kek, tetapi Kakek tenang saja, Claire akan mengunjungi Kakek tiap bulannya!\"'), nl,
+pulang(Ans) :- Ans==ya, nl, write('\"Kakek... Claire mau mengucapkan terima kasih sebesar-besarnya pada Kakek...\n Kakek sudah banyak membantu Claire selama ini...\n Claire akan kembali ke kota Kek, tetapi Kakek tenang saja, Claire akan mengunjungi Kakek tiap bulannya!\"'), nl,
 				yoga, write('Yoga : \"Claire, aku akan kembali ke kota juga. Bagaimana kalau kita kembali ke kota bersama? Aku sudah sewa baling-baling bambu untuk kembali, maukah kamu ikut?\"'), write('\"Benarkah? Aku mau. Terima kasih banyak, Yoga!\"'), !.
 pulang(Ans) :- Ans==tidak, nl, write('\"Tidak Kek, Claire mau menemani Kakek saja di desa!\"'), nl, !.
 
