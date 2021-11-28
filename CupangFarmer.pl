@@ -1413,7 +1413,7 @@ gachahewandomba(_Y) :- write('Masukan Claire salah dan domba tersebut telah perg
 
 
 /*===========================================================ALCHEMIST=================================================================*/
-summonAlchemist:- randomize,random(1,100, X), X =:= 1, retractall(alchemist(_,_)), asserta(alchemist(1,72)),write('Alchemist sedang berada di market selama 72 jam kedepan. ketik potion pada menu di market untuk membeli barangnya!'),!.
+summonAlchemist:- randomize,random(1,100, X), X =:= 1, retractall(alchemist(_,_)), asserta(alchemist(1,72)),write('Alchemist sedang berada di market selama 72 jam kedepan. ketik potion pada menu di market untuk membeli barangnya!'), nl, !.
 
 buypotion :-	alchemist(0,_), write('Alchemist sedang tidak berada di market, Anda tidak dapat membeli potion'),nl,!.
 buypotion :- 	write('1. Farming Potion  (500) --> memaksimalkan lvl farming'),nl,
