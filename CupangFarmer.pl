@@ -243,7 +243,7 @@ promptMenu :-
 	write('%  7. d       : Gerak ke timur 1 langkah         %'),nl,
 	write('%  8. help    : Menampilkan peraturan game       %'),nl,
 	write('%                                                %'),nl,
-	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl.
 
 help :-
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,
@@ -421,17 +421,18 @@ market:-	write('          ______'),nl,
 			/*emang rada zig-zag ga usah dibikin lurus*/
 			write('i want to (buy/sell/exit): '),read(X),nl, marketchoice(X),!.
 
-marketchoice(buy):- write('Buy something'), nl, buymenu, market, !.
+marketchoice(buy):- write('Buy something'), nl, season(S), buymenu(S), market, !.
 marketchoice(sell):- write('Sell something'),nl, sellmenu, market,!.
 marketchoice(exit):- map,!.
 marketchoice(potion):- alchemist(0,_), write('Alchemist sedang tidak berada di market'),nl,market,!.
 marketchoice(potion):- alchemist(1,_), buypotion,market,!.
 marketchoice(_):- write('invalid input'),nl,market,!.
 
-buymenu :-
+buymenu(spring) :-
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
 	write('%                                           %'), nl,
 	write('%           Mau beli apa hari ini?          %'), nl,
+	write('%               Spring Edition              %'), nl,
 	write('%                                           %'), nl,
 	write('% 1. Shovel lvl 1       : 25                %'), nl,
 	write('% 2. Shovel lvl 2       : 500               %'), nl,
@@ -439,26 +440,99 @@ buymenu :-
 	write('% 4. Fishing rod lvl 2  : 750               %'), nl,
 	write('% 5. Rancher lvl 1      : 50                %'), nl,
 	write('% 6. Rancher lvl 2      : 500               %'), nl,
-	write('% 7. Seed Carrot    : 5 gold                %'), nl,
-	write('% 8. Seed Corn      : 10 gold               %'), nl,
-	write('% 9. Seed Turnip    : 15 gold               %'), nl,
-	write('% 10. Seed Cabbage   : 20 gold              %'), nl,
-	write('% 11. Chicken Old    : 50 gold              %'), nl,
-	write('% 12. Babi Old       : 200 gold             %'), nl,
-	write('% 13. Sapi Old       : 150 gold             %'), nl,
-	write('% 14. Domba Old      : 100 gold             %'), nl,
+	write('% 7. Seed Carrot        : 5 gold            %'), nl,
+	write('% 8. Seed Corn          : 10 gold           %'), nl,
+	write('% 9. Seed Turnip        : 15 gold           %'), nl,
+	write('% 10. Seed Cabbage      : 20 gold           %'), nl,
+	write('% 11. Chicken Old       : 50 gold           %'), nl,
+	write('% 12. Babi Old          : 200 gold          %'), nl,
+	write('% 13. Sapi Old          : 150 gold          %'), nl,
+	write('% 14. Domba Old         : 100 gold          %'), nl,
 	write('%                                           %'), nl,
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
 	write('Masukkan nomor item yang ingin dibeli : '), read(X),
 	(((X>=1, X=<6), Y=1); ((X>=7), write('Masukkan jumlah item yang ingin dibeli : '), read(Y))),
-	buy(X,Y), !.
+	buy(X,Y,spring), !.
 
-buy(Code, _Num) :- uang(X), Code=:=1, X>=25, Money=25, minGold(Money), retractall(shovel(_)), asserta(shovel(1)), write('Membeli Shovel Level 1'), nl, !.
-buy(Code, _Num) :- uang(X), Code=:=2, X>=500, Money=500, minGold(Money), retractall(shovel(_)), asserta(shovel(2)), write('Membeli Shovel Level 2'), nl, !.
-buy(Code, _Num) :- uang(X), Code=:=3, X>=25, Money=25, minGold(Money), retractall(fishrod(_)), asserta(fishrod(1)), write('Membeli Fishing Rod Level 1'), nl, !.
-buy(Code, _Num) :- uang(X), Code=:=4, X>=750, Money=750, minGold(Money), retractall(fishrod(_)), asserta(fishrod(2)), write('Membeli Fishing Rod Level 2'), nl, !.
-buy(Code, _Num) :- uang(X), Code=:=5, X>=50, Money=50, minGold(Money), retractall(ranchlvl(_)), asserta(ranchlvl(1)), write('Membeli Rancher Level 1'), nl, !.
-buy(Code, _Num) :- uang(X), Code=:=6, X>=500, Money=500, minGold(Money), retractall(ranchlvl(_)), asserta(ranchlvl(2)), write('Membeli Rancher Level 2'), nl, !.
+buymenu(summer) :-
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+	write('%                                           %'), nl,
+	write('%           Mau beli apa hari ini?          %'), nl,
+	write('%               Summer Edition              %'), nl,
+	write('%                                           %'), nl,
+	write('% 1. Shovel lvl 1       : 25                %'), nl,
+	write('% 2. Shovel lvl 2       : 500               %'), nl,
+	write('% 3. Fishing rod lvl 1  : 25                %'), nl,
+	write('% 4. Fishing rod lvl 2  : 750               %'), nl,
+	write('% 5. Rancher lvl 1      : 50                %'), nl,
+	write('% 6. Rancher lvl 2      : 500               %'), nl,
+	write('% 7. Seed Corn      : 10 gold               %'), nl,
+	write('% 8. Seed Turnip    : 15 gold               %'), nl,
+	write('% 9. Chicken Old    : 50 gold              %'), nl,
+	write('% 10. Babi Old       : 200 gold             %'), nl,
+	write('% 11. Sapi Old       : 150 gold             %'), nl,
+	write('% 12. Domba Old      : 100 gold             %'), nl,
+	write('%                                           %'), nl,
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+	write('Masukkan nomor item yang ingin dibeli : '), read(X),
+	(((X>=1, X=<6), Y=1); ((X>=7), write('Masukkan jumlah item yang ingin dibeli : '), read(Y))),
+	buy(X,Y,summer), !.
+
+buymenu(autumn) :-
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+	write('%                                           %'), nl,
+	write('%           Mau beli apa hari ini?          %'), nl,
+	write('%               Autumn Edition              %'), nl,
+	write('%                                           %'), nl,
+	write('% 1. Shovel lvl 1       : 25                %'), nl,
+	write('% 2. Shovel lvl 2       : 500               %'), nl,
+	write('% 3. Fishing rod lvl 1  : 25                %'), nl,
+	write('% 4. Fishing rod lvl 2  : 750               %'), nl,
+	write('% 5. Rancher lvl 1      : 50                %'), nl,
+	write('% 6. Rancher lvl 2      : 500               %'), nl,
+	write('% 7. Seed Corn          : 10 gold           %'), nl,
+	write('% 8. Seed Turnip        : 15 gold           %'), nl,
+	write('% 9. Seed Cabbage      : 20 gold           %'), nl,
+	write('% 10. Chicken Old       : 50 gold           %'), nl,
+	write('% 11. Babi Old          : 200 gold          %'), nl,
+	write('% 12. Sapi Old          : 150 gold          %'), nl,
+	write('% 13. Domba Old         : 100 gold          %'), nl,
+	write('%                                           %'), nl,
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+	write('Masukkan nomor item yang ingin dibeli : '), read(X),
+	(((X>=1, X=<6), Y=1); ((X>=7), write('Masukkan jumlah item yang ingin dibeli : '), read(Y))),
+	buy(X,Y,autumn), !.
+
+buymenu(winter) :-
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+	write('%                                           %'), nl,
+	write('%           Mau beli apa hari ini?          %'), nl,
+	write('%               Autumn Edition              %'), nl,
+	write('%                                           %'), nl,
+	write('% 1. Shovel lvl 1       : 25                %'), nl,
+	write('% 2. Shovel lvl 2       : 500               %'), nl,
+	write('% 3. Fishing rod lvl 1  : 25                %'), nl,
+	write('% 4. Fishing rod lvl 2  : 750               %'), nl,
+	write('% 5. Rancher lvl 1      : 50                %'), nl,
+	write('% 6. Rancher lvl 2      : 500               %'), nl,
+	write('% 7. Seed Turnip        : 15 gold           %'), nl,
+	write('% 8. Seed Cabbage       : 20 gold           %'), nl,
+	write('% 9. Chicken Old        : 50 gold           %'), nl,
+	write('% 10. Babi Old          : 200 gold          %'), nl,
+	write('% 11. Sapi Old          : 150 gold          %'), nl,
+	write('% 12. Domba Old         : 100 gold          %'), nl,
+	write('%                                           %'), nl,
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+	write('Masukkan nomor item yang ingin dibeli : '), read(X),
+	(((X>=1, X=<6), Y=1); ((X>=7), write('Masukkan jumlah item yang ingin dibeli : '), read(Y))),
+	buy(X,Y,winter), !.
+
+buy(Code, _Num, _) :- uang(X), Code=:=1, X>=25, Money=25, minGold(Money), retractall(shovel(_)), asserta(shovel(1)), write('Membeli Shovel Level 1'), nl, !.
+buy(Code, _Num, _) :- uang(X), Code=:=2, X>=500, Money=500, minGold(Money), retractall(shovel(_)), asserta(shovel(2)), write('Membeli Shovel Level 2'), nl, !.
+buy(Code, _Num, _) :- uang(X), Code=:=3, X>=25, Money=25, minGold(Money), retractall(fishrod(_)), asserta(fishrod(1)), write('Membeli Fishing Rod Level 1'), nl, !.
+buy(Code, _Num, _) :- uang(X), Code=:=4, X>=750, Money=750, minGold(Money), retractall(fishrod(_)), asserta(fishrod(2)), write('Membeli Fishing Rod Level 2'), nl, !.
+buy(Code, _Num, _) :- uang(X), Code=:=5, X>=50, Money=50, minGold(Money), retractall(ranchlvl(_)), asserta(ranchlvl(1)), write('Membeli Rancher Level 1'), nl, !.
+buy(Code, _Num, _) :- uang(X), Code=:=6, X>=500, Money=500, minGold(Money), retractall(ranchlvl(_)), asserta(ranchlvl(2)), write('Membeli Rancher Level 2'), nl, !.
 
 buy(Code, Num) :- uang(X), Code=:=7, X>=5, Money=5*Num, minGold(Money), addItemQnt(carrot, Num), write('Membeli '), write(Num), write(' carrot!'), nl, !.
 buy(Code, Num) :- uang(X), Code=:=8, X>=10, Money=10*Num, minGold(Money), addItemQnt(corn, Num), write('Membeli '), write(Num), write(' corn!'), nl, !.
@@ -584,11 +658,11 @@ prompttransport(Opt) :-
 	write('Putri Tidur sedih diusir Anda'),nl,house,!.
 
 transport(X,Y) :-
-	!,X < 11, X > 0, Y < 11, X > 0, \+ (loc(NextY,X,A),A=='o'),
+	!,X < 11, X > 0, Y < 11, X > 0, \+ (loc(_,X,A),A=='o'),
 	retractall(playerpos(_,_)),assertz(playerpos(Y,X)), write('Putri Tidur langsung membonceng Anda ke lokasi tersebut'),nl.
 
 transport(X,Y) :-
-	!,X < 11, X > 0, Y < 11, X > 0, loc(NextY,X,A), A=='o', write('Putri Tidur tidak mau menceburkan Anda ke air'),nl,house.
+	!,X < 11, X > 0, Y < 11, X > 0, loc(_,X,A), A=='o', write('Putri Tidur tidak mau menceburkan Anda ke air'),nl,house.
 
 transport(X,Y) :-
 	!,(X > 10 ; X < 1 ; Y > 10; Y < 1),
@@ -614,9 +688,9 @@ writediary([H|T],Isi,Day,[H|Hasil]) :-
 rdiary :-
 		diary(Diary),
 		printdiary(Diary),
-		write('Which day diary do you want to read?'),nl,
-		read(Day),
-		readdiary(Diary,Day),!.
+		write('Which log do you want to read?'),nl,
+		read(Search),
+		readdiary(Diary,Search),!.
 
 printdiary([]) :-
 		write('You have no writings in your diary'),!,fail.
@@ -631,19 +705,21 @@ printdiarynext([H|T],N) :-
 		Next is N+1,
 		printdiarynext(T,Next),!.
 
-readdiary([],_) :-
+readdiary([],Search) :-
+		Search < 1,
 		write('You have no record of this day'),!,fail.
-readdiary([H|_],CDay) :-
+readdiary([H|_],CSearch) :-
 		isiDiary(H,Day,Isi),
-		CDay =:= Day,
+		CSearch =:= 1,
 		write('Here is the entry for Day '),
 		write(Day),nl,
 		write(Isi),!.
 
-readdiary([H|T],CDay) :-
-		isiDiary(H,Day,_),
-		CDay =\= Day,
-		readdiary(T,CDay),!.
+readdiary([H|T],CSearch) :-
+		isiDiary(H,_,_),
+		CSearch =\= 1,
+		NSearch is CSearch -1,
+		readdiary(T,NSearch),!.
 isiDiary([Day,Isi],Day,Isi).
 
 
