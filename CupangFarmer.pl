@@ -30,10 +30,10 @@
 :- dynamic(alchemist/2).
 
 diary([]).
-chickenlist([]).
+chickenlist([0,0,0,0]).
 piglist([]).
-cowlist([]).
-sheeplist([]).
+cowlist([-2,-2,-2]).
+sheeplist([-7,-7]).
 
 /* li -> List of item */
 li([]).
@@ -903,7 +903,7 @@ ranch :-
 	printpig,
 	printcow,
 	printsheep,
-	write('Apa yang mau kamu lakukan?').
+	write('Apa yang mau kamu lakukan?'),!.
 
 numegg([],0) :- !.
 numegg([Head|Tail], Count) :- day(X), N is X-Head, numegg(Tail, Ncount), Count is Ncount + N.
@@ -935,18 +935,18 @@ addexpranch(X):- ranchexp(EXP), NEXTEXP is EXP+X, ranchinglvl(LVL), NEXTLVLEXP i
 addexpranch(X):- ranchexp(EXP), ranchinglvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(ranchexp(_)), retractall(ranchinglvl(_)), asserta(ranchexp(NEXTEXP)), asserta(ranchinglvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp ranching'),!.
 
 chicken :- chickenlist(X), numegg(X,Y), Y =:= 0, write('Ayam anda belum menghasilkan telur.'), nl, write('Silakan cek lagi di lain waktu.'), !.
-chicken :- chickenlist(X), numegg(X,Y), write('Ayam anda menghasilkan '), write(Y), write(' telur.'), nl, write('Anda mendapat '), write(Y), write(' telur!'), day(D), chickenlist(C), chickenchange(C, D, Z), retractall(chickenlist(X)), asserta(chickenlist(Z)), addtimeambilegg, addexpranch(Y), addItemQnt(telur, Y).
+chicken :- chickenlist(X), numegg(X,Y), write('Ayam anda menghasilkan '), write(Y), write(' telur.'), nl, write('Anda mendapat '), write(Y), write(' telur!'), day(D), chickenlist(C), chickenchange(C, D, Z), retractall(chickenlist(X)), asserta(chickenlist(Z)), addtimeambilegg, addexpranch(Y), addItemQnt(telur, Y),!.
 cow :- cowlist(X), nummilk(X,Y), Y =:= 0, write('Sapi anda belum menghasilkan susu.'), nl, write('Silakan cek lagi di lain waktu.'), !.
-cow :- cowlist(X), nummilk(X,Y), write('Sapi anda menghasilkan '), write(Y), write(' botol susu.'), nl, write('Anda mendapat '), write(Y), write(' botol susu'), day(D), cowlist(C), cowchange(C,D,Z), retractall(cowlist(X)), asserta(cowlist(Z)), addtimeambilmilk, Nexp is Y * 5, addexpranch(Nexp), addItemQnt(susu, Y).
+cow :- cowlist(X), nummilk(X,Y), write('Sapi anda menghasilkan '), write(Y), write(' botol susu.'), nl, write('Anda mendapat '), write(Y), write(' botol susu'), day(D), cowlist(C), cowchange(C,D,Z), retractall(cowlist(X)), asserta(cowlist(Z)), addtimeambilmilk, Nexp is Y * 5, addexpranch(Nexp), addItemQnt(susu, Y),!.
 sheep :- sheeplist(X), numwool(X,Y), Y =:= 0, write('Domba anda belum menghasilkan wol.'), nl, write('Silakan cek lagi di lain waktu.'), !.
-sheep :- sheeplist(X), numwool(X,Y), write('Domba anda menghasilkan '), write(Y), write(' wol.'), nl, write('Anda mendapat '), write(Y), write(' wol!'), day(D), sheeplist(C), sheepchange(C,D,Z), retractall(sheeplist(X)), asserta(sheeplist(Z)), addtimeambilwool, Nexp is Y * 15, addexpranch(Nexp), addItemQnt(wool, Y).
+sheep :- sheeplist(X), numwool(X,Y), write('Domba anda menghasilkan '), write(Y), write(' wol.'), nl, write('Anda mendapat '), write(Y), write(' wol!'), day(D), sheeplist(C), sheepchange(C,D,Z), retractall(sheeplist(X)), asserta(sheeplist(Z)), addtimeambilwool, Nexp is Y * 15, addexpranch(Nexp), addItemQnt(wool, Y),!.
 
-gachahewan :- randomize, random(1,300,X), gachahewannext(X),!.
-gachahewannext(X) :- X < 11, write('Anda bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewanayam(Y), ! .
-gachahewannext(X) :- X >= 11 ,X < 15, write('Anda bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewanbabi(Y), ! .
-gachahewannext(X) :-  X >= 15 ,X < 18, write('Anda bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewansapi(Y),  ! .
-gachahewannext(X) :-  X >= 18 ,X < 21, write('Anda bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewandomba(Y),  ! .
-gachahewannext(X) :-  X >= 21, !.
+gachahewan :- randomize, random(1,100,X), gachahewannext(X),!.
+gachahewannext(X) :- X < 3, write('Anda bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewanayam(Y), ! .
+gachahewannext(X) :- X >= 3 ,X < 5, write('Anda bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewanbabi(Y), ! .
+gachahewannext(X) :-  X >= 5 ,X < 8, write('Anda bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewansapi(Y),  ! .
+gachahewannext(X) :-  X >= 8 ,X < 10, write('Anda bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), gachahewandomba(Y),  ! .
+gachahewannext(X) :-  X >= 10, !.
 
 gachahewanayam(Y) :- Y == ya, chickenlist(Z), addchicken(1,Z), nl, write('Ayam berhasil ditambahkan ke peternakan.'), !.
 gachahewanayam(Y) :- Y == tidak, !.
