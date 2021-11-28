@@ -286,8 +286,13 @@ start:- write('Silahkan Pilih Pekerjaan Anda (Tidak dapat diubah) '),nl,
 		write('1. Farmer    (2x exp jika berkebun)'),nl,
 		write('2. Fisherman (2x exp jika memancing)'),nl,
 		write('3. Rancher   (2x exp jika berternak)'),nl,
-		write('Pilihan Anda (1/2/3): '), read(X),asserta(job(X)),
-		status,!.
+		write('Pilihan Anda (1/2/3): '), read(X),predikatjob(X),!.
+predikatjob(X):-
+		X >= 1 , X =<3, asserta(job(X)),status,!.
+
+predikatjob(_) :-
+		write('Masukan Pekerjaan Salah Ulangi Input : '), read(Y), predikatjob(Y),!.
+
 
 writejob:-	job(X), X=:=1, write('Job        : Farmer'),!.
 writejob:-	job(X), X=:=2, write('Job        : Fishermen'),!.
