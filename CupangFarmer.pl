@@ -204,7 +204,7 @@ startGame :-
 	asserta(farmexp(0)),
 	asserta(fishlvl(0)),
 	asserta(fishexp(0)),
-	asserta(fishrod(1)),
+	asserta(fishrod(0)),
 	asserta(ranchexp(0)),
 	asserta(ranchinglvl(0)),
 	asserta(ranchlvl(0)),
@@ -214,7 +214,7 @@ startGame :-
 	asserta(fatigue(0)),
 	asserta(questlvl(1)),
 	asserta(isPlant(0)),
-	asserta(shovel(1)),
+	asserta(shovel(0)),
 	asserta(invcurrcap(0)),
 	asserta(plantType(none)),
 	asserta(farmlvl(0)),
@@ -223,27 +223,276 @@ startGame :-
 	promptStart,start.
 
 promptStart :-
-	write('Selamat datang di game Cupang Farmer'),nl,
-	write('Anda terbangun dan di sebelah meja Anda terdapat KTP bertuliskan nama CUPANG'),nl,
+	write('Selamat datang di game HARVEST : Cupang Farmer'),nl,
+	write('  ___ ___                                          __    '), nl,
+	write(' /   |   \\ _____  _______ ___  __  ____    _______/  |_  '), nl,
+	write('/    ~    \\\\__  \\ \\_  __ \\\\  \\/ /_/ __ \\  /  ___/\\   __\\ '), nl,
+	write('\\    Y    / / __ \\_|  | \\/ \\   / \\  ___/  \\___ \\  |  |   '), nl,
+	write(' \\___|_  / (____  /|__|     \\_/   \\___  >/____  > |__|   '), nl,
+	write('       \\/       \\/                    \\/      \\/         '), nl,
+	write('.-. . . .-. .-. . . .-.   .-. .-. .-. .  . .-. .-.'), nl,
+	write('|   | | |-\' |-| |\\| |..   |-  |-| |(  |\\/| |-  |( '), nl,
+	write('`-\' `-\' \'   ` \' \' ` `-\'   \'   ` \' \' \' \'  ` `-\' \' \''), nl,
+	write(''), nl,
+	write('\"Ah, akhirnya aku sampai juga di desa Kakek... \n Hiruk-pikuk kota tak lagi terasa ya...\n Berapa lama lagi aku akan dapat membayar hutang-hutangku?\n Entahlah, sebaiknya aku ke rumah Kakek dulu saja.\"'), nl, nl,
+	kakek,
+	write('\"Itu Kakek! Apakah kedatanganku akan mengejutkannya?\"'), nl, nl,
+	write('Masukkan karakter apapun untuk berbincang dengan Kakek! '), read(_Omg), nl,
+	write('Kakek : \"Claire cucuku! Kenapa kau ada di sini? Bukankah kamu sibuk dengan pekerjaanmu di kota?\"'), nl, nl,
+	write('\"Kakek... Aku terkena penipuan dalam proyek besar yang kubuat... Dan aku terlilit hutang 20,000 Gold.\"'), nl, nl,
+	write('Kakek : \"Astaganaga! Besar sekali besar hutangmu!\n Sini kau bantu Kakek saja, bertanam, memancing, dan memelihara ternak di desa.\n Siapa tahu dalam waktu setahun kamu sudah bisa menabung uang untuk membayar hutangmu.\n Maukah kamu?\"'), nl, nl,
+	write('Masukkan karakter apapun untuk menerima tawaran Kakek! '), read(_Omg), nl,
+	write('\"Ya Kakek! Terima kasih atas tawarannya, Kakek memang Kakek terbaik!\"'), nl, nl,
+	write('Selamat memulai hari-harimu di Desa Cupang Farmer, dimana alam terbentang hijau sejauh mata memandang.\n Tanah-tanah subur dan penghasil wortel, jagung, lobak, dan kubis terbesar di seluruh kota.\n Danau besar terbentang berisikan ikan salmon, tuna, dan cupang berenang-renang gembira.\n Tanah-tanah lapang terisi ramai dengan suara-suara ternak, seperti ayam, sapi, domba, dan babi.'), nl,
+	write('Mari bertualang dan menghasilkan Gold!'), nl, nl,
 	promptMenu.
 
+kakek :- write('              ,-----.'), nl,
+		write('            W/,-. ,-.\\W'), nl,
+		write('            ()>a   a<()'), nl,
+		write('            (.--(_)--.)'), nl,
+		write('          ,\'/.-\'\\_/`-.\\`.'), nl,
+		write('        ,\' /    `-\'    \\ `.'), nl,
+		write('       /   \\           /   \\'), nl,
+		write('      /     `.       ,\'     \\'), nl,
+		write('     /    /   `-._.-\'   \\    \\'), nl,
+		write('   ,-`-._/|     |=|o    |\\_.-<'), nl,
+		write('  <,--.)  |_____| |o____|  )_ \\'), nl,
+		write('   `-)|    |//   _   \\\\|     )/'), nl,
+		write('     ||    |\'    |    `|'), nl,
+		write('     ||    |     |     |'), nl,
+		write('     ||    (    )|(    )'), nl,
+		write('     ||    |     |     |'), nl,
+		write('     ||    |     |     |'), nl,
+		write('     ||    |_.--.|.--._|'), nl,
+		write('     ||     /\'\"\"| |\"\"`\\'), nl,
+		write('     []     `===\' `===\''), nl, nl, !.
+
+man :- write('  \\\\\\||///'), nl,
+		write('  |\' ,- -|'), nl,
+		write('  |  ( .).)'), nl,
+		write('  |     _)'), nl,
+		write('  \'  .___|'), nl,
+		write('   \\  \\/'), nl,
+		write('  ,-`--\'-.'), nl,
+		write(' /        \\'), nl,
+		write(' ||      ||'), nl,
+		write(' ||      ||'), nl,
+		write(' ||      ||'), nl,
+		write(' ||      ||'), nl,
+		write(' ||______||'), nl,
+		write(' //      \\\\'), nl,
+		write(' \\)      (/'), nl,
+		write('  |   ,  |'), nl,
+		write('  |   |  |'), nl,
+		write('  |   |  |'), nl,
+		write('  |   |  |'), nl,
+		write('  |   |  |'), nl,
+		write('  < __>__>'), nl,
+		write('  |____)___)'), nl, nl, !.
+
+woman :- write('       ,\"=-.'), nl,
+		write('      /    _),`\'\".'), nl,
+		write('     (   /a( ),   )'), nl,
+		write('     )  C  = =  ?/'), nl,
+		write('    (  )) (_  o-<'), nl,
+		write('    ) ( `-\' \\; ( \\_'), nl,
+		write('   (  | \\ ) )|  \\_/}'), nl,
+		write('    \\  \\  \\(_;/-|_)'), nl,
+		write('     )/) `._,--/ /'), nl,
+		write('      /     `!__!!'), nl,
+		write('     (       (_o))'), nl,
+		write('   ---`-._,      )---'), nl,
+		write('    ------(   /  |----'), nl,
+		write('          |   (  |'), nl,
+		write('          :__/|\\_;'), nl,
+		write('            \\ |/'), nl,
+		write('             )(\\_'), nl,
+		write('            /_)--`'), nl,
+		write('            \\_!'), nl, nl, !.
+
+momkid :-   write('      ___'), nl,
+			write('     /  /|'), nl,
+			write('    /__/-'), nl,
+			write('    /     |\\'), nl,
+			write('   |      | \\'), nl,
+			write('    \\      \\ \\'), nl,
+			write('    /       | >  **@'), nl,
+			write('    \\       / \\\\*\'\'*'), nl,
+			write('     \\     /     )|'), nl,
+			write('      | | |     /  \\'), nl,
+			write('      | | |      ||'), nl,
+			write('       - --\''), nl, nl, !.
+
+bryan :-write('   ////'), nl,
+		write('   oo )'), nl,
+		write('   \\-/'), nl,
+		write('   /\\\\'), nl,
+		write('   |//'), nl,
+		write('  //\\\\'), nl,
+		write('  \\\\ \\\\'), nl,
+		write('  (_)(_)'), nl, nl, !.
+
+kyle :- write('              ,,,,'), nl,
+		write('             /   \''), nl,
+		write('            /.. /'), nl,
+		write('           ( c  D'), nl,
+		write('            \\- \'\\_'), nl,
+		write('             `-\'\\)\\'), nl,
+		write('                |_ \\'), nl,
+		write('                |U \\\\'), nl,
+		write('               (__,//'), nl,
+		write('               |. \\/'), nl,
+		write('               LL__I'), nl,
+		write('                |||'), nl,
+		write('                |||'), nl,
+		write('             ,,-``\'\\'), nl, nl, !.
+
+yoga :- write('             ,.,.'), nl,
+		write('           ((((^))'), nl,
+		write('           d e_# b'), nl,
+		write('            \\._./'), nl,
+		write('        ,---i`-\'i---.'), nl,
+		write('       /  |  `-\'  |  \\'), nl,
+		write('       |__|       |__|'), nl,
+		write('        \\ |        | |'), nl,
+		write('         \\ \\______ | |'), nl,
+		write('          \\/ )   \\|| \\'), nl,
+		write('          |-  |   |\'//\\'), nl,
+		write('          |___|___|'), nl,
+		write('           |  |  |'), nl,
+		write('           (  |  )'), nl,
+		write('           {_ |__|'), nl,
+		write('           (__|__}'), nl,
+		write('          _>= | =<_'), nl,
+		write('         (__._|_.__)'), nl, nl, !.
+
+communicate :- day(D), D=:=7, nl, kakek,
+				write('Kakek : \"Bagaimana minggu pertamamu disini? Menyenangkan bukan?\n Hidup dengan tetangga yang ramah dan sumber daya alam yang melimpah.\n Hidup di desa memang simpel, bukankah begitu, Claire?\"'), read(_Omg), nl,
+				write('Kakek : \"Itulah kenapa Kakek senang hidup di desa! Mari kita kembali ke pekerjaan kita!\"'), nl, !.
+communicate :- day(D), D=:=14, nl, woman,
+				write('Kepala Desa Rusma : \"Hai anak muda! Kau pasti Claire ya, cucu Pak Andy?\"'), nl,
+				write('Masukkan karakter apapun untuk menjawab pertanyaan Bu Kades! '), read(_Omg), nl,
+				write('Kepala Desa Rusma : \"Ah... Kalau begitu, mari ikut Ibu ke kantor desa. Kau akan kumasukkan dalam daftar kependudukan!\"'), nl, !.
+communicate :- day(D), D=:=28, nl, bryan,
+				write('Bryan : \"Hai! Kamu baru di desa ini ya?\"'), nl,
+				write('\"Halo! Iya aku memang baru datang sebulan terakhir ini.\"'), nl,
+				write('Bryan : \"Kenalin, aku Bryan, pedagang di marketplace.\n Aku baru saja kembali dari perdagangan ke negeri Antah Berantah, pantas saja aku belum bertemu denganmu.\n Boleh tahu siapa namamu?\"'), nl,
+				write('\"Namaku Claire.\"'), nl,
+				write('Bryan : \"Karena kamu baru di sini, nih aku beri kamu!\"'), nl, nl, addItemQnt(tulip, 1),
+				write('Kamu menerima setangkai bunga tulip!'), nl, 
+				write('Bryan : \"Sampai bertemu di marketplace!\"'), nl, !.
+communicate :- day(D), D=:=42,
+				write('Setelah berjalan-jalan selama beberapa jam di desa... Hari mulai gelap. Claire rupanya tersesat!'), nl,
+				write('\"Ah, dimana ini? Kenapa tidak ada orang ya? Banyak pohon juga. Tadi aku sudah lewat sini bukan sih?\"'), nl,
+				write('\"Tolong... Apa ada orang di sini?\"'), nl, kyle,
+				write('Kyle : \"Sepertinya ada suara orang minta bantuan, deh. Dari mana ya asal suaranya?\"'), nl,
+				write('\"Tolong... Apa ada orang?\"'), nl,
+				write('Kyle : \"Hai!\"'), nl,
+				write('\"AAAAAAA!!!! Hantuuuu!!!!!!\"'), nl,
+				write('Kyle : \"Mana hantu? Mana hantu?\"'), nl,
+				write('\"Kamu!\"'), nl,
+				write('Kyle : \"Hah? Aku bukan hantu! Kenalin, aku seorang naturalis yang lagi neliti tumbuhan liar di daerah sini, namaku Kyle!\n Maaf ya udah ngagetin kamu...\"'), nl,
+				write('Wah aku juga minta maaf nih, sempat mengira kamu hantu, hehehe...'), nl,
+				write('Kyle : \"Kamu ngapain di sini malem-malem?\"'), nl,
+				write('\"Aku tersesat.\"'), nl,
+				write('Kyle : \"Boleh tau namamu?\"'), nl,
+				write('\"Namaku Claire, aku baru sebulan setengah di sini\"'), nl,
+				write('Kyle : \"Oh, pantas saja. Yuk kutemani supaya kamu nggak tersesat lagi.\"'), nl,
+				write('\"Wah, terima kasih banyak!\"'), nl, !.
+communicate :- day(D), D=:=56, yoga,
+				write('Warga desa ini begitu baik ya... Sepertinya aku juga harus bersikap ramah pada mereka.\n Disana ada orang! Aku sapa ah...'), nl,
+				write('\"Hai! Kenalin, aku Claire, warga baru disini.\"'), nl,
+				write('Yoga : \"Hai juga! Namaku Yoga. Kamu juga warga baru ya rupanya.\"'), nl,
+				write('\"Kamu juga warga baru? Wah... udah berapa lama nih?\"'), nl,
+				write('Yoga : \"Iya aku warga baru juga... Baru seminggu aku berada di sini. Kalau kamu?\"'), nl,
+				write('\"Hampir dua bulan aku di sini.'), nl,
+				write('Yoga : \"Ohh... Oh iya, kamu mau beli produk jamur ini? Aku bawa ini dari kota. Pembelian pertama aku kasih gratis 100%!\"'), nl,
+				write('\"Boleh banget, terima kasih! Sampai jumpa lagi, aku mau pergi bertani dulu!\"'), addItemQnt(jamur, 1),
+				write('Kamu menerima sebungkus jamur kering!'), nl, !.
+communicate :- day(D), D=:=84, momkid,
+				write('Anak kecil : \"Ibu, aku mau lentera itu!\"'), nl,
+				write('Ibu        : \"Lentera itu tidak boleh diambil, Ibu memasangnya untuk festival api malam ini.\"'), nl,
+				write('\"Permisi, apa Ibu bisa menjelaskan festival api itu apa ya?\"'), nl,
+				write('Ibu        : \"Kamu pasti salah satu dari 2 pendatang baru di desa ini ya?\"'), nl,
+				write('\"Iya Bu, eh itu ada Yoga, dia juga pendatang baru di desa ini\n Hai, Yoga!\"'), nl,
+				write('Yoga       : \"Halo Claire, lama tidak bertemu! Ada apa nih?\"'), nl,
+				write('Ibu        : \"Karena kalian berdua sama-sama pendatang baru, mari Ibu jelaskan tentang Festival Api.\"'), nl, nl,
+				write('Festival Api merupakan festival yang dilakukan setahun sekali di Desa ini. Jaman dahulu kala, belum ada yang namanya api unggun di desa yang lumayan terpencil ini. Kalau sekarang `kan akses lumayan mudah, dahulu tidak seperti itu. Konon, seekor Naga Api pernah datang ke desa ini, Ia datang dan hidup di gua di belakang desa.\n Namun, suatu hari, ada seorang rancher yang sedang menggembalakan dombanya.\n Tanpa sengaja, Ia bertemu dengan naga tersebut. Ia membawa sebatang tongkat kayu.\n Naga tersebut mendekati rancher tersebut. Ternyata, naga itu meminta tongkat yang dipegangnya untuk bayi naganya.\n Rancher itu kemudian menyerahkan tongkatnya. Sang naga menyemburkan api ke arah tongkat kayu tersebut dan terbakar menjadi api unggun.\n Karena bulan sudah bertengger di langit dan udara mulai terasa menusuk tulang, rancher tersebut memutuskan untuk tinggal bersama sang naga.\n Ia menyadari bahwa api unggun yang dibuat naga tersebut menghangatkan tubuh, lalu pergi mencari batang-batang kayu.\n Setelah sang naga tertidur dan api unggun telah habis, rancher tersebut mencoba untuk menggosok-gosokkan batu dan terciptalah api unggun.\n Untuk mengenang penciptaan api unggun itu, kami merayakan festival api dengan lentera lilin, untuk mengundang sang naga yang telah pergi untuk datang kembali.'), nl,
+				write('\nSaatnya merayakan Festival Api!'), nl, !.
+communicate :- day(D), D=:=100, kyle,
+				write('Kyle : \"Halo, Claire!\"'), nl,
+				write('\"Hai Kyle! Apa yang membuatmu kemari?\"'), nl,
+				write('Ini, aku baru saja menemukan sebuah tanaman liar yang cantik sekali, kuberikan untukmu!'), nl,addItemQnt(daisy, 1),
+				write('Kamu menerima setangkai bunga daisy!'), nl, 
+				write('Wah, terima kasih!'), nl, !.
+communicate :- day(D), D=:=120, kakek,
+				write('Kakek : \"Selamat pagi Cucuku!\"'), nl,
+				write('\"Selamat pagi, Kek.\"'), nl, !.
+communicate :- day(D), D=:=132, woman,
+				write('Kepala Desa Rusma : \"Halo Claire! Senang bertemu denganmu lagi! Bagaimana kabarmu?\"'), nl,
+				write('\"Baik, Bu. Bagaimana dengan kabar Ibu?\"'), nl,
+				write('Kepala Desa Rusma : \"Kabar Ibu baik pula. Semoga hewan-hewan ternakmu sehat-sehat juga ya!\"'), nl,
+				write('\"Terima kasih, Bu!\"'), nl, !.
+communicate :- day(D), D=:=181,
+				write('\"Tidak terasa, musim panas sudah hampir berakhir ya. Mari kita mulai hari ini dengan bahagia!\"'), nl, !.
+communicate :- day(D), D=:=200, bryan,
+				write('Bryan : \"Hai Claire! Apa kabar hari ini?\"'), nl,
+				write('\"Baik sekali! Apa yang membawamu kemari?\"'), nl,
+				write('Bryan : \"Oh ini, aku ingin memperkenalkanmu pada temanku, Yoga. Dia juga berasal dari kota. Aku baru saja kembali dari perjalanan dagang bersamanya.\"'), nl, yoga,
+				write('\"Yoga katamu? Aku sudah kenal dengannya, hehehe...\"'), nl,
+				write('Yoga : \"Claire katamu? Aku sudah kenal dengannya!\"'), nl,
+				write('Bryan : \"Oh rupanya kalian sudah berkenalan ya...\"'), nl, !.
+communicate :- day(D), D=:=250, kakek,
+				write('Kakek : \"Claire cucuku... Apakah kamu sudah akan kembali ke kota?\"'), nl,
+				write('\"Tidak, Kek, kenapa Kakek bertanya begitu?\"'), nl,
+				write('Kakek : \"Bukan apa-apa, Kakek senang kamu disini menemani Kakek yang sudah tua ini. Kakek akan sangat senang jika kamu tidak kembali ke kota...\n Tapi kamu harus melanjutkan masa depanmu disana...\"'), nl,
+				write('\"Hehehe... Aku tidak akan memutuskannya sekarang, Kek. Kakek tenang saja.\"'), nl, !.
+communicate :- day(D), D=:=280, uang(X), X>=15000,
+				write('\"Yes! Sedikit lagi aku akan dapat pulang ke kota dan membayar hutang-hutangku!.\n Tapi, akankah Kakek sedih mendengar berita ini...\"'), nl,!.
+communicate :- day(D), D=:=300, uang(X), X>=17000,
+				write('\"Satu... Dua... Tiga... Empat... Tujuh belas ribu Gold! Kembali ke kota atau tidak ya?\"'), nl, 
+				write('\"Bunga mawar, bantulah aku! Pulang, Tidak, Pulang, Tidak, Pulang...\"'), nl, !.
+communicate :- day(D), D=:=320, kyle,
+				write('Kyle : \"Claire! Kata Kakekmu, kau akan segera kembali ke kota ya?\"'), nl,
+				write('Masukkan karakter apapun untuk menjawab pertanyaan Kyle! '), read(_Omg), nl,
+				write('\"Begitulah... Meskipun begitu, aku masih mempertimbangkan untuk tidak kembali ke kota, kok!\"'), nl,
+				write('Kyle : \"Akankah kau kembali kemari lagi setelahnya?\"'), nl,
+				write('\"Untuk itu... aku tak tahu...\"'), nl,
+				write('Kyle : \"Lantas, bagaimana jika kami, warga Desa Cupang Farmer, merindukanmu?\"'), nl,
+				write('\"Kau punya nomor telepon?\"'), nl,
+				write('Kyle : \"?! Nomor telepon? Apa itu?\"'), nl,
+				write('\"Nomor telepon dan gawai, itu yang digunakan untuk teleponan, saling berbicara dari jarak yang jauh, mendekatkan yang jauh.\"'), nl,
+				write('Kyle : \"Sayangnya aku tak punya... Beli di mana ya?\"'), nl,
+				write('\"Beli saja lewat Yoga, katakanlah, \"Aku mau beli Nokia 3310!\"\"'), nl,
+				write('Kyle : \"Wah, mudah juga ya. Terima kasih sarannya, aku akan bertemu dengan Yoga nanti untuk beli gawai darinya!\"'), nl, !.
+communicate :- day(D), D=:=354, kakek,
+				write('Kakek : \"Claire, apakah kamu sudah memutuskan akan kembali ke kota atau tidak?\"'), nl,
+				write('Masukkan ya jika akan kembali ke kota, tidak jika tak kembali ke kota! '), read(Omg), pulang(Omg), !.
+
+pulang(Ans) :- Ans==ya, nl, write('\"Kakek... Claire mau mengucapkan terima kasih sebesar-besarnya pada Kakek...\n Kakek sudah banyak membantu Clair selama ini...\n Claire akan kembali ke kota Kek, tetapi Kakek tenang saja, Claire akan mengunjungi Kakek tiap bulannya!\"'), nl, 
+				yoga, write('Yoga : \"Claire, aku akan kembali ke kota juga. Bagaimana kalau kita kembali ke kota bersama? Aku sudah sewa baling-baling bambu untuk kembali, maukah kamu ikut?\"'), write('\"Benarkah? Aku mau. Terima kasih banyak, Yoga!\"'), !.
+pulang(Ans) :- Ans==tidak, nl, write('\"Tidak Kek, Claire mau menemani Kakek saja di desa!\"'), nl, !.
+
 promptMenu :-
-	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,
-	write('%                                                %'),nl,
-	write('%                   Cupang Farmer                %'),nl,
-	write('%                                                %'),nl,
-	write('%                       Menu                     %'),nl,
-	write('%                                                %'),nl,
-	write('%  1. menu    : Menampilkan Menu                 %'),nl,
-	write('%  2. map     : Menampilkan map                  %'),nl,
-	write('%  3. status  : Menampilkan kondisimu terkini    %'),nl,
-	write('%  4. w       : Gerak ke utara 1 langkah         %'),nl,
-	write('%  5. a       : Gerak ke barat 1 langkah         %'),nl,
-	write('%  6. s       : Gerak ke selatan 1 langkah       %'),nl,
-	write('%  7. d       : Gerak ke timur 1 langkah         %'),nl,
-	write('%  8. help    : Menampilkan peraturan game       %'),nl,
-	write('%                                                %'),nl,
-	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl.
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,
+	write('%                                                    %'),nl,
+	write('% .-. . . .-. .-. . . .-.   .-. .-. .-. .  . .-. .-. %'), nl,
+	write('% |   | | |-\' |-| |\\| |..   |-  |-| |(  |\\/| |-  |(  %'), nl,
+	write('% `-\' `-\' \'   ` \' \' ` `-\'   \'   ` \' \' \' \'  ` `-\' \' \' %'), nl,
+	write('%                                                    %'),nl,
+	write('%                       Menu                         %'),nl,
+	write('%                                                    %'),nl,
+	write('%  1. menu    : Menampilkan Menu                     %'),nl,
+	write('%  2. map     : Menampilkan map                      %'),nl,
+	write('%  3. status  : Menampilkan kondisimu terkini        %'),nl,
+	write('%  4. w       : Gerak ke utara 1 langkah             %'),nl,
+	write('%  5. a       : Gerak ke barat 1 langkah             %'),nl,
+	write('%  6. s       : Gerak ke selatan 1 langkah           %'),nl,
+	write('%  7. d       : Gerak ke timur 1 langkah             %'),nl,
+	write('%  8. help    : Menampilkan peraturan game           %'),nl,
+	write('%                                                    %'),nl,
+	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl.
 
 menu :- promptMenu.
 help :-
@@ -293,13 +542,12 @@ predikatjob(X):-
 predikatjob(_) :-
 		write('Masukan Pekerjaan Salah Ulangi Input : '), read(Y), predikatjob(Y),!.
 
-
 writejob:-	job(X), X=:=1, write('Job        : Farmer'),!.
 writejob:-	job(X), X=:=2, write('Job        : Fishermen'),!.
 writejob:-	job(X), X=:=3, write('Job        : Rancher'),!.
 
-tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update(X), updatePlant(6), !.
-tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update(X), updatePlant(6),!.
+tidur(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),retractall(fatigue(_)),asserta(fatigue(0)),update(X), updatePlant(6), communicate, !.
+tidur(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),retractall(fatigue(_)),asserta(fatigue(0)),update(X), updatePlant(6), communicate, !.
 
 addTime(X):- time(T), NextT is T+X, NextT<24, retractall(time(_)), asserta(time(NextT)),addfatigue(X),update(X), updatePlant(X), !.
 addTime(X):- time(T), NextT is mod(T+X,24), day(CurrDay), NextDay is CurrDay+1, retractall(day(_)), asserta(day(NextDay)),retractall(time(_)), asserta(time(NextT)),addfatigue(X),update(X), updatePlant(X),!.
@@ -691,8 +939,6 @@ housechoice(sleep):-!,
 		putritidur(Chance),!.
 housechoice(_):- write('invalid input'),house,!.
 
-
-
 putritidur(Chance) :-
 	Chance =:= 1,
 	write('Putri Tidur timbul pada bayangan Anda dan menawarkan membonceng ke mana pun dalam peta'),nl,
@@ -729,8 +975,6 @@ transport(X,Y) :-
 transport(X,Y) :-
 	!,(X > 10 ; X < 1 ; Y > 10; Y < 1),
 	write('Putri Tidur kesal Anda meminta yang mustahil lalu pergi meninggalkan Anda'),house,nl.
-
-
 
 /* membuka opsi  diary */
 wdiary :-
@@ -905,27 +1149,28 @@ plant :- shovel(X), X=:=0, write('Anda harus memiliki shovel untuk menggali tana
 plant :- playerpos(Y,X), loc(Y,X,A), A==m, write('Anda tidak dapat menanam pada area M'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==h, write('Anda tidak dapat menanam pada area H'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==r, write('Anda tidak dapat menanam pada area R'), nl, !.
+plant :- playerpos(Y,X), loc(Y,X,A), A==q, write('Anda tidak dapat menanam pada area Q'), nl, !.
 plant :- showplanting, write('Mari kita bercocok tanam!'), nl, write('Masukkan pilihan seed yang ditanam (1:Carrot, 2:Corn, 3:Turnip, 4:Cabbage) : '), read(X), planting(X), !.
 
 /* Time Planting 6 (shovel 1) */
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
-					Seed =:= 1, findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), addPlant(Y,X,72,carrot), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
-					Seed =:= 2, findQnt(corn, Num), Num>=1, deleteitem(corn, 1), addPlant(Y,X,96,corn), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
-					Seed =:= 3, findQnt(turnip, Num), Num>=1, deleteitem(turnip, 1), addPlant(Y,X,120,turnip), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
-					Seed =:= 4, findQnt(cabbage, Num), Num>=1, deleteitem(cabbage, 1), addPlant(Y,X,144,cabbage), !.
+planting(Seed) :- 	Seed =:= 1, playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
+					findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), write('seed 1'), addPlant(Y,X,72,carrot), !.
+planting(Seed) :- 	Seed =:= 2, playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
+					findQnt(corn, Num), Num>=1, deleteitem(corn, 1), addPlant(Y,X,96,corn), !.
+planting(Seed) :- 	Seed =:= 3, playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
+					findQnt(turnip, Num), Num>=1, deleteitem(turnip, 1), addPlant(Y,X,120,turnip), !.
+planting(Seed) :- 	Seed =:= 4, playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
+					findQnt(cabbage, Num), Num>=1, deleteitem(cabbage, 1), addPlant(Y,X,144,cabbage), !.
 
 /* Time Planting 4 (shovel 2) */
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
-					Seed =:= 1, findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), addPlant(Y,X,72,carrot), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
-					Seed =:= 2, findQnt(corn, Num), Num>=1, deleteitem(corn, 1), addPlant(Y,X,96,corn), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
-					Seed =:= 3, findQnt(turnip, Num), Num>=1, deleteitem(turnip, 1), addPlant(Y,X,120,turnip), !.
-planting(Seed) :- 	playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
-					Seed =:= 4, findQnt(cabbage, Num), Num>=1, deleteitem(cabbage, 1), addPlant(Y,X,144,cabbage), !.
+planting(Seed) :- 	Seed =:= 1, playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
+					findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), addPlant(Y,X,72,carrot), !.
+planting(Seed) :- 	Seed =:= 2, playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
+					findQnt(corn, Num), Num>=1, deleteitem(corn, 1), addPlant(Y,X,96,corn), !.
+planting(Seed) :- 	Seed =:= 3, playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
+					findQnt(turnip, Num), Num>=1, deleteitem(turnip, 1), addPlant(Y,X,120,turnip), !.
+planting(Seed) :- 	Seed =:= 4, playerpos(Y, X), shovel(C), C=:=2, addTimePlanting(4),
+					findQnt(cabbage, Num), Num>=1, deleteitem(cabbage, 1), addPlant(Y,X,144,cabbage), !.
 
 showplanting:-	write('       '),nl,
 				write('|____  '),nl,
