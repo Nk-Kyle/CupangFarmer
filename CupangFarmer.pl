@@ -871,11 +871,6 @@ addexpfarm(X):- farmexp(EXP), NEXTEXP is EXP+X, farmlvl(LVL), NEXTLVLEXP is 100+
 addexpfarm(X):- farmexp(EXP), farmlvl(LVL), NEXTLVLEXP is 100+(100*LVL), NEXTEXP is EXP+X-NEXTLVLEXP, NEXTLVL is LVL+1, retractall(farmexp(_)), retractall(farmlvl(_)), asserta(farmexp(NEXTEXP)), asserta(farmlvl(NEXTLVL)),nl,write('Anda mendapat '),write(X),write(' Exp farming'),nl,!.
 
 /*===================RANCHER============================*/
-/*chickenlist([-1,0,1]).
-piglist([3,2]).
-cowlist([-2, 0,-1, 1]).
-sheeplist([-6, 1, 0]).*/
-
 
 numchicken([],0) :- !.
 numchicken([_Head|Tail], Count) :- numchicken(Tail, Ncount), Count is Ncount + 1.
@@ -946,15 +941,19 @@ cow :- cowlist(X), nummilk(X,Y), write('Sapi anda menghasilkan '), write(Y), wri
 sheep :- sheeplist(X), numwool(X,Y), Y =:= 0, write('Domba anda belum menghasilkan wol.'), nl, write('Silakan cek lagi di lain waktu.'), !.
 sheep :- sheeplist(X), numwool(X,Y), write('Domba anda menghasilkan '), write(Y), write(' wol.'), nl, write('Anda mendapat '), write(Y), write(' wol!'), day(D), sheeplist(C), sheepchange(C,D,Z), retractall(sheeplist(X)), asserta(sheeplist(Z)), addtimeambilwool, Nexp is Y * 15, addexpranch(Nexp), addItemQnt(wool, Y).
 
-gachahewan :- randomize, random(1,100,X), X < 11, write('Anda bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, chickenlist(Z), addchicken(1,Z), nl, write('Ayam berhasil ditambahkan ke peternakan.'), ! .
-gachahewan :- randomize, random(1,100,X), X < 11, write('Anda bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
-gachahewan :- randomize, random(1,100,X), X < 21, write('Anda bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, piglist(Z), addpig(1,Z), nl, write('Babi berhasil ditambahkan ke peternakan.'), ! .
-gachahewan :- randomize, random(1,100,X), X < 21, write('Anda bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
-gachahewan :- randomize, random(1,100,X), X < 31, write('Anda bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, cowlist(Z), addcow(1,Z), nl, write('Sapi berhasil ditambahkan ke peternakan.'), ! .
-gachahewan :- randomize, random(1,100,X), X < 31, write('Anda bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
-gachahewan :- randomize, random(1,100,X), X < 41, write('Anda bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, sheeplist(Z), addsheep(1,Z), nl, write('Domba berhasil ditambahkan ke peternakan.'), ! .
-gachahewan :- randomize, random(1,100,X), X < 41, write('Anda bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
-gachahewan :- randomize, random(1,100,X), X > 41, !.
+gachahewan :- randomize, random(1,300,X), X < 11, write('Anda bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, chickenlist(Z), addchicken(1,Z), nl, write('Ayam berhasil ditambahkan ke peternakan.'), ! .
+gachahewan :- randomize, random(1,300,X), X < 11, write('Anda bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
+gachahewan :- randomize, random(1,300,X), X < 11, write('Anda bertemu dengan ayam liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(_Y), write('Masukan anda salah dan ayam tersebut telah pergi.'), !.
+gachahewan :- randomize, random(1,300,X), X >= 11 ,X < 15, write('Anda bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, piglist(Z), addpig(1,Z), nl, write('Babi berhasil ditambahkan ke peternakan.'), ! .
+gachahewan :- randomize, random(1,300,X), X >= 11 ,X < 15, write('Anda bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
+gachahewan :- randomize, random(1,300,X), X >= 11 ,X < 15, write('Anda bertemu dengan babi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(_Y),write('Masukan anda salah dan babi tersebut telah pergi.'), !.
+gachahewan :- randomize, random(1,300,X), X >= 15 ,X < 18, write('Anda bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, cowlist(Z), addcow(1,Z), nl, write('Sapi berhasil ditambahkan ke peternakan.'), ! .
+gachahewan :- randomize, random(1,300,X), X >= 15 ,X < 18, write('Anda bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
+gachahewan :- randomize, random(1,300,X), X >= 15 ,X < 18, write('Anda bertemu dengan sapi liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(_Y), write('Masukan anda salah dan sapi tersebut telah pergi.'), !.
+gachahewan :- randomize, random(1,300,X), X >= 18 ,X < 21, write('Anda bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == ya, sheeplist(Z), addsheep(1,Z), nl, write('Domba berhasil ditambahkan ke peternakan.'), ! .
+gachahewan :- randomize, random(1,300,X), X >= 18 ,X < 21, write('Anda bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(_Y),write('Masukan anda salah dan domba tersebut telah pergi.'), !.
+gachahewan :- randomize, random(1,300,X), X >= 18 ,X < 21, write('Anda bertemu dengan domba liar.'), nl, write('Ingin menjadikannya sebagai ternak Anda?(ya/tidak): '), read(Y), Y == tidak, !.
+gachahewan :- randomize, random(1,300,X), X > 21, !.
 
 
 /*===========================================================ALCHEMIST=================================================================*/
