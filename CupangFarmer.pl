@@ -557,7 +557,7 @@ minGold(X) :- uang(Gold), X=<Gold, Nextgold is Gold - X, retractall(uang(Gold)),
 
 addExp(_) :- lvlplayer(L), L =:= 3, write('Level player sudah maksimal.'), !.
 addExp(X) :- exp(E), Nexp is E + X, lvlplayer(L), Nextl is 100+(100*L), Nexp < Nextl, retractall(exp(_E)), asserta(exp(Nexp)), nl, write('Anda mendapat '), write(X), write(' Exp player!'),!.
-addExp(X) :- exp(E), lvlplayer(L), Nextl is 100+(100*L), Nexp is E + X - Nextl, Nextlvl is L + 1, retractall(exp(_E)), asserta(exp(Nexp)), retractall(lvlplayer(_L)), asserta(lvlplayer(Nextlvl)), write('Anda mendapat '), write(X), write(' Exp player dan mendapat kenaikan level player!'), C is 25*Nextlvl, addexpfish(C), addexpranch(C), addexpfarm(C)!.
+addExp(X) :- exp(E), lvlplayer(L), Nextl is 100+(100*L), Nexp is E + X - Nextl, Nextlvl is L + 1, retractall(exp(_E)), asserta(exp(Nexp)), retractall(lvlplayer(_L)), asserta(lvlplayer(Nextlvl)), write('Anda mendapat '), write(X), write(' Exp player dan mendapat kenaikan level player!'), C is 25*Nextlvl, addexpfish(C), addexpranch(C), addexpfarm(C),!.
 
 time:- day(D), time(T),season(S), cuaca(C),write(S),write(' Season '),nl, write('Day '),write(D),write(' '),write(T),write(':00 '),write(C),!.
 
@@ -944,6 +944,8 @@ sell(X,Y) :- X==pig, deletepig(Y), Money=150*Y, addGold(Money), !.
 sell(X,Y) :- X==cow, deletecow(Y), Money=100*Y, addGold(Money), !.
 sell(X,Y) :- X==sheep, deletesheep(Y), Money=75*Y, addGold(Money), !.
 sell(_,_) :- write('Tidak terdapat item tersebut'),!.
+
+throwItem :- displayInv, write('Masukkan nama Item yang Ingin Anda Buang : '), read(Item),write('Masukkan jumlah yang dibuang : '), read(Qnt), deleteitem(Item,Qnt).
 
 deletechicken(0, X) :- retractall(chickenlist(_)), asserta(chickenlist(X)) ,!.
 deletechicken(Num, [_H|T]) :- Nextnum is Num - 1, deletechicken(Nextnum, T), ! .
@@ -1426,74 +1428,3 @@ pilihanpotion(1):- minGold(5), retractall(farmlvl(_)),asserta(farmlvl(3)),status
 pilihanpotion(2):- minGold(5),  retractall(fishlvl(_)),asserta(fishlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
 pilihanpotion(3):- minGold(5),  retractall(ranchlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
 pilihanpotion(4):- !.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
