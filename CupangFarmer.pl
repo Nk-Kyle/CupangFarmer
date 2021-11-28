@@ -580,7 +580,7 @@ status:- 	fatigue(F),
 
 addfatigue(X):- fatigue(F), NextF is F+X, retractall(fatigue(_)), asserta(fatigue(NextF)),!.
 
-update(_):- day(D), D =:= 366, failgame,!.
+update(_):- day(D), D =:= 365, failgame,!.
 update(_):- uang(G), G>=20000, successgame,!.
 update(_):- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur sehingga ia tertidur selama 12 jam'),nl,showfatigue,tidur(12),!.
 update(_):- day(D), D =:= 92, retractall(season(_)), asserta(season(summer)).
@@ -596,8 +596,9 @@ showfatigue:- 	write('    zz'),nl,
 				write('o_ '),nl,
 				write('|/\\'),nl.
 
-failgame:- write('Pesan dari sistem:\nClaire, tetap semangat ya meskipun kamu gagal dalam permainan ini. Semoga beruntung dalam percobaan selanjutnya!\n'), retractall(_), pulang(ya), !.
-successgame:- write('Pesan dari sistem:\nSelamat, Claire! Kamu berhasil menyelesaikan permainan ini! Semoga hari-harimu menyenangkan! Kembali lagi ya!'), pulang(ya),!.
+failgame:- write('Pesan dari sistem:\nClaire, tetap semangat ya meskipun kamu gagal dalam permainan ini. Semoga beruntung dalam percobaan selanjutnya!\n'), pulang(ya),deleteall, !.
+successgame:- write('Pesan dari sistem:\nSelamat, Claire! Kamu berhasil menyelesaikan permainan ini! Semoga hari-harimu menyenangkan! Kembali lagi ya!'), pulang(ya),deleteall,!.
+deleteall:- retractall(uang(_)),retractall(exp(_)),retractall(lvlplayer(_)),retractall(farmexp(_)),retractall(fishlvl(_)),retractall(fishexp(_)),retractall(fishrod(_)),retractall(ranchexp(_)),retractall(ranchinglvl(_)),retractall(ranchlvl(_)),retractall(time(_)),retractall(day(_)),retractall(playerpos(_)),retractall(fatigue(_)),retractall(questlvl(_)),retractall(isPlant(_)),retractall(shovel(_)),retractall(invcurrcap(_)),retractall(plantType(_)),retractall(farmlvl(_)),retractall(alchemist(_)),retractall(season(_)),!. 
 
 /*=========================================================QUEST==================================================================================*/
 quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil dan dilihat di Q'),!.
