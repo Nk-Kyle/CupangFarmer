@@ -28,6 +28,8 @@
 :- dynamic(farmlvl/1).
 :- dynamic(diary/1).
 :- dynamic(alchemist/2).
+:- dynamic(season/1).
+:- dynamic(cuaca/1).
 
 diary([]).
 chickenlist([0,0,0,0]).
@@ -217,7 +219,8 @@ startGame :-
 	asserta(plantType(none)),
 	asserta(farmlvl(0)),
 	asserta(alchemist(0,0)),
-	promptStart.
+	asserta(season(spring)),
+	promptStart,start.
 
 promptStart :-
 	write('Selamat datang di game Cupang Farmer'),nl,
@@ -231,15 +234,14 @@ promptMenu :-
 	write('%                                                %'),nl,
 	write('%                       Menu                     %'),nl,
 	write('%                                                %'),nl,
-	write('%  1. start   : Mulai pertualanganmu             %'),nl,
-	write('%  2. menu    : Menampilkan Menu                 %'),nl,
-	write('%  3. map     : Menampilkan map                  %'),nl,
-	write('%  4. status  : Menampilkan kondisimu terkini    %'),nl,
-	write('%  5. w       : Gerak ke utara 1 langkah         %'),nl,
-	write('%  6. a       : Gerak ke barat 1 langkah         %'),nl,
-	write('%  7. s       : Gerak ke selatan 1 langkah       %'),nl,
-	write('%  8. d       : Gerak ke timur 1 langkah         %'),nl,
-	write('%  9. help    : Menampilkan peraturan game       %'),nl,
+	write('%  1. menu    : Menampilkan Menu                 %'),nl,
+	write('%  2. map     : Menampilkan map                  %'),nl,
+	write('%  3. status  : Menampilkan kondisimu terkini    %'),nl,
+	write('%  4. w       : Gerak ke utara 1 langkah         %'),nl,
+	write('%  5. a       : Gerak ke barat 1 langkah         %'),nl,
+	write('%  6. s       : Gerak ke selatan 1 langkah       %'),nl,
+	write('%  7. d       : Gerak ke timur 1 langkah         %'),nl,
+	write('%  8. help    : Menampilkan peraturan game       %'),nl,
 	write('%                                                %'),nl,
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
 
@@ -326,10 +328,13 @@ addfatigue(X):- fatigue(F), NextF is F+X, retractall(fatigue(_)), asserta(fatigu
 
 update(_):- day(D), D =:= 366, failgame,!.
 update(_):- uang(G), G>=20000, sucessgame,!.
+update(_):- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur sehingga ia tertidur selama 12 jam'),nl,showfatigue,tidur(12),!.
+update(_):- day(D), D =:= 92, retractall(season(_)), asserta(season(summer)).
+update(_):- day(D), D =:= 183, retractall(season(_)), asserta(season(autumn)).
+update(_):- day(D), D =:= 274, retractall(season(_)), asserta(season(winter)).
 update(_):- alchemist(X,_),X=:=0, summonAlchemist.
 update(X):- alchemist(1,B), NEXTB is B - X, retractall(alchemist(_,_)), asserta(alchemist(1,NEXTB)), NEXTB =< 0 , write('Alchemist sudah pergi meninggalkan market'), retractall(alchemist(_,_)),asserta(alchemist(0,0)).
-update(_):- gachahewan, !.
-update(_):- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur sehingga ia tertidur selama 12 jam'),nl,showfatigue,tidur(12),!.
+update(_):- gachahewan.
 update(_):- !.
 
 showfatigue:- 	write('    zz'),nl,
@@ -967,7 +972,7 @@ gachahewandomba(_Y) :- write('Masukan anda salah dan domba tersebut telah pergi.
 summonAlchemist:- randomize,random(1,100, X), X =:= 1, retractall(alchemist(_,_)), asserta(alchemist(1,72)),write('Alchemist sedang berada di market selama 72 jam kedepan. ketik potion pada menu di market untuk membeli barangnya!'),!.
 
 buypotion :-	alchemist(0,_), write('Alchemist sedang tidak berada di market, Anda tidak dapat membeli potion'),nl,!.
-buypotion :- 	write('1. Farming Potion  (500) --> memaksimalkan lvl farming'),nl, 
+buypotion :- 	write('1. Farming Potion  (500) --> memaksimalkan lvl farming'),nl,
 				write('2. Fishing Potion  (500) --> memaksimalkan lvl fishing'),nl,
 				write('3. Ranching Potion (500) --> memaksimalkan lvl ranching'),nl,
 				write('4. Tidak jadi beli'),nl,
@@ -976,4 +981,4 @@ buypotion :- 	write('1. Farming Potion  (500) --> memaksimalkan lvl farming'),nl
 pilihanpotion(1):- minGold(5), retractall(farmlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
 pilihanpotion(2):- minGold(5),  retractall(fishlvl(_)),asserta(fishlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
 pilihanpotion(3):- minGold(5),  retractall(ranchlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
-pilihanpotion(4):- !. 
+pilihanpotion(4):- !.
