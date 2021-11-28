@@ -380,7 +380,7 @@ communicate :- day(D), D=:=28, nl, bryan,
 				write('Bryan : \"Kenalin, aku Bryan, pedagang di marketplace.\n Aku baru saja kembali dari perdagangan ke negeri Antah Berantah, pantas saja aku belum bertemu denganmu.\n Boleh tahu siapa namamu?\"'), nl,
 				write('\"Namaku Claire.\"'), nl,
 				write('Bryan : \"Karena kamu baru di sini, nih aku beri kamu!\"'), nl, nl, addItemQnt(tulip, 1),
-				write('Kamu menerima setangkai bunga tulip!'), nl, 
+				write('Kamu menerima setangkai bunga tulip!'), nl,
 				write('Bryan : \"Sampai bertemu di marketplace!\"'), nl, !.
 communicate :- day(D), D=:=42,
 				write('Setelah berjalan-jalan selama beberapa jam di desa... Hari mulai gelap. Claire rupanya tersesat!'), nl,
@@ -424,7 +424,7 @@ communicate :- day(D), D=:=100, kyle,
 				write('Kyle : \"Halo, Claire!\"'), nl,
 				write('\"Hai Kyle! Apa yang membuatmu kemari?\"'), nl,
 				write('Ini, aku baru saja menemukan sebuah tanaman liar yang cantik sekali, kuberikan untukmu!'), nl,addItemQnt(daisy, 1),
-				write('Kamu menerima setangkai bunga daisy!'), nl, 
+				write('Kamu menerima setangkai bunga daisy!'), nl,
 				write('Wah, terima kasih!'), nl, !.
 communicate :- day(D), D=:=120, kakek,
 				write('Kakek : \"Selamat pagi Cucuku!\"'), nl,
@@ -451,7 +451,7 @@ communicate :- day(D), D=:=250, kakek,
 communicate :- day(D), D=:=280, uang(X), X>=15000,
 				write('\"Yes! Sedikit lagi aku akan dapat pulang ke kota dan membayar hutang-hutangku!.\n Tapi, akankah Kakek sedih mendengar berita ini...\"'), nl,!.
 communicate :- day(D), D=:=300, uang(X), X>=17000,
-				write('\"Satu... Dua... Tiga... Empat... Tujuh belas ribu Gold! Kembali ke kota atau tidak ya?\"'), nl, 
+				write('\"Satu... Dua... Tiga... Empat... Tujuh belas ribu Gold! Kembali ke kota atau tidak ya?\"'), nl,
 				write('\"Bunga mawar, bantulah aku! Pulang, Tidak, Pulang, Tidak, Pulang...\"'), nl, !.
 communicate :- day(D), D=:=320, kyle,
 				write('Kyle : \"Claire! Kata Kakekmu, kau akan segera kembali ke kota ya?\"'), nl,
@@ -470,7 +470,7 @@ communicate :- day(D), D=:=354, kakek,
 				write('Kakek : \"Claire, apakah kamu sudah memutuskan akan kembali ke kota atau tidak?\"'), nl,
 				write('Masukkan ya jika akan kembali ke kota, tidak jika tak kembali ke kota! '), read(Omg), pulang(Omg), !.
 
-pulang(Ans) :- Ans==ya, nl, write('\"Kakek... Claire mau mengucapkan terima kasih sebesar-besarnya pada Kakek...\n Kakek sudah banyak membantu Clair selama ini...\n Claire akan kembali ke kota Kek, tetapi Kakek tenang saja, Claire akan mengunjungi Kakek tiap bulannya!\"'), nl, 
+pulang(Ans) :- Ans==ya, nl, write('\"Kakek... Claire mau mengucapkan terima kasih sebesar-besarnya pada Kakek...\n Kakek sudah banyak membantu Clair selama ini...\n Claire akan kembali ke kota Kek, tetapi Kakek tenang saja, Claire akan mengunjungi Kakek tiap bulannya!\"'), nl,
 				yoga, write('Yoga : \"Claire, aku akan kembali ke kota juga. Bagaimana kalau kita kembali ke kota bersama? Aku sudah sewa baling-baling bambu untuk kembali, maukah kamu ikut?\"'), write('\"Benarkah? Aku mau. Terima kasih banyak, Yoga!\"'), !.
 pulang(Ans) :- Ans==tidak, nl, write('\"Tidak Kek, Claire mau menemani Kakek saja di desa!\"'), nl, !.
 
@@ -598,7 +598,7 @@ showfatigue:- 	write('    zz'),nl,
 
 failgame:- write('Pesan dari sistem:\nClaire, tetap semangat ya meskipun kamu gagal dalam permainan ini. Semoga beruntung dalam percobaan selanjutnya!\n'), pulang(ya),deleteall, !.
 successgame:- write('Pesan dari sistem:\nSelamat, Claire! Kamu berhasil menyelesaikan permainan ini! Semoga hari-harimu menyenangkan! Kembali lagi ya!'), pulang(ya),deleteall,!.
-deleteall:- retractall(uang(_)),retractall(exp(_)),retractall(lvlplayer(_)),retractall(farmexp(_)),retractall(fishlvl(_)),retractall(fishexp(_)),retractall(fishrod(_)),retractall(ranchexp(_)),retractall(ranchinglvl(_)),retractall(ranchlvl(_)),retractall(time(_)),retractall(day(_)),retractall(playerpos(_)),retractall(fatigue(_)),retractall(questlvl(_)),retractall(isPlant(_)),retractall(shovel(_)),retractall(invcurrcap(_)),retractall(plantType(_)),retractall(farmlvl(_)),retractall(alchemist(_)),retractall(season(_)),!. 
+deleteall:- retractall(uang(_)),retractall(exp(_)),retractall(lvlplayer(_)),retractall(farmexp(_)),retractall(fishlvl(_)),retractall(fishexp(_)),retractall(fishrod(_)),retractall(ranchexp(_)),retractall(ranchinglvl(_)),retractall(ranchlvl(_)),retractall(time(_)),retractall(day(_)),retractall(playerpos(_)),retractall(fatigue(_)),retractall(questlvl(_)),retractall(isPlant(_)),retractall(shovel(_)),retractall(invcurrcap(_)),retractall(plantType(_)),retractall(farmlvl(_)),retractall(alchemist(_)),retractall(season(_)),!.
 
 /*=========================================================QUEST==================================================================================*/
 quest:- loc(Y,X,L), L==q, playerpos(A,B), (Y\=A;X\=B), write('Quest hanya bisa diambil dan dilihat di Q'),!.
@@ -894,20 +894,21 @@ sellternak(X,Y,Num) :- X==cow, cowlist(W), numcow(W,Num), Y =< Num, sell(X,Y), !
 sellternak(X,Y,Num) :- X==sheep, sheeplist(W), numsheep(W,Num), Y > Num, sell(X,Num), !.
 sellternak(X,Y,Num) :- X==sheep, sheeplist(W), numsheep(W,Num), Y =< Num, sell(X,Y), !.
 
-sell(X,Y) :- deleteitem(X,Y), X==carrot, Money=5*Y, addGold(Money), !.
-sell(X,Y) :- deleteitem(X,Y), X==corn, Money=10*Y, addGold(Money), !.
-sell(X,Y) :- deleteitem(X,Y), X==turnip, Money=15*Y, addGold(Money), !.
-sell(X,Y) :- deleteitem(X,Y), X==cabbage, Money=25*Y, addGold(Money), !.
-sell(X,Y) :- deleteitem(X,Y), X==telur, Money=10*Y, addGold(Money), !.
-sell(X,Y) :- deleteitem(X,Y), X==susu, Money=15*Y, addGold(Money), !.
-sell(X,Y) :- deleteitem(X,Y), X==wool, Money=20*Y, addGold(Money), !.
-sell(X,Y) :- deleteitem(X,Y), X==tuna, Money=20*Y, addGold(Money), !.
-sell(X,Y) :- deleteitem(X,Y), X==salmon, Money=30*Y, addGold(Money), !.
-sell(X,Y) :- deleteitem(X,Y), X==cupang, Money=50*Y, addGold(Money), !.
+sell(X,Y) :- X==carrot, Money=5*Y, !,deleteitem(X,Y), addGold(Money),!.
+sell(X,Y) :- X==corn, Money=10*Y,!, deleteitem(X,Y),addGold(Money), !.
+sell(X,Y) :- X==turnip, Money=15*Y,!,deleteitem(X,Y), addGold(Money), !.
+sell(X,Y) :- X==cabbage, Money=25*Y,!,deleteitem(X,Y),addGold(Money), !.
+sell(X,Y) :- X==telur, Money=10*Y,!,deleteitem(X,Y),addGold(Money), !.
+sell(X,Y) :- X==susu, Money=15*Y,!,deleteitem(X,Y), addGold(Money), !.
+sell(X,Y) :- X==wool, Money=20*Y,!,deleteitem(X,Y), addGold(Money), !.
+sell(X,Y) :- X==tuna, Money=20*Y,!,deleteitem(X,Y), addGold(Money), !.
+sell(X,Y) :- X==salmon, Money=30*Y,!,deleteitem(X,Y), addGold(Money), !.
+sell(X,Y) :- X==cupang, Money=50*Y,!,deleteitem(X,Y), addGold(Money), !.
 sell(X,Y) :- X==chicken, deletechicken(Y), Money=30*Y, addGold(Money), !.
 sell(X,Y) :- X==pig, deletepig(Y), Money=150*Y, addGold(Money), !.
 sell(X,Y) :- X==cow, deletecow(Y), Money=100*Y, addGold(Money), !.
 sell(X,Y) :- X==sheep, deletesheep(Y), Money=75*Y, addGold(Money), !.
+sell(_,_) :- write('Tidak terdapat item tersebut'),!.
 
 deletechicken(0, X) :- retractall(chickenlist(_)), asserta(chickenlist(X)) ,!.
 deletechicken(Num, [_H|T]) :- Nextnum is Num - 1, deletechicken(Nextnum, T), ! .
@@ -1083,19 +1084,19 @@ findQnt([], _, 0).
 /* Jika Item pada li dan Qnty < jumlah item, kurangi jumlah item dengan Qnty */
 /* Jika Item pada li dan Qnty = jumlah item, menghilangkan item dari li */
 /* Jika tidak ditemui atau Qnty > jumlah item, menampilkan pesan kesalahan */
+
 deleteitem(_,Qnty) :-
-	!,
 	invcurrcap(Cap),
   Tot is Cap - Qnty,
-  Tot < 0, write('Jumlah tidak dipenuhi'),fail.
+  Tot < 0, write('Jumlah tidak dipenuhi'),!,fail.
 deleteitem(Item,Qnty) :-
 	li(X),
 	deleteitem(X,Item,Qnty,Deleted, Cap),
   retractall(invcurrcap(_)),
 	assertz(invcurrcap(Cap)),
 	retractall(li(_)),
-	assertz(li(Deleted)).
-deleteitem([],_,_,[],Cap) :- !,fail,write('Claire Tidak Memiliki Item Tersebut'),invcurrcap(Cap).
+	assertz(li(Deleted)),!.
+deleteitem([],_,_,[],_) :- write('Claire Tidak Memiliki Item Tersebut'),!,fail.
 deleteitem([H|T],Item,Qnty,[Subtracted|T],NewCap) :-
 	eleitem(H,Targ,[Val]),
 	Targ == Item,
@@ -1113,17 +1114,17 @@ deleteitem([H|T],Item,Qnty,T,NewCap) :-
   NewCap is Cap - Qnty,
 	!.
 deleteitem([H|T],Item,Qnty,[H|T],Cap) :-
-	!,
 	eleitem(H,Targ,[Val]),
 	Targ == Item,
 	Qnty > Val,
-  write('Claire Tidak Memiliki Cukup Barang'),fail,
-  invcurrcap(Cap).
+  write('Claire Tidak Memiliki Cukup Barang'),!,
+  invcurrcap(Cap),fail.
 deleteitem([H|T],Item,Qnty,[H|Res],Cap) :-
 	eleitem(H,Targ,_),
 	Targ \== Item,
 	deleteitem(T,Item,Qnty,Res,Cap),
 	!.
+
 
 /* Display Inventory*/
 displayInv :-
