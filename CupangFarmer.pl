@@ -1185,7 +1185,7 @@ eleitem([Item|Qnty],Item,Qnty).
 
 /*======================FARMER============================*/
 plant :- shovel(X), X=:=0, write('Claire harus memiliki shovel untuk menggali tanah!'), nl, !.
-plant :- season(S), S=:=winter, write('Tanaman sulit tumbuh pada musim dingin!'), nl, !.
+plant :- season(S), S==winter, write('Tanaman sulit tumbuh pada musim dingin!'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==m, write('Claire tidak dapat menanam pada area M'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==h, write('Claire tidak dapat menanam pada area H'), nl, !.
 plant :- playerpos(Y,X), loc(Y,X,A), A==r, write('Claire tidak dapat menanam pada area R'), nl, !.
@@ -1197,7 +1197,7 @@ plant :- season(S), S==winter, showplanting, write('Mari kita bercocok tanam!'),
 
 /* Time Planting 6 (shovel 1) */
 planting(Seed) :- 	Seed =:= 1, playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
-					findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), write('seed 1'), addPlant(Y,X,72,carrot), !.
+					findQnt(carrot, Num), Num>=1, deleteitem(carrot, 1), addPlant(Y,X,72,carrot), !.
 planting(Seed) :- 	Seed =:= 2, playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
 					findQnt(corn, Num), Num>=1, deleteitem(corn, 1), addPlant(Y,X,96,corn), !.
 planting(Seed) :- 	Seed =:= 3, playerpos(Y, X), shovel(C), C=:=1, addTimePlanting(6),
