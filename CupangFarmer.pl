@@ -715,7 +715,7 @@ market:-	write('          ______'),nl,
 			write(' /|      |      |'),nl,
 			write(' / \\     |______|'),nl,
 			/*emang rada zig-zag ga usah dibikin lurus*/
-			write('Saya ingin (buy/sell/exit): '),read(X),nl, marketchoice(X),!.
+			write('Saya ingin (buy/sell/exit/potion): '),read(X),nl, marketchoice(X),!.
 
 marketchoice(buy):-  !, write('Membeli barang'), nl, season(S), buymenu(S), market.
 marketchoice(sell):- !,write('Menjual barang'),nl, sellmenu, market.
@@ -1424,7 +1424,7 @@ buypotion :- 	write('1. Farming Potion  (500) --> memaksimalkan lvl farming'),nl
 				write('4. Tidak jadi beli'),nl,
 				write('Pilihan : '), read(X), pilihanpotion(X),!.
 
-pilihanpotion(1):- minGold(5), retractall(farmlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
-pilihanpotion(2):- minGold(5),  retractall(fishlvl(_)),asserta(fishlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
-pilihanpotion(3):- minGold(5),  retractall(ranchlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
+pilihanpotion(1):- minGold(500), retractall(farmlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
+pilihanpotion(2):- minGold(500),  retractall(fishlvl(_)),asserta(fishlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
+pilihanpotion(3):- minGold(500),  retractall(ranchlvl(_)),asserta(farmlvl(3)),status,nl,write('Karena sudah laku, Alchemist pergi meninggalkan market'), nl,retractall(alchemist(_,_)),asserta(alchemist(0,0)),!.
 pilihanpotion(4):- !.
