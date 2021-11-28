@@ -521,12 +521,9 @@ help :-
 	write('%  18. exit       : Keluar dari Marketplace (M)             %'),nl,
 	write('%  19. displayInv : Menampilkan daftar barang di Inventory  %'),nl,
 	write('%  20. ranch      : Menampilkan daftar ternak (R)           %'),nl,
-	write('%  21. chicken    : Mengambil telur dari ayam (R)           %'),nl,
-	write('%  22. cow        : Memerah susu dari sapi (R)              %'),nl,
-	write('%  23. sheep      : Mencukur bulu domba (R(                 %'),nl,
-	write('%  24. fish       : Memancing (Tepi danau [o])              %'),nl,
-	write('%  25. plant      : Menanam tanaman (Tile kosong [-])       %'),nl,
-	write('%  26. harvest    : Memanen tanaman (Fully grown plant [*]) %'),nl,
+	write('%  21. fish       : Memancing (Tepi danau [o])              %'),nl,
+	write('%  22. plant      : Menanam tanaman (Tile kosong [-])       %'),nl,
+	write('%  23. harvest    : Memanen tanaman (Fully grown plant [*]) %'),nl,
 	write('%                                                           %'),nl,
 	write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%').
 
