@@ -35,30 +35,24 @@ You need to have GNU Prolog compiler installed in your machine.
 
 
 ## Usage
-You need to compile it first with GNU Prolog. Type <i>['CupangFarmer.pl']</i>
+You need to compile it first with GNU Prolog. Type <i>['CupangFarmer.pl']</i> or run CupangFarmer.pl file
 
 
 ## Project Status
-Project is: _in progress_
+Project is: _completed_
 
 
 ## Room for Improvement
-Haven't finished yet
 
 Room for improvement:
-- Improvement to be done 1
-- Improvement to be done 2
-
-To do:
-- Feature to be added 1
-- Feature to be added 2
+- Save and Load Game
+- More weather customization
 
 
 ## Acknowledgements
 Many thanks to:
 - Lecturers and Assistants of IF2121 Computational Logic ITB Course 2021/2022
 - Sources based on Lecture notes and GNU Prolog Manual [@Manual](http://www.gprolog.org/manual/gprolog.html)
-- Many thanks to...
 
 
 ## Contact
