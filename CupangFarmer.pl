@@ -30,6 +30,7 @@
 :- dynamic(alchemist/2).
 :- dynamic(season/1).
 :- dynamic(cuaca/1).
+:- dynamic(lastcomm/1).
 
 diary([]).
 chickenlist([]).
@@ -221,6 +222,7 @@ startGame :-
 	asserta(alchemist(0,0)),
 	asserta(season(spring)),
 	asserta(cuaca(sunny)),
+	asserta(lastcomm(0)),
 	promptStart,start.
 
 promptStart :-
@@ -583,8 +585,9 @@ update(_):- fatigue(X), X>=48, nl,write('Cupang kelelahan karena belum tidur seh
 update(_):- day(D), D =:= 92, retractall(season(_)), asserta(season(summer)).
 update(_):- day(D), D =:= 183, retractall(season(_)), asserta(season(autumn)).
 update(_):- day(D), D =:= 274, retractall(season(_)), asserta(season(winter)).
-update(_):- alchemist(X,_),X=:=0, summonAlchemist, communicate.
+update(_):- alchemist(X,_),X=:=0, summonAlchemist.
 update(X):- alchemist(1,B), NEXTB is B - X, retractall(alchemist(_,_)), asserta(alchemist(1,NEXTB)), NEXTB =< 0 , write('Alchemist sudah pergi meninggalkan market'), retractall(alchemist(_,_)),asserta(alchemist(0,0)).
+update(_):- lastcomm(X), day(D), X\==D, communicate, retractall(lastcomm(_)), asserta(lastcomm(D)).
 update(_):-  \+ (season(winter)) ,gachahewan.
 update(_):- season(S), ubahcuaca(S).
 update(_):- !.
