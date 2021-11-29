@@ -629,7 +629,7 @@ showfatigue:- 	write('    zz'),nl,
 				write('o_ '),nl,
 				write('|/\\'),nl.
 
-failgame:- write('Pesan dari sistem:\nClaire, tetap semangat ya meskipun kamu gagal dalam permainan ini. Semoga beruntung dalam percobaan selanjutnya!\n'), pulang(ya),deleteall, !.
+failgame:- write('Pesan dari sistem:\nClaire, tetap semangat ya meskipun kamu gagal dalam permainan ini. Semoga beruntung dalam percobaan selanjutnya!\n'), pulang(tidak),deleteall, !.
 successgame:- write('Pesan dari sistem:\nSelamat, Claire! Kamu berhasil menyelesaikan permainan ini! Semoga hari-harimu menyenangkan! Kembali lagi ya!'), pulang(ya),deleteall,!.
 deleteall:- retractall(uang(_)),retractall(exp(_)),retractall(lvlplayer(_)),retractall(farmexp(_)),retractall(fishlvl(_)),retractall(fishexp(_)),retractall(fishrod(_)),retractall(ranchexp(_)),retractall(ranchinglvl(_)),retractall(ranchlvl(_)),retractall(time(_)),retractall(day(_)),retractall(playerpos(_)),retractall(fatigue(_)),retractall(questlvl(_)),retractall(isPlant(_)),retractall(shovel(_)),retractall(invcurrcap(_)),retractall(plantType(_)),retractall(farmlvl(_)),retractall(alchemist(_)),retractall(season(_)),asserta(cuaca(_)),retractall(job(_)),!.
 
